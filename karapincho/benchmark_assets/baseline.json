@@ -1,0 +1,156 @@
+{
+  "id": "m2-8gb-2026-09-13",
+  "hardware": "Apple M2 \u00b7 8 GB",
+  "os": "macOS 26.6.2",
+  "runs": 3,
+  "fixtures": [
+    {
+      "language": "es",
+      "duration": 44.4,
+      "title": "La Cucaracha",
+      "artist": "Elisa; Sean Buss; Kenmayer",
+      "sha256": "dc2518483a18e78b3334f6b79029f04c0fb5f5dbdda1340ae7c0d3a03c111c0f",
+      "cpu": {
+        "seconds": 196.46,
+        "stages": {
+          "prepare": 1.24,
+          "separate": 27.94,
+          "transcribe": 63.6,
+          "align": 6.89,
+          "pitch": 95.91,
+          "chart": 0.42,
+          "package": 0.41
+        }
+      },
+      "gpu": {
+        "seconds": 111.62,
+        "stages": {
+          "prepare": 2.05,
+          "separate": 15.85,
+          "transcribe": 69.0,
+          "align": 7.29,
+          "pitch": 17.96,
+          "chart": 0.41,
+          "package": 0.42
+        }
+      }
+    },
+    {
+      "language": "ja",
+      "duration": 29.266667,
+      "title": "Sakura Sakura",
+      "artist": "Kanohara; anonymous synthesized vocalist",
+      "sha256": "78ac9d9966dcec57580d4d12aace0803c9398058936f0130c44f1b391d6a9273",
+      "cpu": {
+        "seconds": 108.68,
+        "stages": {
+          "prepare": 0.82,
+          "separate": 12.68,
+          "transcribe": 28.6,
+          "align": 8.18,
+          "pitch": 57.91,
+          "chart": 0.83,
+          "package": 0.41
+        }
+      },
+      "gpu": {
+        "seconds": 76.2,
+        "stages": {
+          "prepare": 1.64,
+          "separate": 8.18,
+          "transcribe": 40.45,
+          "align": 8.58,
+          "pitch": 15.4,
+          "chart": 0.82,
+          "package": 0.41
+        }
+      }
+    },
+    {
+      "language": "en",
+      "duration": 142.366667,
+      "title": "Auld Lang Syne",
+      "artist": "Frank C. Stanley",
+      "sha256": "968901ae1a219b1f616610322708328ee08ab122cc595baf63dc32d839133f83",
+      "cpu": {
+        "seconds": 527.95,
+        "stages": {
+          "prepare": 3.65,
+          "separate": 79.81,
+          "transcribe": 108.99,
+          "align": 9.32,
+          "pitch": 306.5,
+          "chart": 0.41,
+          "package": 0.41
+        }
+      },
+      "gpu": {
+        "seconds": 257.47,
+        "stages": {
+          "prepare": 6.07,
+          "separate": 46.97,
+          "transcribe": 112.42,
+          "align": 8.9,
+          "pitch": 65.62,
+          "chart": 0.41,
+          "package": 0.41
+        }
+      }
+    }
+  ],
+  "provenance": {
+    "prepare": {
+      "revision": 3,
+      "mode": "auto",
+      "validated": true,
+      "versions": {},
+      "model_revision": "packaged-model",
+      "whisper_model": null
+    },
+    "separate": {
+      "revision": 3,
+      "mode": "auto",
+      "validated": true,
+      "versions": {
+        "torch": "2.8.0",
+        "demucs": "4.0.1"
+      },
+      "model_revision": "packaged-model",
+      "whisper_model": null
+    },
+    "transcribe": {
+      "revision": 3,
+      "mode": "auto",
+      "validated": true,
+      "versions": {
+        "faster-whisper": "1.2.1",
+        "mlx-whisper": "0.4.3",
+        "mlx": "0.32.2"
+      },
+      "model_revision": "7fc08c4eac4c316526498f147dfdee6f6303f975",
+      "whisper_model": "medium"
+    },
+    "align": {
+      "revision": 3,
+      "mode": "auto",
+      "validated": true,
+      "versions": {
+        "torch": "2.8.0",
+        "whisperx": "3.8.6"
+      },
+      "model_revision": "packaged-model",
+      "whisper_model": null
+    },
+    "pitch": {
+      "revision": 3,
+      "mode": "auto",
+      "validated": true,
+      "versions": {
+        "torch": "2.8.0",
+        "torchcrepe": "0.0.24"
+      },
+      "model_revision": "packaged-model",
+      "whisper_model": null
+    }
+  }
+}

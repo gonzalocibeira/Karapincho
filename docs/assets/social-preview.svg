@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">Karapincho</title>
+  <desc id="desc">From song to singalong, locally on your Mac.</desc>
+  <rect width="1280" height="640" fill="#f7f5ef"/>
+  <circle cx="1090" cy="130" r="210" fill="#e4e8db"/>
+  <circle cx="1160" cy="560" r="250" fill="#f8e9dc"/>
+  <g transform="translate(105 118) scale(3.4)" fill="none">
+    <path d="M10 32V20c0-6 6-10 15-10 10 0 15 5 15 12v11H10Z" fill="#3b4c35"/>
+    <path d="M15 15c-7-7-10 5-4 7M33 13c4-8 11 1 5 5" fill="#3b4c35"/>
+    <path d="M28 31h12M18 21v2M33 21v2" stroke="#f7f5ef" stroke-width="3" stroke-linecap="round"/>
+    <path d="M10 34H6M17 37v3M34 37v3" stroke="#3b4c35" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <text x="300" y="245" fill="#292c28" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="94" font-weight="750" letter-spacing="-4">karapincho</text>
+  <circle cx="828" cy="235" r="8" fill="#d87348"/>
+  <text x="112" y="390" fill="#3b4c35" font-family="Georgia, serif" font-size="56">From song to singalong.</text>
+  <text x="115" y="462" fill="#6f7469" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="28">Local AI karaoke creation for Apple Silicon Macs</text>
+  <text x="115" y="540" fill="#829365" font-family="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="22" font-weight="650" letter-spacing="4">OPEN SOURCE · GPLv3</text>
+</svg>

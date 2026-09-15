@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "models": [
+    {
+      "purpose": "primary CPU transcription",
+      "source": "huggingface",
+      "repository": "Systran/faster-whisper-medium",
+      "provenance": "https://huggingface.co/Systran/faster-whisper-medium",
+      "revision": "08e178d48790749d25932bbc082711ddcfdfbc4f",
+      "license": "MIT"
+    },
+    {
+      "purpose": "low-memory CPU transcription recovery",
+      "source": "huggingface",
+      "repository": "Systran/faster-whisper-small",
+      "provenance": "https://huggingface.co/Systran/faster-whisper-small",
+      "revision": "536b0662742c02347bc0e980a01041f333bce120",
+      "license": "MIT"
+    },
+    {
+      "purpose": "optional MLX transcription",
+      "source": "huggingface",
+      "repository": "mlx-community/whisper-medium-mlx",
+      "provenance": "https://huggingface.co/mlx-community/whisper-medium-mlx",
+      "revision": "7fc08c4eac4c316526498f147dfdee6f6303f975",
+      "license": "MIT"
+    },
+    {
+      "purpose": "Japanese forced alignment",
+      "source": "huggingface",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "provenance": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "revision": "cf031e020336460d15a417eba710bbc5bb43be9a",
+      "license": "Apache-2.0",
+      "allow_patterns": ["config.json", "preprocessor_config.json", "pytorch_model.bin", "special_tokens_map.json", "vocab.json"]
+    },
+    {
+      "purpose": "English forced alignment",
+      "source": "torchaudio",
+      "repository": "torchaudio/WAV2VEC2_ASR_BASE_960H",
+      "provenance": "https://docs.pytorch.org/audio/2.8.0/generated/torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H.html",
+      "revision": "torch-2.8.0:wav2vec2_fairseq_base_ls960_asr_ls960.pth",
+      "license": "MIT"
+    },
+    {
+      "purpose": "Spanish forced alignment",
+      "source": "huggingface",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-spanish",
+      "provenance": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-spanish",
+      "revision": "96d7e9b4e4a78af515a3c6d3cee7c0826045d276",
+      "license": "Apache-2.0",
+      "allow_patterns": ["config.json", "preprocessor_config.json", "pytorch_model.bin", "special_tokens_map.json", "vocab.json"]
+    },
+    {
+      "purpose": "vocal separation",
+      "source": "package-managed",
+      "repository": "facebookresearch/demucs htdemucs",
+      "provenance": "https://github.com/facebookresearch/demucs",
+      "revision": "demucs-4.0.1:955717e8-8726e21a.th",
+      "license": "Research-only; not covered by the Demucs code's MIT license"
+    },
+    {
+      "purpose": "pitch detection",
+      "source": "package-managed",
+      "repository": "maxrmorrison/torchcrepe full",
+      "provenance": "https://github.com/maxrmorrison/torchcrepe",
+      "revision": "torchcrepe-0.0.24:full.pth",
+      "sha256": "133225604dedd2e4005f8bbd1bd0a2ec073ba8b7a6cd31ff6d5edbbfa3539986",
+      "license": "MIT"
+    }
+  ]
+}

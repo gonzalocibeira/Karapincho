@@ -1,0 +1,15 @@
+.venv/
+node_modules/
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+data/
+.cache/
+.DS_Store
+*.egg-info/
+.codebase-memory/
+*.tsbuildinfo
