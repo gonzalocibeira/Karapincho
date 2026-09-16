@@ -1,17 +1,37 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import json
 import subprocess
+import threading
 import time
+from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 
-from karapincho import config
+from karapincho import config, power
 from karapincho.store import Store
 from karapincho.worker import Worker
 
 
 @pytest.fixture
-def environment(tmp_path, monkeypatch):
+def awake_processes():
+    processes = []
+
+    def launch(*args, **kwargs):
+        process = Mock()
+        process.poll.return_value = None
+        processes.append(process)
+        return process
+
+    # Keep this patch independent from tests that restore their stage subprocess wrappers.
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(power, "sys", SimpleNamespace(platform="darwin"))
+        patch.setattr(power, "Popen", launch)
+        yield processes
+
+
+@pytest.fixture
+def environment(tmp_path, monkeypatch, awake_processes):
     monkeypatch.setattr(config, "DATA", tmp_path)
     config.initialize()
     store = Store()
@@ -62,12 +82,33 @@ def wait_until(predicate, timeout=8):
     raise AssertionError("Worker did not reach the expected state")
 
 
-def test_checkpoints_resume_without_repeating_successful_stages(environment, monkeypatch):
+def test_idle_worker_does_not_prevent_sleep(environment, monkeypatch, awake_processes):
+    store, _, _ = environment
+    idle = threading.Event()
+
+    def no_pending_job():
+        idle.set()
+        return None
+
+    monkeypatch.setattr(store, "next", no_pending_job)
+    worker = Worker(store)
+    worker.start()
+    try:
+        assert idle.wait(timeout=3)
+        assert awake_processes == []
+    finally:
+        worker.stop()
+
+
+def test_checkpoints_resume_without_repeating_successful_stages(environment, monkeypatch, awake_processes):
     store, job, folder = environment
     fake_stages(monkeypatch, fail_stage="align")
     worker = Worker(store)
     with pytest.raises(RuntimeError, match="test failure"):
         worker.execute(job)
+    assert len(awake_processes) == 1
+    awake_processes[0].terminate.assert_called_once()
+    awake_processes[0].wait.assert_called_once()
     first_calls = (folder / "calls").read_text().splitlines()
     assert first_calls == [f"{s}:False" for s in config.STAGES[:config.STAGES.index("align") + 1]]
     # Restore Popen before installing another wrapper around it.
@@ -79,6 +120,9 @@ def test_checkpoints_resume_without_repeating_successful_stages(environment, mon
     assert calls[len(first_calls) :] == [f"{s}:False" for s in config.STAGES[config.STAGES.index("align"): ]]
     assert store.get(job["id"])["status"] == "completed"
     assert json.loads((folder / "report.json").read_text())["align"]["pipeline_version"] == 1
+    assert len(awake_processes) == 2
+    awake_processes[1].terminate.assert_called_once()
+    awake_processes[1].wait.assert_called_once()
 
 
 def test_memory_failure_retries_once(environment, monkeypatch):
@@ -90,13 +134,15 @@ def test_memory_failure_retries_once(environment, monkeypatch):
     assert any("reduced memory" in w for w in store.get(job["id"])["warnings"])
 
 
-def test_cancellation_terminates_child_and_advances_queue(environment, monkeypatch):
+def test_cancellation_terminates_child_and_advances_queue(environment, monkeypatch, awake_processes):
     store, job, folder = environment
     fake_stages(monkeypatch, slow_stage="acquire")
     worker = Worker(store)
     worker.start()
     try:
         wait_until(lambda: (folder / "calls").exists())
+        assert len(awake_processes) == 1
+        awake_processes[0].terminate.assert_not_called()
         process = worker.process
         store.update(job["id"], cancel_requested=1)
         wait_until(lambda: store.get(job["id"])["status"] == "cancelled")
@@ -104,29 +150,40 @@ def test_cancellation_terminates_child_and_advances_queue(environment, monkeypat
         assert not (folder / "acquire.json").exists()
     finally:
         worker.stop()
+    awake_processes[0].terminate.assert_called_once()
+    awake_processes[0].wait.assert_called_once()
 
 
-def test_shutdown_requeues_interrupted_job(environment, monkeypatch):
+def test_shutdown_requeues_interrupted_job(environment, monkeypatch, awake_processes):
     store, job, folder = environment
     fake_stages(monkeypatch, slow_stage="acquire")
     worker = Worker(store)
     worker.start()
     wait_until(lambda: (folder / "calls").exists())
+    assert len(awake_processes) == 1
+    awake_processes[0].terminate.assert_not_called()
     worker.stop()
     assert store.get(job["id"])["status"] == "queued"
     assert worker.process.poll() is not None
+    awake_processes[0].terminate.assert_called_once()
+    awake_processes[0].wait.assert_called_once()
 
 
-def test_lyric_rebuild_reuses_audio_and_pitch(environment, monkeypatch):
+def test_lyric_rebuild_reuses_audio_and_pitch(environment, monkeypatch, awake_processes):
     store, job, folder = environment
     fake_stages(monkeypatch)
     worker = Worker(store)
     worker.execute(job)
+    assert len(awake_processes) == 1
+    awake_processes[0].terminate.assert_called_once()
     first_calls = (folder / "calls").read_text().splitlines()
     updated = store.rebuild(job["id"], {"lyrics": "corrected lyrics", "language": "en"})
     worker.execute(updated)
     calls = (folder / "calls").read_text().splitlines()[len(first_calls):]
     assert calls == [f"{stage}:False" for stage in ("lyrics", "transcribe", "align", "chart", "package")]
+    assert len(awake_processes) == 2
+    awake_processes[1].terminate.assert_called_once()
+    awake_processes[1].wait.assert_called_once()
 
 
 @pytest.mark.parametrize('failure,stage,expected', [
