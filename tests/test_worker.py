@@ -252,3 +252,21 @@ def test_killed_gpu_child_uses_runtime_record_for_recovery(environment, monkeypa
     assert '--low-memory' not in calls[1]
     assert calls[1][-2:] == ['--backend', 'mps' if runtime_written else 'cpu']
     assert not (folder/'.attempt-killed').exists()
+
+
+def test_processing_mode_change_reuses_separation_and_pitch(environment, monkeypatch):
+    store, job, folder = environment
+    fake_stages(monkeypatch)
+    worker = Worker(store)
+    worker.execute(job)
+    initial = len((folder / 'calls').read_text().splitlines())
+    fast = store.rebuild(job['id'], job['lyric_settings'], 'fast')
+    worker.execute(fast)
+    calls = (folder / 'calls').read_text().splitlines()[initial:]
+    assert calls == [f'{stage}:False' for stage in ('transcribe', 'align', 'chart', 'package')]
+    count = len((folder / 'calls').read_text().splitlines())
+    worker.execute(store.get(job['id']))
+    assert len((folder / 'calls').read_text().splitlines()) == count
+    quality = store.rebuild(job['id'], job['lyric_settings'], 'quality')
+    worker.execute(quality)
+    assert (folder / 'calls').read_text().splitlines()[count:] == calls

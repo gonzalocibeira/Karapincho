@@ -189,3 +189,33 @@ def test_gpu_alignment_quality_failure_requests_cpu_before_estimates(tmp_path, m
     with pytest.raises(RuntimeError, match='quality retry'):
         ai.align(tmp_path)
     assert not (tmp_path/'aligned.json').exists()
+
+
+def test_eight_gb_auto_transcription_avoids_speculative_model_load(monkeypatch):
+    monkeypatch.setattr(a.platform, 'system', lambda: 'Darwin')
+    monkeypatch.setattr(a.platform, 'machine', lambda: 'arm64')
+    monkeypatch.setenv('KARAPINCHO_ACCELERATION', 'auto')
+    try:
+        result = a.configure('transcribe')
+        assert result.backend == 'cpu'
+        assert result.selected_backend == 'cpu'
+        assert '8 GB' in result.reason
+    finally:
+        a.CURRENT = a.Runtime()
+
+
+def test_pitch_batch_uses_available_headroom_but_keeps_pressure_recovery(monkeypatch):
+    import psutil
+    monkeypatch.setattr(a.platform, 'system', lambda: 'Darwin')
+    monkeypatch.setattr(a.platform, 'machine', lambda: 'arm64')
+    monkeypatch.setitem(sys.modules, 'torch', SimpleNamespace(
+        backends=SimpleNamespace(mps=SimpleNamespace(is_available=lambda: True)),
+        mps=SimpleNamespace(recommended_max_memory=lambda: 6*a.GIB,
+                            set_per_process_memory_fraction=lambda value: None)))
+    try:
+        assert a.configure('pitch', backend='mps').batch_size == 16
+        assert a.configure('pitch', reduced=True, backend='mps').batch_size == 4
+        monkeypatch.setattr(psutil, 'virtual_memory', lambda: SimpleNamespace(total=8*a.GIB, available=a.GIB))
+        assert a.configure('pitch', backend='mps').batch_size == 4
+    finally:
+        a.CURRENT = a.Runtime()

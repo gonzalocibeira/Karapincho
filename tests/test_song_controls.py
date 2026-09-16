@@ -65,6 +65,9 @@ def test_existing_database_migrates_without_inventing_timings(tmp_path):
         db.execute("INSERT INTO jobs (id,status) VALUES ('old','completed')")
     assert Store(path).get('old')['elapsed_seconds'] is None
     assert Store(path).get('old')['started_at'] is None
+    assert Store(path).get('old')['processing_mode'] == 'quality'
+    assert Store(path).get('old')['export_receipt'] == {}
+    assert Store(path).get('old')['cleaned_at'] is None
 
 
 @pytest.mark.parametrize('status', ['completed', 'failed', 'cancelled'])

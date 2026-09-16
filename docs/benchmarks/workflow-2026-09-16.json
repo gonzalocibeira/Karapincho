@@ -1,0 +1,4178 @@
+{
+  "environment": {
+    "machine": "Apple M2",
+    "physical_memory_gb": 8,
+    "macos": "27.0",
+    "reference_commit": "47c34cdca9ea34dc937fdea35be3a833c71e402e",
+    "updated_python_source_sha256": "084e5eaded4ba3413589b6c597da67bf5c91cff4811007aca727133da48c5626",
+    "models": "release-pinned, cached; no downloads in timed runs",
+    "execution": "sequential isolated subprocesses; no concurrent development tests/builds during final comparison"
+  },
+  "method": "Three fresh runs per recording and profile. Aggregate is the sum of per-recording medians. Earlier incomplete-cache runs are excluded. Desktop load, thermal state, and memory pressure can still affect results.",
+  "comparison": {
+    "median_seconds": {
+      "en": {
+        "baseline": 269.98,
+        "fast": 150.27,
+        "quality": 243.44
+      },
+      "es": {
+        "baseline": 153.92,
+        "fast": 64.67,
+        "quality": 121.34
+      },
+      "ja": {
+        "baseline": 87.32,
+        "fast": 53.19,
+        "quality": 70.38
+      }
+    },
+    "sum_of_fixture_medians": {
+      "baseline": 511.22,
+      "fast": 268.13,
+      "quality": 435.15999999999997
+    },
+    "fast_reduction_vs_baseline": 0.4755095653534682,
+    "fast_reduction_vs_quality": 0.38383583049912673,
+    "quality_comparison": {
+      "en": {
+        "baseline_repeat_variation": [
+          {
+            "runs": [
+              1,
+              2
+            ],
+            "same_pitch_grid": true,
+            "same_energy": true,
+            "baseline_voiced_frames": 8869,
+            "compared_voiced_frames": 8869,
+            "voicing_disagreement_fraction": 0.0,
+            "pitch_median_cents": 5.927988430238213,
+            "pitch_p95_cents": 18.248777223381264,
+            "transcription_character_edit_distance": 0,
+            "transcription_baseline_characters": 338,
+            "same_aligned_word_sequence": true,
+            "alignment_boundary_median_seconds": 0.0,
+            "alignment_boundary_p95_seconds": 0.0,
+            "alignment_boundary_max_seconds": 0.0
+          },
+          {
+            "runs": [
+              1,
+              3
+            ],
+            "same_pitch_grid": true,
+            "same_energy": true,
+            "baseline_voiced_frames": 8869,
+            "compared_voiced_frames": 8869,
+            "voicing_disagreement_fraction": 0.0,
+            "pitch_median_cents": 5.939975092588889,
+            "pitch_p95_cents": 18.094984106023297,
+            "transcription_character_edit_distance": 0,
+            "transcription_baseline_characters": 338,
+            "same_aligned_word_sequence": true,
+            "alignment_boundary_median_seconds": 0.0,
+            "alignment_boundary_p95_seconds": 0.0,
+            "alignment_boundary_max_seconds": 0.0
+          },
+          {
+            "runs": [
+              2,
+              3
+            ],
+            "same_pitch_grid": true,
+            "same_energy": true,
+            "baseline_voiced_frames": 8869,
+            "compared_voiced_frames": 8869,
+            "voicing_disagreement_fraction": 0.0,
+            "pitch_median_cents": 5.966448748785028,
+            "pitch_p95_cents": 18.597401135114417,
+            "transcription_character_edit_distance": 0,
+            "transcription_baseline_characters": 338,
+            "same_aligned_word_sequence": true,
+            "alignment_boundary_median_seconds": 0.0,
+            "alignment_boundary_p95_seconds": 0.0,
+            "alignment_boundary_max_seconds": 0.0
+          }
+        ],
+        "quality_runs": [
+          {
+            "run": 1,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.996119536514164,
+                "pitch_p95_cents": 18.121208066646616,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 6.14186934744023,
+                "pitch_p95_cents": 18.376622089546004,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.810820428847449,
+                "pitch_p95_cents": 18.28088226690517,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              }
+            ],
+            "alignment_quality": {
+              "precise": 8,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Uncertain melody passages are freestyle notes and do not require an exact pitch."
+            ]
+          },
+          {
+            "run": 2,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.8668543609471335,
+                "pitch_p95_cents": 18.230611041412402,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.9968229353956115,
+                "pitch_p95_cents": 18.39948420526493,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.927644353509457,
+                "pitch_p95_cents": 18.37158943998203,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              }
+            ],
+            "alignment_quality": {
+              "precise": 8,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Uncertain melody passages are freestyle notes and do not require an exact pitch."
+            ]
+          },
+          {
+            "run": 3,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.959263215682355,
+                "pitch_p95_cents": 18.220739829292732,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.9516787346402715,
+                "pitch_p95_cents": 18.14344063581865,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.936158466671451,
+                "pitch_p95_cents": 18.39067929965886,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              }
+            ],
+            "alignment_quality": {
+              "precise": 8,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Uncertain melody passages are freestyle notes and do not require an exact pitch."
+            ]
+          }
+        ],
+        "fast_runs": [
+          {
+            "run": 1,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.975599173129876,
+                "pitch_p95_cents": 18.303653997471073,
+                "transcription_character_edit_distance": 159,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.933075962230204,
+                "pitch_p95_cents": 18.309048283544435,
+                "transcription_character_edit_distance": 159,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.883986871862788,
+                "pitch_p95_cents": 18.525960636542255,
+                "transcription_character_edit_distance": 159,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": false
+              }
+            ],
+            "alignment_quality": {
+              "precise": 6,
+              "estimated": 1,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Retried uncertain lyrics at 24.9s; wording may need checking.",
+              "Retried uncertain lyrics at 28.4s; wording may need checking.",
+              "Fast mode uses a smaller transcription model; lyrics may be less accurate.",
+              "Retried lyric alignment for more reliable timing.",
+              "Estimated lyric timing at 28.4s.",
+              "Some syllable boundaries are acoustically refined estimates, especially sustained or rapid vocals.",
+              "Uncertain melody passages are freestyle notes and do not require an exact pitch."
+            ]
+          },
+          {
+            "run": 2,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.992711391330501,
+                "pitch_p95_cents": 17.875140572721026,
+                "transcription_character_edit_distance": 159,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.878793444754192,
+                "pitch_p95_cents": 17.97399065840868,
+                "transcription_character_edit_distance": 159,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.879321954250342,
+                "pitch_p95_cents": 18.360024561328707,
+                "transcription_character_edit_distance": 159,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": false
+              }
+            ],
+            "alignment_quality": {
+              "precise": 6,
+              "estimated": 1,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Retried uncertain lyrics at 24.9s; wording may need checking.",
+              "Retried uncertain lyrics at 28.4s; wording may need checking.",
+              "Fast mode uses a smaller transcription model; lyrics may be less accurate.",
+              "Retried lyric alignment for more reliable timing.",
+              "Estimated lyric timing at 28.4s.",
+              "Some syllable boundaries are acoustically refined estimates, especially sustained or rapid vocals.",
+              "Uncertain melody passages are freestyle notes and do not require an exact pitch."
+            ]
+          },
+          {
+            "run": 3,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.985213570939318,
+                "pitch_p95_cents": 18.067531322207255,
+                "transcription_character_edit_distance": 159,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.849772287044054,
+                "pitch_p95_cents": 18.11416723615889,
+                "transcription_character_edit_distance": 159,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 8869,
+                "compared_voiced_frames": 8869,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 6.009882959937494,
+                "pitch_p95_cents": 18.232461621977347,
+                "transcription_character_edit_distance": 159,
+                "transcription_baseline_characters": 338,
+                "same_aligned_word_sequence": false
+              }
+            ],
+            "alignment_quality": {
+              "precise": 6,
+              "estimated": 1,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Retried uncertain lyrics at 24.9s; wording may need checking.",
+              "Retried uncertain lyrics at 28.4s; wording may need checking.",
+              "Fast mode uses a smaller transcription model; lyrics may be less accurate.",
+              "Retried lyric alignment for more reliable timing.",
+              "Estimated lyric timing at 28.4s.",
+              "Some syllable boundaries are acoustically refined estimates, especially sustained or rapid vocals.",
+              "Uncertain melody passages are freestyle notes and do not require an exact pitch."
+            ]
+          }
+        ]
+      },
+      "es": {
+        "baseline_repeat_variation": [
+          {
+            "runs": [
+              1,
+              2
+            ],
+            "same_pitch_grid": true,
+            "same_energy": true,
+            "baseline_voiced_frames": 2286,
+            "compared_voiced_frames": 2286,
+            "voicing_disagreement_fraction": 0.0,
+            "pitch_median_cents": 5.14138918030471,
+            "pitch_p95_cents": 15.906702488577556,
+            "transcription_character_edit_distance": 4,
+            "transcription_baseline_characters": 196,
+            "same_aligned_word_sequence": false
+          },
+          {
+            "runs": [
+              1,
+              3
+            ],
+            "same_pitch_grid": true,
+            "same_energy": true,
+            "baseline_voiced_frames": 2286,
+            "compared_voiced_frames": 2286,
+            "voicing_disagreement_fraction": 0.0,
+            "pitch_median_cents": 5.024273901168167,
+            "pitch_p95_cents": 15.661888141936275,
+            "transcription_character_edit_distance": 4,
+            "transcription_baseline_characters": 196,
+            "same_aligned_word_sequence": false
+          },
+          {
+            "runs": [
+              2,
+              3
+            ],
+            "same_pitch_grid": true,
+            "same_energy": true,
+            "baseline_voiced_frames": 2286,
+            "compared_voiced_frames": 2286,
+            "voicing_disagreement_fraction": 0.0,
+            "pitch_median_cents": 5.28552016727679,
+            "pitch_p95_cents": 16.25605269814461,
+            "transcription_character_edit_distance": 0,
+            "transcription_baseline_characters": 198,
+            "same_aligned_word_sequence": true,
+            "alignment_boundary_median_seconds": 0.0035000000000007248,
+            "alignment_boundary_p95_seconds": 0.1464000000000049,
+            "alignment_boundary_max_seconds": 1.0079999999999956
+          }
+        ],
+        "quality_runs": [
+          {
+            "run": 1,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.146360222832165,
+                "pitch_p95_cents": 15.931035200365042,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 196,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.007500000000002061,
+                "alignment_boundary_p95_seconds": 0.05210000000000197,
+                "alignment_boundary_max_seconds": 0.18100000000000094
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.276553154524383,
+                "pitch_p95_cents": 16.029754547014708,
+                "transcription_character_edit_distance": 4,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.153862141815798,
+                "pitch_p95_cents": 16.31668808066206,
+                "transcription_character_edit_distance": 4,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": false
+              }
+            ],
+            "alignment_quality": {
+              "precise": 7,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Retried transcription on original audio; vocals were difficult to recognize."
+            ]
+          },
+          {
+            "run": 2,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.285686407108242,
+                "pitch_p95_cents": 16.239226805930414,
+                "transcription_character_edit_distance": 4,
+                "transcription_baseline_characters": 196,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.42968191833339,
+                "pitch_p95_cents": 15.950755128783943,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0035000000000007248,
+                "alignment_boundary_p95_seconds": 0.1464000000000049,
+                "alignment_boundary_max_seconds": 1.0079999999999956
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.409881266461462,
+                "pitch_p95_cents": 16.02159723734989,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              }
+            ],
+            "alignment_quality": {
+              "precise": 3,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Retried transcription on original audio; vocals were difficult to recognize."
+            ]
+          },
+          {
+            "run": 3,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.084013046939078,
+                "pitch_p95_cents": 15.472326795670625,
+                "transcription_character_edit_distance": 4,
+                "transcription_baseline_characters": 196,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.008795952790024,
+                "pitch_p95_cents": 15.663143119684147,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.353514002406955,
+                "pitch_p95_cents": 15.947928738331596,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0035000000000007248,
+                "alignment_boundary_p95_seconds": 0.1464000000000049,
+                "alignment_boundary_max_seconds": 1.0079999999999956
+              }
+            ],
+            "alignment_quality": {
+              "precise": 3,
+              "estimated": 1,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Retried transcription on original audio; vocals were difficult to recognize.",
+              "Precise ro alignment unavailable; using estimated word timings (ValueError).",
+              "Estimated lyric timing at 34.0s.",
+              "Some syllable boundaries are acoustically refined estimates, especially sustained or rapid vocals."
+            ]
+          }
+        ],
+        "fast_runs": [
+          {
+            "run": 1,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.399648354959918,
+                "pitch_p95_cents": 15.176981860343497,
+                "transcription_character_edit_distance": 115,
+                "transcription_baseline_characters": 196,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 4.834029637303798,
+                "pitch_p95_cents": 15.093354128318,
+                "transcription_character_edit_distance": 117,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.4417879309531685,
+                "pitch_p95_cents": 15.805229165278236,
+                "transcription_character_edit_distance": 117,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": false
+              }
+            ],
+            "alignment_quality": {
+              "precise": 3,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Fast mode uses a smaller transcription model; lyrics may be less accurate."
+            ]
+          },
+          {
+            "run": 2,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.296399197407606,
+                "pitch_p95_cents": 16.027283352249345,
+                "transcription_character_edit_distance": 115,
+                "transcription_baseline_characters": 196,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.381922502668303,
+                "pitch_p95_cents": 15.585498268345768,
+                "transcription_character_edit_distance": 117,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.403297573280595,
+                "pitch_p95_cents": 16.309780376530036,
+                "transcription_character_edit_distance": 117,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": false
+              }
+            ],
+            "alignment_quality": {
+              "precise": 3,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Fast mode uses a smaller transcription model; lyrics may be less accurate."
+            ]
+          },
+          {
+            "run": 3,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.112630024058413,
+                "pitch_p95_cents": 16.33301254141471,
+                "transcription_character_edit_distance": 115,
+                "transcription_baseline_characters": 196,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.079566345466237,
+                "pitch_p95_cents": 16.370096652624305,
+                "transcription_character_edit_distance": 117,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2286,
+                "compared_voiced_frames": 2286,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.503994230181037,
+                "pitch_p95_cents": 16.10237780713592,
+                "transcription_character_edit_distance": 117,
+                "transcription_baseline_characters": 198,
+                "same_aligned_word_sequence": false
+              }
+            ],
+            "alignment_quality": {
+              "precise": 3,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Fast mode uses a smaller transcription model; lyrics may be less accurate."
+            ]
+          }
+        ]
+      },
+      "ja": {
+        "baseline_repeat_variation": [
+          {
+            "runs": [
+              1,
+              2
+            ],
+            "same_pitch_grid": true,
+            "same_energy": true,
+            "baseline_voiced_frames": 2562,
+            "compared_voiced_frames": 2562,
+            "voicing_disagreement_fraction": 0.0,
+            "pitch_median_cents": 5.140055309569861,
+            "pitch_p95_cents": 14.969840524961773,
+            "transcription_character_edit_distance": 0,
+            "transcription_baseline_characters": 33,
+            "same_aligned_word_sequence": true,
+            "alignment_boundary_median_seconds": 0.0,
+            "alignment_boundary_p95_seconds": 0.0,
+            "alignment_boundary_max_seconds": 0.0
+          },
+          {
+            "runs": [
+              1,
+              3
+            ],
+            "same_pitch_grid": true,
+            "same_energy": true,
+            "baseline_voiced_frames": 2562,
+            "compared_voiced_frames": 2562,
+            "voicing_disagreement_fraction": 0.0,
+            "pitch_median_cents": 4.797687490954633,
+            "pitch_p95_cents": 14.659739415596341,
+            "transcription_character_edit_distance": 0,
+            "transcription_baseline_characters": 33,
+            "same_aligned_word_sequence": true,
+            "alignment_boundary_median_seconds": 0.0,
+            "alignment_boundary_p95_seconds": 0.0,
+            "alignment_boundary_max_seconds": 0.0
+          },
+          {
+            "runs": [
+              2,
+              3
+            ],
+            "same_pitch_grid": true,
+            "same_energy": true,
+            "baseline_voiced_frames": 2562,
+            "compared_voiced_frames": 2562,
+            "voicing_disagreement_fraction": 0.0,
+            "pitch_median_cents": 5.112434646330941,
+            "pitch_p95_cents": 15.213042396574682,
+            "transcription_character_edit_distance": 0,
+            "transcription_baseline_characters": 33,
+            "same_aligned_word_sequence": true,
+            "alignment_boundary_median_seconds": 0.0,
+            "alignment_boundary_p95_seconds": 0.0,
+            "alignment_boundary_max_seconds": 0.0
+          }
+        ],
+        "quality_runs": [
+          {
+            "run": 1,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 4.963639863599177,
+                "pitch_p95_cents": 14.217466077392446,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 4.907383084211457,
+                "pitch_p95_cents": 14.788272493849943,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.11580678711193,
+                "pitch_p95_cents": 15.116242162379015,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              }
+            ],
+            "alignment_quality": {
+              "precise": 3,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Some syllable boundaries are acoustically refined estimates, especially sustained or rapid vocals.",
+              "Japanese kanji readings were inferred automatically; names and unusual sung readings may differ."
+            ]
+          },
+          {
+            "run": 2,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 4.939806393813221,
+                "pitch_p95_cents": 15.213514813579165,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 4.941245690040846,
+                "pitch_p95_cents": 14.254070782897662,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 4.896654231174382,
+                "pitch_p95_cents": 15.230413642772312,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              }
+            ],
+            "alignment_quality": {
+              "precise": 3,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Some syllable boundaries are acoustically refined estimates, especially sustained or rapid vocals.",
+              "Japanese kanji readings were inferred automatically; names and unusual sung readings may differ."
+            ]
+          },
+          {
+            "run": 3,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 4.930127860010507,
+                "pitch_p95_cents": 14.870827842461171,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 4.951617550099238,
+                "pitch_p95_cents": 14.131898788586502,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 4.990256186887818,
+                "pitch_p95_cents": 15.092947589464089,
+                "transcription_character_edit_distance": 0,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": true,
+                "alignment_boundary_median_seconds": 0.0,
+                "alignment_boundary_p95_seconds": 0.0,
+                "alignment_boundary_max_seconds": 0.0
+              }
+            ],
+            "alignment_quality": {
+              "precise": 3,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Some syllable boundaries are acoustically refined estimates, especially sustained or rapid vocals.",
+              "Japanese kanji readings were inferred automatically; names and unusual sung readings may differ."
+            ]
+          }
+        ],
+        "fast_runs": [
+          {
+            "run": 1,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.006820185847614,
+                "pitch_p95_cents": 14.884350986887128,
+                "transcription_character_edit_distance": 8,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 4.860702845671204,
+                "pitch_p95_cents": 14.62988539012094,
+                "transcription_character_edit_distance": 8,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.057471993931818,
+                "pitch_p95_cents": 15.710521786840253,
+                "transcription_character_edit_distance": 8,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": false
+              }
+            ],
+            "alignment_quality": {
+              "precise": 2,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Retried transcription on original audio; vocals were difficult to recognize.",
+              "Fast mode uses a smaller transcription model; lyrics may be less accurate.",
+              "Some syllable boundaries are acoustically refined estimates, especially sustained or rapid vocals.",
+              "Japanese kanji readings were inferred automatically; names and unusual sung readings may differ."
+            ]
+          },
+          {
+            "run": 2,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.255470952491802,
+                "pitch_p95_cents": 14.690235164118828,
+                "transcription_character_edit_distance": 7,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 4.672383807006195,
+                "pitch_p95_cents": 14.490870661231861,
+                "transcription_character_edit_distance": 7,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.001131305457939,
+                "pitch_p95_cents": 15.066544527939017,
+                "transcription_character_edit_distance": 7,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": false
+              }
+            ],
+            "alignment_quality": {
+              "precise": 2,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Retried transcription on original audio; vocals were difficult to recognize.",
+              "Fast mode uses a smaller transcription model; lyrics may be less accurate.",
+              "Some syllable boundaries are acoustically refined estimates, especially sustained or rapid vocals.",
+              "Japanese kanji readings were inferred automatically; names and unusual sung readings may differ."
+            ]
+          },
+          {
+            "run": 3,
+            "comparisons": [
+              {
+                "baseline_run": 1,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.190699893968983,
+                "pitch_p95_cents": 14.714797461793324,
+                "transcription_character_edit_distance": 13,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 2,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.113525932970619,
+                "pitch_p95_cents": 15.248546049260145,
+                "transcription_character_edit_distance": 13,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": false
+              },
+              {
+                "baseline_run": 3,
+                "same_pitch_grid": true,
+                "same_energy": true,
+                "baseline_voiced_frames": 2562,
+                "compared_voiced_frames": 2562,
+                "voicing_disagreement_fraction": 0.0,
+                "pitch_median_cents": 5.310978842206321,
+                "pitch_p95_cents": 15.498808713910575,
+                "transcription_character_edit_distance": 13,
+                "transcription_baseline_characters": 33,
+                "same_aligned_word_sequence": false
+              }
+            ],
+            "alignment_quality": {
+              "precise": 2,
+              "estimated": 0,
+              "transcription_fallback": 0
+            },
+            "warnings": [
+              "Retried transcription on original audio; vocals were difficult to recognize.",
+              "Fast mode uses a smaller transcription model; lyrics may be less accurate.",
+              "Some syllable boundaries are acoustically refined estimates, especially sustained or rapid vocals.",
+              "Japanese kanji readings were inferred automatically; names and unusual sung readings may differ."
+            ]
+          }
+        ]
+      }
+    },
+    "caution": "Baseline comparisons do not establish accuracy against independently annotated singing."
+  },
+  "runs": [
+    {
+      "implementation": "baseline",
+      "profile": "quality",
+      "fixture": "es",
+      "run": 1,
+      "seconds": 160.85,
+      "stages": {
+        "prepare": {
+          "seconds": 2.05,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3825074176,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 15.09,
+          "peak_rss_mb": 701.0,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3742990336,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 108.54,
+          "peak_rss_mb": 2902.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4119855104,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mlx",
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 8.58,
+          "peak_rss_mb": 502.9,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4639719424,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 25.7,
+          "peak_rss_mb": 603.5,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4472406016,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.42,
+          "peak_rss_mb": 36.3,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4027891712,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 24.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3886530560,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "baseline",
+      "profile": "quality",
+      "fixture": "ja",
+      "run": 1,
+      "seconds": 89.36,
+      "stages": {
+        "prepare": {
+          "seconds": 2.04,
+          "peak_rss_mb": 35.6,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3817029632,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 12.63,
+          "peak_rss_mb": 701.8,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3640885248,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 46.86,
+          "peak_rss_mb": 1913.8,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3984293888,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mlx",
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 9.4,
+          "peak_rss_mb": 503.5,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3848880128,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 17.12,
+          "peak_rss_mb": 573.1,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4280074240,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.83,
+          "peak_rss_mb": 163.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3808493568,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 23.6,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3799842816,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "baseline",
+      "profile": "quality",
+      "fixture": "en",
+      "run": 1,
+      "seconds": 269.98,
+      "stages": {
+        "prepare": {
+          "seconds": 6.5,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3793436672,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 57.1,
+          "peak_rss_mb": 706.5,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3679240192,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 119.38,
+          "peak_rss_mb": 2025.2,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4128931840,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mlx",
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 8.56,
+          "peak_rss_mb": 1165.6,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3949068288,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 77.54,
+          "peak_rss_mb": 580.1,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4263460864,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.42,
+          "peak_rss_mb": 37.3,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3481616384,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 24.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3471261696,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "baseline",
+      "profile": "quality",
+      "fixture": "es",
+      "run": 2,
+      "seconds": 153.92,
+      "stages": {
+        "prepare": {
+          "seconds": 2.84,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3459497984,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 20.8,
+          "peak_rss_mb": 542.0,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3053715456,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 93.54,
+          "peak_rss_mb": 2572.8,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3996352512,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mlx",
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 9.78,
+          "peak_rss_mb": 502.7,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4409147392,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 26.07,
+          "peak_rss_mb": 602.7,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4440260608,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.41,
+          "peak_rss_mb": 36.5,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4154048512,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 24.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4151803904,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "baseline",
+      "profile": "quality",
+      "fixture": "ja",
+      "run": 2,
+      "seconds": 87.32,
+      "stages": {
+        "prepare": {
+          "seconds": 2.03,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4151803904,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 11.43,
+          "peak_rss_mb": 710.4,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4052975616,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 48.04,
+          "peak_rss_mb": 1999.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4177412096,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mlx",
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 8.57,
+          "peak_rss_mb": 503.2,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4154802176,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 15.93,
+          "peak_rss_mb": 573.2,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4526931968,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.82,
+          "peak_rss_mb": 164.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4230561792,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 23.6,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4222730240,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "baseline",
+      "profile": "quality",
+      "fixture": "en",
+      "run": 2,
+      "seconds": 307.37,
+      "stages": {
+        "prepare": {
+          "seconds": 6.53,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4219240448,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 55.87,
+          "peak_rss_mb": 711.4,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3993518080,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 141.9,
+          "peak_rss_mb": 1671.6,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3236675584,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mlx",
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 8.98,
+          "peak_rss_mb": 1165.3,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4044783616,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 93.2,
+          "peak_rss_mb": 578.7,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4214898688,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.41,
+          "peak_rss_mb": 37.2,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 2610003968,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 24.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 2595241984,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "baseline",
+      "profile": "quality",
+      "fixture": "es",
+      "run": 3,
+      "seconds": 128.2,
+      "stages": {
+        "prepare": {
+          "seconds": 2.43,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 2570043392,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 24.33,
+          "peak_rss_mb": 542.5,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 2403876864,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 72.19,
+          "peak_rss_mb": 2705.2,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3670392832,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mlx",
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 9.33,
+          "peak_rss_mb": 502.7,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4003561472,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 19.01,
+          "peak_rss_mb": 603.5,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4319232000,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.41,
+          "peak_rss_mb": 36.5,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3825303552,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 23.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3860447232,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "baseline",
+      "profile": "quality",
+      "fixture": "ja",
+      "run": 3,
+      "seconds": 78.22,
+      "stages": {
+        "prepare": {
+          "seconds": 2.03,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3973545984,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 9.72,
+          "peak_rss_mb": 700.8,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3770138624,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 40.88,
+          "peak_rss_mb": 1676.7,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4051238912,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mlx",
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 10.12,
+          "peak_rss_mb": 503.0,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3970924544,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 14.16,
+          "peak_rss_mb": 573.3,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 4078354432,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.81,
+          "peak_rss_mb": 163.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3703488512,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 23.8,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3663986688,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "baseline",
+      "profile": "quality",
+      "fixture": "en",
+      "run": 3,
+      "seconds": 232.88,
+      "stages": {
+        "prepare": {
+          "seconds": 6.07,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3656843264,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 48.56,
+          "peak_rss_mb": 670.2,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3523002368,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 106.86,
+          "peak_rss_mb": 1791.3,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4171825152,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mlx",
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 9.73,
+          "peak_rss_mb": 1165.5,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3447750656,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 60.75,
+          "peak_rss_mb": 580.4,
+          "model_load_seconds": null,
+          "backend": "mps",
+          "available_bytes": 3905699840,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.41,
+          "peak_rss_mb": 37.2,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3594338304,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 24.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3590438912,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "quality",
+      "fixture": "es",
+      "run": 1,
+      "seconds": 146.5,
+      "stages": {
+        "prepare": {
+          "seconds": 2.43,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3563487232,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 17.02,
+          "peak_rss_mb": 580.1,
+          "model_load_seconds": {
+            "demucs": 0.3174
+          },
+          "backend": "mps",
+          "available_bytes": 3427713024,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 96.57,
+          "peak_rss_mb": 2335.9,
+          "model_load_seconds": {
+            "whisper": 1.4643
+          },
+          "backend": "cpu",
+          "available_bytes": 4220715008,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 10.12,
+          "peak_rss_mb": 523.5,
+          "model_load_seconds": {
+            "alignment/es": 1.7027
+          },
+          "backend": "mps",
+          "available_bytes": 3825041408,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 19.42,
+          "peak_rss_mb": 597.4,
+          "model_load_seconds": {
+            "torchcrepe": 0.183
+          },
+          "backend": "mps",
+          "available_bytes": 4252696576,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.41,
+          "peak_rss_mb": 36.5,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3893870592,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 24.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3885465600,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "fast",
+      "fixture": "es",
+      "run": 1,
+      "seconds": 84.38,
+      "stages": {
+        "prepare": {
+          "seconds": 2.43,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3885465600,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 20.27,
+          "peak_rss_mb": 704.4,
+          "model_load_seconds": {
+            "demucs": 0.3085
+          },
+          "backend": "mps",
+          "available_bytes": 3829317632,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 17.81,
+          "peak_rss_mb": 979.9,
+          "model_load_seconds": {
+            "whisper": 0.5327
+          },
+          "backend": "cpu",
+          "available_bytes": 4196270080,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 9.71,
+          "peak_rss_mb": 500.6,
+          "model_load_seconds": {
+            "alignment/es": 2.6897
+          },
+          "backend": "mps",
+          "available_bytes": 3301408768,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 32.84,
+          "peak_rss_mb": 513.4,
+          "model_load_seconds": {
+            "torchcrepe": 0.1937
+          },
+          "backend": "mps",
+          "available_bytes": 4148002816,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.82,
+          "peak_rss_mb": 36.2,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 2874572800,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 23.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3084009472,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "quality",
+      "fixture": "ja",
+      "run": 1,
+      "seconds": 89.72,
+      "stages": {
+        "prepare": {
+          "seconds": 2.42,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3092267008,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 14.18,
+          "peak_rss_mb": 537.0,
+          "model_load_seconds": {
+            "demucs": 0.3346
+          },
+          "backend": "mps",
+          "available_bytes": 2751561728,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 43.01,
+          "peak_rss_mb": 1647.0,
+          "model_load_seconds": {
+            "whisper": 2.6011
+          },
+          "backend": "cpu",
+          "available_bytes": 4033871872,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 12.59,
+          "peak_rss_mb": 487.1,
+          "model_load_seconds": {
+            "alignment/ja": 2.6136
+          },
+          "backend": "mps",
+          "available_bytes": 3143499776,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 16.21,
+          "peak_rss_mb": 528.0,
+          "model_load_seconds": {
+            "torchcrepe": 0.2079
+          },
+          "backend": "mps",
+          "available_bytes": 3725377536,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.82,
+          "peak_rss_mb": 164.1,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3375153152,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 23.6,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3348856832,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "fast",
+      "fixture": "ja",
+      "run": 1,
+      "seconds": 60.82,
+      "stages": {
+        "prepare": {
+          "seconds": 2.03,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3292282880,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 11.75,
+          "peak_rss_mb": 542.2,
+          "model_load_seconds": {
+            "demucs": 0.3198
+          },
+          "backend": "mps",
+          "available_bytes": 3306766336,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 18.21,
+          "peak_rss_mb": 1530.6,
+          "model_load_seconds": {
+            "whisper": 0.552
+          },
+          "backend": "cpu",
+          "available_bytes": 4245094400,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 10.54,
+          "peak_rss_mb": 503.3,
+          "model_load_seconds": {
+            "alignment/ja": 2.7356
+          },
+          "backend": "mps",
+          "available_bytes": 3655319552,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 16.99,
+          "peak_rss_mb": 535.7,
+          "model_load_seconds": {
+            "torchcrepe": 0.2017
+          },
+          "backend": "mps",
+          "available_bytes": 3988488192,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.81,
+          "peak_rss_mb": 164.1,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3663953920,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 23.6,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3658792960,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "quality",
+      "fixture": "en",
+      "run": 1,
+      "seconds": 243.44,
+      "stages": {
+        "prepare": {
+          "seconds": 6.08,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3648323584,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 83.01,
+          "peak_rss_mb": 542.2,
+          "model_load_seconds": {
+            "demucs": 0.3252
+          },
+          "backend": "mps",
+          "available_bytes": 3335946240,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 93.52,
+          "peak_rss_mb": 1994.8,
+          "model_load_seconds": {
+            "whisper": 1.6783
+          },
+          "backend": "cpu",
+          "available_bytes": 4200906752,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 8.52,
+          "peak_rss_mb": 1165.6,
+          "model_load_seconds": {
+            "alignment/en": 0.7205
+          },
+          "backend": "mps",
+          "available_bytes": 4089266176,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 51.43,
+          "peak_rss_mb": 598.1,
+          "model_load_seconds": {
+            "torchcrepe": 0.1803
+          },
+          "backend": "mps",
+          "available_bytes": 4161896448,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.41,
+          "peak_rss_mb": 37.2,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3760586752,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.41,
+          "peak_rss_mb": 23.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3721773056,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "fast",
+      "fixture": "en",
+      "run": 1,
+      "seconds": 150.27,
+      "stages": {
+        "prepare": {
+          "seconds": 6.07,
+          "peak_rss_mb": 35.6,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3716136960,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 44.14,
+          "peak_rss_mb": 669.6,
+          "model_load_seconds": {
+            "demucs": 0.3181
+          },
+          "backend": "mps",
+          "available_bytes": 3352264704,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 30.83,
+          "peak_rss_mb": 1341.8,
+          "model_load_seconds": {
+            "whisper": 0.4872
+          },
+          "backend": "cpu",
+          "available_bytes": 4354293760,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 14.74,
+          "peak_rss_mb": 1661.3,
+          "model_load_seconds": {
+            "alignment/en": 0.4386
+          },
+          "backend": "cpu",
+          "available_bytes": 3209789440,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps",
+            "cpu"
+          ]
+        },
+        "pitch": {
+          "seconds": 53.56,
+          "peak_rss_mb": 557.6,
+          "model_load_seconds": {
+            "torchcrepe": 0.1842
+          },
+          "backend": "mps",
+          "available_bytes": 3407544320,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.42,
+          "peak_rss_mb": 36.8,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3502424064,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 24.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 3502456832,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "quality",
+      "fixture": "es",
+      "run": 2,
+      "seconds": 109.61,
+      "stages": {
+        "prepare": {
+          "seconds": 2.46,
+          "peak_rss_mb": 35.6,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 3500703744,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 17.95,
+          "peak_rss_mb": 548.8,
+          "model_load_seconds": {
+            "demucs": 0.3152
+          },
+          "backend": "mps",
+          "available_bytes": 3440951296,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 63.76,
+          "peak_rss_mb": 2823.2,
+          "model_load_seconds": {
+            "whisper": 1.668
+          },
+          "backend": "cpu",
+          "available_bytes": 4223057920,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 8.21,
+          "peak_rss_mb": 502.5,
+          "model_load_seconds": {
+            "alignment/es": 1.4347
+          },
+          "backend": "mps",
+          "available_bytes": 4393746432,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 16.34,
+          "peak_rss_mb": 595.0,
+          "model_load_seconds": {
+            "torchcrepe": 0.1785
+          },
+          "backend": "mps",
+          "available_bytes": 4525768704,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.41,
+          "peak_rss_mb": 36.6,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4189192192,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 24.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4187521024,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "fast",
+      "fixture": "es",
+      "run": 2,
+      "seconds": 53.78,
+      "stages": {
+        "prepare": {
+          "seconds": 2.45,
+          "peak_rss_mb": 35.6,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4184981504,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 13.5,
+          "peak_rss_mb": 712.0,
+          "model_load_seconds": {
+            "demucs": 0.3135
+          },
+          "backend": "mps",
+          "available_bytes": 4127506432,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 11.86,
+          "peak_rss_mb": 978.8,
+          "model_load_seconds": {
+            "whisper": 0.5003
+          },
+          "backend": "cpu",
+          "available_bytes": 4688969728,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 6.96,
+          "peak_rss_mb": 502.6,
+          "model_load_seconds": {
+            "alignment/es": 1.4644
+          },
+          "backend": "mps",
+          "available_bytes": 4338368512,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 18.12,
+          "peak_rss_mb": 594.8,
+          "model_load_seconds": {
+            "torchcrepe": 0.1775
+          },
+          "backend": "mps",
+          "available_bytes": 4410081280,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.42,
+          "peak_rss_mb": 36.1,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4181983232,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 23.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4181508096,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "quality",
+      "fixture": "ja",
+      "run": 2,
+      "seconds": 62.23,
+      "stages": {
+        "prepare": {
+          "seconds": 2.05,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4197285888,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 8.6,
+          "peak_rss_mb": 711.1,
+          "model_load_seconds": {
+            "demucs": 0.3172
+          },
+          "backend": "mps",
+          "available_bytes": 4148985856,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 30.61,
+          "peak_rss_mb": 1962.6,
+          "model_load_seconds": {
+            "whisper": 1.4496
+          },
+          "backend": "cpu",
+          "available_bytes": 4761059328,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 7.79,
+          "peak_rss_mb": 503.3,
+          "model_load_seconds": {
+            "alignment/ja": 1.5416
+          },
+          "backend": "mps",
+          "available_bytes": 3966156800,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 11.87,
+          "peak_rss_mb": 566.2,
+          "model_load_seconds": {
+            "torchcrepe": 0.1824
+          },
+          "backend": "mps",
+          "available_bytes": 4555014144,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.83,
+          "peak_rss_mb": 164.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4379869184,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 23.7,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4373020672,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "fast",
+      "fixture": "ja",
+      "run": 2,
+      "seconds": 52.78,
+      "stages": {
+        "prepare": {
+          "seconds": 2.06,
+          "peak_rss_mb": 35.6,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4371660800,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 9.41,
+          "peak_rss_mb": 710.8,
+          "model_load_seconds": {
+            "demucs": 0.3145
+          },
+          "backend": "mps",
+          "available_bytes": 4304928768,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 16.72,
+          "peak_rss_mb": 1531.5,
+          "model_load_seconds": {
+            "whisper": 0.505
+          },
+          "backend": "cpu",
+          "available_bytes": 4564238336,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 7.75,
+          "peak_rss_mb": 503.3,
+          "model_load_seconds": {
+            "alignment/ja": 1.405
+          },
+          "backend": "mps",
+          "available_bytes": 4374315008,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 15.54,
+          "peak_rss_mb": 566.0,
+          "model_load_seconds": {
+            "torchcrepe": 0.1846
+          },
+          "backend": "mps",
+          "available_bytes": 4579147776,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.83,
+          "peak_rss_mb": 163.8,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4465573888,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 23.6,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4451745792,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "quality",
+      "fixture": "en",
+      "run": 2,
+      "seconds": 244.3,
+      "stages": {
+        "prepare": {
+          "seconds": 6.53,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4425285632,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 53.62,
+          "peak_rss_mb": 713.1,
+          "model_load_seconds": {
+            "demucs": 0.3075
+          },
+          "backend": "mps",
+          "available_bytes": 4326637568,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 97.8,
+          "peak_rss_mb": 2060.0,
+          "model_load_seconds": {
+            "whisper": 1.6591
+          },
+          "backend": "cpu",
+          "available_bytes": 4738826240,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 8.16,
+          "peak_rss_mb": 1165.4,
+          "model_load_seconds": {
+            "alignment/en": 0.6038
+          },
+          "backend": "mps",
+          "available_bytes": 4296327168,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 77.28,
+          "peak_rss_mb": 599.7,
+          "model_load_seconds": {
+            "torchcrepe": 0.1804
+          },
+          "backend": "mps",
+          "available_bytes": 4460953600,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.42,
+          "peak_rss_mb": 36.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4143448064,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 23.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4139958272,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "fast",
+      "fixture": "en",
+      "run": 2,
+      "seconds": 180.21,
+      "stages": {
+        "prepare": {
+          "seconds": 6.92,
+          "peak_rss_mb": 35.6,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4139155456,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 52.27,
+          "peak_rss_mb": 709.9,
+          "model_load_seconds": {
+            "demucs": 0.3073
+          },
+          "backend": "mps",
+          "available_bytes": 4089937920,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 35.92,
+          "peak_rss_mb": 1373.2,
+          "model_load_seconds": {
+            "whisper": 0.5402
+          },
+          "backend": "cpu",
+          "available_bytes": 4706271232,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 11.85,
+          "peak_rss_mb": 1675.7,
+          "model_load_seconds": {
+            "alignment/en": 0.3067
+          },
+          "backend": "cpu",
+          "available_bytes": 4337090560,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps",
+            "cpu"
+          ]
+        },
+        "pitch": {
+          "seconds": 72.35,
+          "peak_rss_mb": 597.7,
+          "model_load_seconds": {
+            "torchcrepe": 0.1811
+          },
+          "backend": "mps",
+          "available_bytes": 4294656000,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.42,
+          "peak_rss_mb": 37.1,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4030234624,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 23.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4030431232,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "quality",
+      "fixture": "es",
+      "run": 3,
+      "seconds": 121.34,
+      "stages": {
+        "prepare": {
+          "seconds": 2.46,
+          "peak_rss_mb": 35.6,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4029415424,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 19.22,
+          "peak_rss_mb": 706.1,
+          "model_load_seconds": {
+            "demucs": 0.3351
+          },
+          "backend": "mps",
+          "available_bytes": 3977150464,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 70.95,
+          "peak_rss_mb": 3286.9,
+          "model_load_seconds": {
+            "whisper": 1.5331
+          },
+          "backend": "cpu",
+          "available_bytes": 4665393152,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 7.8,
+          "peak_rss_mb": 502.6,
+          "model_load_seconds": {
+            "alignment/es": 1.4724,
+            "alignment/ro": 0.0017
+          },
+          "backend": "mps",
+          "available_bytes": 4436475904,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 20.0,
+          "peak_rss_mb": 595.1,
+          "model_load_seconds": {
+            "torchcrepe": 0.1771
+          },
+          "backend": "mps",
+          "available_bytes": 4545544192,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.41,
+          "peak_rss_mb": 36.4,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4393730048,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 24.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4393107456,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "fast",
+      "fixture": "es",
+      "run": 3,
+      "seconds": 64.67,
+      "stages": {
+        "prepare": {
+          "seconds": 2.44,
+          "peak_rss_mb": 35.6,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4392058880,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 17.97,
+          "peak_rss_mb": 711.1,
+          "model_load_seconds": {
+            "demucs": 0.307
+          },
+          "backend": "mps",
+          "available_bytes": 4324671488,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 15.94,
+          "peak_rss_mb": 979.9,
+          "model_load_seconds": {
+            "whisper": 0.5332
+          },
+          "backend": "cpu",
+          "available_bytes": 4847452160,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 6.96,
+          "peak_rss_mb": 502.7,
+          "model_load_seconds": {
+            "alignment/es": 1.4162
+          },
+          "backend": "mps",
+          "available_bytes": 4680269824,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 20.43,
+          "peak_rss_mb": 595.0,
+          "model_load_seconds": {
+            "torchcrepe": 0.1772
+          },
+          "backend": "mps",
+          "available_bytes": 4605329408,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.42,
+          "peak_rss_mb": 36.2,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4464443392,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 24.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4464033792,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "quality",
+      "fixture": "ja",
+      "run": 3,
+      "seconds": 70.38,
+      "stages": {
+        "prepare": {
+          "seconds": 2.06,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4464410624,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 9.78,
+          "peak_rss_mb": 711.4,
+          "model_load_seconds": {
+            "demucs": 0.2998
+          },
+          "backend": "mps",
+          "available_bytes": 4370333696,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 35.95,
+          "peak_rss_mb": 2024.3,
+          "model_load_seconds": {
+            "whisper": 1.5717
+          },
+          "backend": "cpu",
+          "available_bytes": 4815486976,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 7.77,
+          "peak_rss_mb": 503.4,
+          "model_load_seconds": {
+            "alignment/ja": 1.4151
+          },
+          "backend": "mps",
+          "available_bytes": 4769087488,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 13.5,
+          "peak_rss_mb": 566.2,
+          "model_load_seconds": {
+            "torchcrepe": 0.1787
+          },
+          "backend": "mps",
+          "available_bytes": 4607868928,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.83,
+          "peak_rss_mb": 163.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4066574336,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 23.6,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4044259328,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "fast",
+      "fixture": "ja",
+      "run": 3,
+      "seconds": 53.19,
+      "stages": {
+        "prepare": {
+          "seconds": 1.64,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4043292672,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 10.23,
+          "peak_rss_mb": 710.9,
+          "model_load_seconds": {
+            "demucs": 0.3118
+          },
+          "backend": "mps",
+          "available_bytes": 3995664384,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 17.91,
+          "peak_rss_mb": 1528.7,
+          "model_load_seconds": {
+            "whisper": 0.5307
+          },
+          "backend": "cpu",
+          "available_bytes": 4679860224,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 7.37,
+          "peak_rss_mb": 503.2,
+          "model_load_seconds": {
+            "alignment/ja": 1.4637
+          },
+          "backend": "mps",
+          "available_bytes": 4346249216,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 14.73,
+          "peak_rss_mb": 566.0,
+          "model_load_seconds": {
+            "torchcrepe": 0.179
+          },
+          "backend": "mps",
+          "available_bytes": 4615553024,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.83,
+          "peak_rss_mb": 163.4,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4464099328,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 23.6,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4453515264,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "quality",
+      "fixture": "en",
+      "run": 3,
+      "seconds": 227.07,
+      "stages": {
+        "prepare": {
+          "seconds": 6.11,
+          "peak_rss_mb": 35.6,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4451532800,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 51.48,
+          "peak_rss_mb": 712.0,
+          "model_load_seconds": {
+            "demucs": 0.3074
+          },
+          "backend": "mps",
+          "available_bytes": 4283793408,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 97.4,
+          "peak_rss_mb": 2072.4,
+          "model_load_seconds": {
+            "whisper": 1.5058
+          },
+          "backend": "cpu",
+          "available_bytes": 4800839680,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 8.18,
+          "peak_rss_mb": 1165.6,
+          "model_load_seconds": {
+            "alignment/en": 0.5902
+          },
+          "backend": "mps",
+          "available_bytes": 4742856704,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "pitch": {
+          "seconds": 62.98,
+          "peak_rss_mb": 598.0,
+          "model_load_seconds": {
+            "torchcrepe": 0.1815
+          },
+          "backend": "mps",
+          "available_bytes": 4527161344,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.42,
+          "peak_rss_mb": 37.2,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4064165888,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 24.0,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4063674368,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    },
+    {
+      "implementation": "updated",
+      "profile": "fast",
+      "fixture": "en",
+      "run": 3,
+      "seconds": 138.75,
+      "stages": {
+        "prepare": {
+          "seconds": 6.1,
+          "peak_rss_mb": 35.5,
+          "model_load_seconds": null,
+          "backend": "videotoolbox",
+          "available_bytes": 4063772672,
+          "batch_size": 8,
+          "attempt_backends": [
+            "videotoolbox"
+          ]
+        },
+        "separate": {
+          "seconds": 40.1,
+          "peak_rss_mb": 711.9,
+          "model_load_seconds": {
+            "demucs": 0.3173
+          },
+          "backend": "mps",
+          "available_bytes": 4015226880,
+          "batch_size": 8,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "transcribe": {
+          "seconds": 29.86,
+          "peak_rss_mb": 1417.0,
+          "model_load_seconds": {
+            "whisper": 0.4922
+          },
+          "backend": "cpu",
+          "available_bytes": 4698996736,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "align": {
+          "seconds": 11.49,
+          "peak_rss_mb": 1675.8,
+          "model_load_seconds": {
+            "alignment/en": 0.299
+          },
+          "backend": "cpu",
+          "available_bytes": 4447076352,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps",
+            "cpu"
+          ]
+        },
+        "pitch": {
+          "seconds": 50.3,
+          "peak_rss_mb": 599.9,
+          "model_load_seconds": {
+            "torchcrepe": 0.1817
+          },
+          "backend": "mps",
+          "available_bytes": 4381589504,
+          "batch_size": 16,
+          "attempt_backends": [
+            "mps"
+          ]
+        },
+        "chart": {
+          "seconds": 0.41,
+          "peak_rss_mb": 37.1,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4060889088,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        },
+        "package": {
+          "seconds": 0.42,
+          "peak_rss_mb": 23.9,
+          "model_load_seconds": null,
+          "backend": "cpu",
+          "available_bytes": 4060594176,
+          "batch_size": 16,
+          "attempt_backends": [
+            "cpu"
+          ]
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Original baseline exposes stage timing and peak RSS but no separate model-loading breakdown; updated reports include model-loading time.",
+    "Baseline text agreement is not an independently annotated lyric accuracy score.",
+    "Peak RSS is per subprocess; it is not total app plus GPU shared-memory usage."
+  ],
+  "long_recording_stress": {
+    "runs_per_profile": 1,
+    "fixture": "Bundled English recording repeated twice; duration stress, not an independent accuracy sample",
+    "comparison": {
+      "median_seconds": {
+        "long": {
+          "baseline": 402.84,
+          "fast": 261.14,
+          "quality": 369.36
+        }
+      },
+      "sum_of_fixture_medians": {
+        "baseline": 402.84,
+        "fast": 261.14,
+        "quality": 369.36
+      },
+      "fast_reduction_vs_baseline": 0.3517525568463906,
+      "fast_reduction_vs_quality": 0.29299328568334426,
+      "quality_comparison": {
+        "long": {
+          "baseline_repeat_variation": [],
+          "quality_runs": [
+            {
+              "run": 1,
+              "comparisons": [
+                {
+                  "baseline_run": 1,
+                  "same_pitch_grid": true,
+                  "same_energy": true,
+                  "baseline_voiced_frames": 18166,
+                  "compared_voiced_frames": 18166,
+                  "voicing_disagreement_fraction": 0.0,
+                  "pitch_median_cents": 6.012163188082532,
+                  "pitch_p95_cents": 17.999642311464882,
+                  "transcription_character_edit_distance": 0,
+                  "transcription_baseline_characters": 677,
+                  "same_aligned_word_sequence": true,
+                  "alignment_boundary_median_seconds": 0.0,
+                  "alignment_boundary_p95_seconds": 0.0,
+                  "alignment_boundary_max_seconds": 0.0
+                }
+              ],
+              "alignment_quality": {
+                "precise": 18,
+                "estimated": 0,
+                "transcription_fallback": 0
+              },
+              "warnings": [
+                "Uncertain melody passages are freestyle notes and do not require an exact pitch."
+              ]
+            }
+          ],
+          "fast_runs": [
+            {
+              "run": 1,
+              "comparisons": [
+                {
+                  "baseline_run": 1,
+                  "same_pitch_grid": true,
+                  "same_energy": true,
+                  "baseline_voiced_frames": 18166,
+                  "compared_voiced_frames": 18166,
+                  "voicing_disagreement_fraction": 0.0,
+                  "pitch_median_cents": 5.969289941947393,
+                  "pitch_p95_cents": 18.431057558342516,
+                  "transcription_character_edit_distance": 359,
+                  "transcription_baseline_characters": 677,
+                  "same_aligned_word_sequence": false
+                }
+              ],
+              "alignment_quality": {
+                "precise": 11,
+                "estimated": 0,
+                "transcription_fallback": 0
+              },
+              "warnings": [
+                "Retried uncertain lyrics at 25.2s; wording may need checking.",
+                "Retried uncertain lyrics at 28.4s; wording may need checking.",
+                "Fast mode uses a smaller transcription model; lyrics may be less accurate.",
+                "Retried alignment on original audio at 28.4s.",
+                "Uncertain melody passages are freestyle notes and do not require an exact pitch."
+              ]
+            }
+          ]
+        }
+      },
+      "caution": "Baseline comparisons do not establish accuracy against independently annotated singing."
+    },
+    "runs": [
+      {
+        "implementation": "baseline",
+        "profile": "quality",
+        "seconds": 402.84,
+        "stages": {
+          "prepare": {
+            "seconds": 10.98,
+            "peak_rss_mb": 35.5,
+            "model_load_seconds": null,
+            "backend": "videotoolbox",
+            "available_bytes": 4042326016,
+            "batch_size": 8,
+            "attempt_backends": [
+              "videotoolbox"
+            ]
+          },
+          "separate": {
+            "seconds": 82.93,
+            "peak_rss_mb": 711.7,
+            "model_load_seconds": null,
+            "backend": "mps",
+            "available_bytes": 4020355072,
+            "batch_size": 8,
+            "attempt_backends": [
+              "mps"
+            ]
+          },
+          "transcribe": {
+            "seconds": 182.83,
+            "peak_rss_mb": 2141.1,
+            "model_load_seconds": null,
+            "backend": "cpu",
+            "available_bytes": 4326998016,
+            "batch_size": 16,
+            "attempt_backends": [
+              "mlx",
+              "cpu"
+            ]
+          },
+          "align": {
+            "seconds": 12.29,
+            "peak_rss_mb": 1165.5,
+            "model_load_seconds": null,
+            "backend": "mps",
+            "available_bytes": 3940007936,
+            "batch_size": 8,
+            "attempt_backends": [
+              "mps"
+            ]
+          },
+          "pitch": {
+            "seconds": 112.91,
+            "peak_rss_mb": 614.0,
+            "model_load_seconds": null,
+            "backend": "mps",
+            "available_bytes": 4477288448,
+            "batch_size": 8,
+            "attempt_backends": [
+              "mps"
+            ]
+          },
+          "chart": {
+            "seconds": 0.42,
+            "peak_rss_mb": 39.0,
+            "model_load_seconds": null,
+            "backend": "cpu",
+            "available_bytes": 3960700928,
+            "batch_size": 16,
+            "attempt_backends": [
+              "cpu"
+            ]
+          },
+          "package": {
+            "seconds": 0.42,
+            "peak_rss_mb": 24.0,
+            "model_load_seconds": null,
+            "backend": "cpu",
+            "available_bytes": 3962585088,
+            "batch_size": 16,
+            "attempt_backends": [
+              "cpu"
+            ]
+          }
+        }
+      },
+      {
+        "implementation": "updated",
+        "profile": "quality",
+        "seconds": 369.36,
+        "stages": {
+          "prepare": {
+            "seconds": 11.39,
+            "peak_rss_mb": 35.5,
+            "model_load_seconds": null,
+            "backend": "videotoolbox",
+            "available_bytes": 3909271552,
+            "batch_size": 8,
+            "attempt_backends": [
+              "videotoolbox"
+            ]
+          },
+          "separate": {
+            "seconds": 81.38,
+            "peak_rss_mb": 708.5,
+            "model_load_seconds": {
+              "demucs": 0.3168
+            },
+            "backend": "mps",
+            "available_bytes": 3856236544,
+            "batch_size": 8,
+            "attempt_backends": [
+              "mps"
+            ]
+          },
+          "transcribe": {
+            "seconds": 155.87,
+            "peak_rss_mb": 2115.8,
+            "model_load_seconds": {
+              "whisper": 1.3799
+            },
+            "backend": "cpu",
+            "available_bytes": 4502962176,
+            "batch_size": 16,
+            "attempt_backends": [
+              "cpu"
+            ]
+          },
+          "align": {
+            "seconds": 10.65,
+            "peak_rss_mb": 1165.6,
+            "model_load_seconds": {
+              "alignment/en": 0.6127
+            },
+            "backend": "mps",
+            "available_bytes": 4276928512,
+            "batch_size": 8,
+            "attempt_backends": [
+              "mps"
+            ]
+          },
+          "pitch": {
+            "seconds": 109.15,
+            "peak_rss_mb": 606.3,
+            "model_load_seconds": {
+              "torchcrepe": 0.1807
+            },
+            "backend": "mps",
+            "available_bytes": 4404330496,
+            "batch_size": 16,
+            "attempt_backends": [
+              "mps"
+            ]
+          },
+          "chart": {
+            "seconds": 0.42,
+            "peak_rss_mb": 38.8,
+            "model_load_seconds": null,
+            "backend": "cpu",
+            "available_bytes": 4029317120,
+            "batch_size": 16,
+            "attempt_backends": [
+              "cpu"
+            ]
+          },
+          "package": {
+            "seconds": 0.42,
+            "peak_rss_mb": 24.0,
+            "model_load_seconds": null,
+            "backend": "cpu",
+            "available_bytes": 4031037440,
+            "batch_size": 16,
+            "attempt_backends": [
+              "cpu"
+            ]
+          }
+        }
+      },
+      {
+        "implementation": "updated",
+        "profile": "fast",
+        "seconds": 261.14,
+        "stages": {
+          "prepare": {
+            "seconds": 11.39,
+            "peak_rss_mb": 35.5,
+            "model_load_seconds": null,
+            "backend": "videotoolbox",
+            "available_bytes": 4028923904,
+            "batch_size": 8,
+            "attempt_backends": [
+              "videotoolbox"
+            ]
+          },
+          "separate": {
+            "seconds": 81.37,
+            "peak_rss_mb": 710.6,
+            "model_load_seconds": {
+              "demucs": 0.3141
+            },
+            "backend": "mps",
+            "available_bytes": 3950690304,
+            "batch_size": 8,
+            "attempt_backends": [
+              "mps"
+            ]
+          },
+          "transcribe": {
+            "seconds": 48.18,
+            "peak_rss_mb": 1358.9,
+            "model_load_seconds": {
+              "whisper": 0.5596
+            },
+            "backend": "cpu",
+            "available_bytes": 4313153536,
+            "batch_size": 16,
+            "attempt_backends": [
+              "cpu"
+            ]
+          },
+          "align": {
+            "seconds": 10.62,
+            "peak_rss_mb": 1165.7,
+            "model_load_seconds": {
+              "alignment/en": 0.6729
+            },
+            "backend": "mps",
+            "available_bytes": 3485515776,
+            "batch_size": 8,
+            "attempt_backends": [
+              "mps"
+            ]
+          },
+          "pitch": {
+            "seconds": 108.68,
+            "peak_rss_mb": 604.3,
+            "model_load_seconds": {
+              "torchcrepe": 0.1808
+            },
+            "backend": "mps",
+            "available_bytes": 4223877120,
+            "batch_size": 16,
+            "attempt_backends": [
+              "mps"
+            ]
+          },
+          "chart": {
+            "seconds": 0.41,
+            "peak_rss_mb": 38.3,
+            "model_load_seconds": null,
+            "backend": "cpu",
+            "available_bytes": 3828170752,
+            "batch_size": 16,
+            "attempt_backends": [
+              "cpu"
+            ]
+          },
+          "package": {
+            "seconds": 0.42,
+            "peak_rss_mb": 23.9,
+            "model_load_seconds": null,
+            "backend": "cpu",
+            "available_bytes": 3827613696,
+            "batch_size": 16,
+            "attempt_backends": [
+              "cpu"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "synthetic_pitch_validation": {
+    "cpu": {
+      "backend": "cpu",
+      "fixture": "synthetic harmonic tones, C4/E4/G4; not human singing",
+      "median_pitch_error_cents": 5.820554885583817,
+      "fraction_within_50_cents": 1.0,
+      "false_voiced_silence_frames": 0,
+      "evaluated_frames": 390,
+      "voiced_reference_coverage": 1.0
+    },
+    "mps": {
+      "backend": "mps",
+      "fixture": "synthetic harmonic tones, C4/E4/G4; not human singing",
+      "median_pitch_error_cents": 5.543128230556249,
+      "fraction_within_50_cents": 1.0,
+      "false_voiced_silence_frames": 0,
+      "evaluated_frames": 390,
+      "voiced_reference_coverage": 1.0
+    }
+  },
+  "handoff_validation": [
+    {
+      "fixture": "es",
+      "profile": "quality",
+      "reclaimed_bytes": 1137703,
+      "idempotent": true,
+      "external_copy_preserved": true
+    },
+    {
+      "fixture": "es",
+      "profile": "fast",
+      "reclaimed_bytes": 1136846,
+      "idempotent": true,
+      "external_copy_preserved": true
+    },
+    {
+      "fixture": "ja",
+      "profile": "quality",
+      "reclaimed_bytes": 751556,
+      "idempotent": true,
+      "external_copy_preserved": true
+    },
+    {
+      "fixture": "ja",
+      "profile": "fast",
+      "reclaimed_bytes": 751645,
+      "idempotent": true,
+      "external_copy_preserved": true
+    },
+    {
+      "fixture": "en",
+      "profile": "quality",
+      "reclaimed_bytes": 3637982,
+      "idempotent": true,
+      "external_copy_preserved": true
+    },
+    {
+      "fixture": "en",
+      "profile": "fast",
+      "reclaimed_bytes": 3636207,
+      "idempotent": true,
+      "external_copy_preserved": true
+    }
+  ]
+}

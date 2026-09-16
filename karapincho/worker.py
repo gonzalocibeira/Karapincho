@@ -39,6 +39,8 @@ def signature(stage, folder, job):
                                 for name in DEPENDENCIES[stage]}}
     if stage in acceleration.AI_STAGES | {"prepare"}:
         payload["acceleration"] = acceleration.provenance(stage)
+    if stage == "transcribe" and job.get("processing_mode", "quality") == "fast":
+        payload["processing"] = {"mode": "fast", "model": "small", "beam_size": 1}
     if stage == "lyrics":
         payload["settings"] = job.get("lyric_settings", {})
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
@@ -180,7 +182,9 @@ class Worker:
                         completed = read_json(checkpoint)
                         attempts.append({"backend": completed.get("runtime", {}).get("backend", backend or "cpu"),
                                          "elapsed_seconds": round(time.monotonic() - attempt_start, 2),
-                                         "status": "completed", "runtime": completed.get("runtime", {})})
+                                         "status": "completed", "runtime": completed.get("runtime", {}),
+                                         "model_load_seconds": completed.get("model_load_seconds", {}),
+                                         "peak_rss_mb": completed.get("peak_rss_mb")})
                         completed["attempts"] = attempts
                         completed["total_elapsed_seconds"] = round(sum(a["elapsed_seconds"] for a in attempts), 2)
                         write_json(checkpoint, completed)
@@ -200,7 +204,9 @@ class Worker:
                     kind = error.get("kind") or acceleration.failure_kind(message, actual, self.process.returncode)
                     attempts.append({"backend": actual, "elapsed_seconds": round(time.monotonic() - attempt_start, 2),
                                      "status": "failed", "reason": message, "kind": kind,
-                                     "runtime": error.get("runtime", last_runtime)})
+                                     "runtime": error.get("runtime", last_runtime),
+                                     "model_load_seconds": error.get("model_load_seconds", {}),
+                                     "peak_rss_mb": error.get("peak_rss_mb")})
                     write_json(folder / f"{stage}-attempts.json", attempts)
                     if stage not in acceleration.AI_STAGES | {"prepare"} or kind == "application":
                         raise RuntimeError(message)

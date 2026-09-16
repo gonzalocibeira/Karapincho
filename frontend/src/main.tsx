@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   ArrowDownToLine,
   ArrowRight,
   AudioLines,
   Check,
-  ChevronDown,
   CircleHelp,
   Clock3,
   Disc3,
   FileVideo,
   FolderOpen,
-  Globe2,
   HardDrive,
   Info,
   Link2,
@@ -22,7 +20,6 @@ import {
   Plus,
   Power,
   RotateCcw,
-  ShieldCheck,
   Sparkles,
   Trash2,
   Upload,
@@ -32,10 +29,26 @@ import {
 import "./style.css";
 import { Benchmark } from "./Benchmark";
 
-type LyricSettings = { title: string; artist: string; language: string; lyrics: string };
-const emptyLyrics: LyricSettings = { title: "", artist: "", language: "", lyrics: "" };
+type LyricSettings = {
+  title: string;
+  artist: string;
+  language: string;
+  lyrics: string;
+};
+const emptyLyrics: LyricSettings = {
+  title: "",
+  artist: "",
+  language: "",
+  lyrics: "",
+};
 
 type Job = {
+  processing_mode?: "quality" | "fast";
+  export_receipt?: { path?: string; exported_at?: number };
+  cleaned_at?: number | null;
+  local_available?: boolean;
+  activity?: string;
+
   lyric_settings?: LyricSettings;
   lyric_source?: string;
   id: string;
@@ -87,26 +100,97 @@ function Capybara() {
 }
 
 function About({ version }: { version?: string }) {
-  return <section className="about-page" aria-labelledby="about-title">
-    <p className="eyebrow">ABOUT THE STUDIO</p>
-    <div className="about-hero">
-      <span className="about-logo"><Capybara /></span>
-      <div><h1 id="about-title">Karapincho<span>.</span></h1>
-      <p className="subtitle">A calm companion for turning songs into singalongs.</p></div>
-    </div>
-    <div className="about-grid">
-      <article className="about-card"><h2>What’s in the name?</h2><p>Karapincho combines <strong>karaoke</strong> with <strong>carpincho</strong>—the Spanish word for capybara. You bring the song, and your capybara studio companion handles the busy work.</p></article>
-      <article className="about-card"><h2>Local, with clear boundaries</h2><p>Uploaded media and AI inference stay on this Mac. YouTube input contacts YouTube, lyric lookup sends song metadata—not audio—to LRCLIB, and setup downloads dependencies and models. Karapincho has no telemetry.</p></article>
-      <article className="about-card"><h2>Open source</h2><p>Karapincho {version ? `v${version}` : ""} source code is licensed under GPL-3.0-or-later. You may use, study, modify, and redistribute it under the GPL. Downloaded model weights retain separate terms; the default Demucs weight is research-only. The software is provided without warranty.</p><a href="https://github.com/gonzalocibeira/Karapincho" target="_blank" rel="noreferrer">View source and license</a></article>
-      <article className="about-card"><h2>AI-assisted development</h2><p>Karapincho was created by Gonzalo Cibeira with substantial assistance from AI tools across product design, implementation, testing, research, and documentation. Gonzalo directed the project and remains its maintainer.</p></article>
-      <article className="about-card"><h2>Acknowledgements</h2><p>Karapincho builds on open-source media, speech, alignment, pitch, language, and karaoke projects. Their licenses remain their own.</p><a href="https://github.com/gonzalocibeira/Karapincho/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noreferrer">Third-party notices</a></article>
-    </div>
-    <p className="about-note">Karapincho is not affiliated with YouTube, LRCLIB, UltraStar Deluxe, or UltraStar WorldParty. Only process media you are entitled to use.</p>
-  </section>;
+  return (
+    <section className="about-page" aria-labelledby="about-title">
+      <p className="eyebrow">ABOUT THE STUDIO</p>
+      <div className="about-hero">
+        <span className="about-logo">
+          <Capybara />
+        </span>
+        <div>
+          <h1 id="about-title">
+            Karapincho<span>.</span>
+          </h1>
+          <p className="subtitle">
+            A calm companion for turning songs into singalongs.
+          </p>
+        </div>
+      </div>
+      <div className="about-grid">
+        <article className="about-card">
+          <h2>What’s in the name?</h2>
+          <p>
+            Karapincho combines <strong>karaoke</strong> with{" "}
+            <strong>carpincho</strong>—the Spanish word for capybara. You bring
+            the song, and your capybara studio companion handles the busy work.
+          </p>
+        </article>
+        <article className="about-card">
+          <h2>Local, with clear boundaries</h2>
+          <p>
+            Uploaded media and AI inference stay on this Mac. YouTube input
+            contacts YouTube, lyric lookup sends song metadata—not audio—to
+            LRCLIB, and setup downloads dependencies and models. Karapincho has
+            no telemetry.
+          </p>
+        </article>
+        <article className="about-card">
+          <h2>Open source</h2>
+          <p>
+            Karapincho {version ? `v${version}` : ""} source code is licensed
+            under GPL-3.0-or-later. You may use, study, modify, and redistribute
+            it under the GPL. Downloaded model weights retain separate terms;
+            the default Demucs weight is research-only. The software is provided
+            without warranty.
+          </p>
+          <a
+            href="https://github.com/gonzalocibeira/Karapincho"
+            target="_blank"
+            rel="noreferrer"
+          >
+            View source and license
+          </a>
+        </article>
+        <article className="about-card">
+          <h2>AI-assisted development</h2>
+          <p>
+            Karapincho was created by Gonzalo Cibeira with substantial
+            assistance from AI tools across product design, implementation,
+            testing, research, and documentation. Gonzalo directed the project
+            and remains its maintainer.
+          </p>
+        </article>
+        <article className="about-card">
+          <h2>Acknowledgements</h2>
+          <p>
+            Karapincho builds on open-source media, speech, alignment, pitch,
+            language, and karaoke projects. Their licenses remain their own.
+          </p>
+          <a
+            href="https://github.com/gonzalocibeira/Karapincho/blob/main/THIRD_PARTY_NOTICES.md"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Third-party notices
+          </a>
+        </article>
+      </div>
+      <p className="about-note">
+        Karapincho is not affiliated with YouTube, LRCLIB, UltraStar Deluxe, or
+        UltraStar WorldParty. Only process media you are entitled to use.
+      </p>
+    </section>
+  );
 }
 
-function LyricFields({ value, onChange, disabled = false }: {
-  value: LyricSettings; onChange: (value: LyricSettings) => void; disabled?: boolean;
+function LyricFields({
+  value,
+  onChange,
+  disabled = false,
+}: {
+  value: LyricSettings;
+  onChange: (value: LyricSettings) => void;
+  disabled?: boolean;
 }) {
   const [fileError, setFileError] = useState("");
   async function readLyrics(file?: File) {
@@ -118,101 +202,599 @@ function LyricFields({ value, onChange, disabled = false }: {
     }
     try {
       const lyrics = await file.text();
-      if (lyrics.length > 100000 || lyrics.includes("\uFFFD")) throw new Error("Use UTF-8 lyrics up to 100,000 characters.");
+      if (lyrics.length > 100000 || lyrics.includes("\uFFFD"))
+        throw new Error("Use UTF-8 lyrics up to 100,000 characters.");
       onChange({ ...value, lyrics });
-    } catch (error) { setFileError(error instanceof Error ? error.message : "Could not read lyrics."); }
+    } catch (error) {
+      setFileError(
+        error instanceof Error ? error.message : "Could not read lyrics.",
+      );
+    }
   }
-  return <fieldset className="lyric-fields" disabled={disabled}>
-    <div className="lyric-metadata">
-      <label>Song title<input value={value.title} maxLength={300} placeholder="Automatic"
-        onChange={e => onChange({ ...value, title: e.target.value })} /></label>
-      <label>Artist<input value={value.artist} maxLength={300} placeholder="Automatic"
-        onChange={e => onChange({ ...value, artist: e.target.value })} /></label>
-      <label>Language code<input value={value.language} maxLength={3} pattern="[a-z]{2,3}|"
-        placeholder="Auto (ja, es, en…)" onChange={e => onChange({ ...value, language: e.target.value.toLowerCase() })} /></label>
-    </div>
-    <label>Lyrics (optional)<textarea rows={6} maxLength={100000} value={value.lyrics}
-      placeholder="Paste original-language lyrics or timestamped LRC lyrics"
-      onChange={e => onChange({ ...value, lyrics: e.target.value })} /></label>
-    <label>Import lyrics<input type="file" accept=".txt,.lrc" onChange={e => void readLyrics(e.target.files?.[0])} /></label>
-    {fileError && <p role="alert" className="job-error">{fileError}</p>}
-    <p>We try LRCLIB automatically. Supplied lyrics take priority; Japanese is converted to romaji after syncing.</p>
-  </fieldset>;
+  return (
+    <fieldset className="lyric-fields" disabled={disabled}>
+      <div className="lyric-metadata">
+        <label>
+          Song title
+          <input
+            value={value.title}
+            maxLength={300}
+            placeholder="Automatic"
+            onChange={(e) => onChange({ ...value, title: e.target.value })}
+          />
+        </label>
+        <label>
+          Artist
+          <input
+            value={value.artist}
+            maxLength={300}
+            placeholder="Automatic"
+            onChange={(e) => onChange({ ...value, artist: e.target.value })}
+          />
+        </label>
+        <label>
+          Language code
+          <input
+            value={value.language}
+            maxLength={3}
+            pattern="[a-z]{2,3}|"
+            placeholder="Auto (ja, es, en…)"
+            onChange={(e) =>
+              onChange({ ...value, language: e.target.value.toLowerCase() })
+            }
+          />
+        </label>
+      </div>
+      <label>
+        Lyrics (optional)
+        <textarea
+          rows={6}
+          maxLength={100000}
+          value={value.lyrics}
+          placeholder="Paste original-language lyrics or timestamped LRC lyrics"
+          onChange={(e) => onChange({ ...value, lyrics: e.target.value })}
+        />
+      </label>
+      <label>
+        Import lyrics
+        <input
+          type="file"
+          accept=".txt,.lrc"
+          onChange={(e) => void readLyrics(e.target.files?.[0])}
+        />
+      </label>
+      {fileError && (
+        <p role="alert" className="job-error">
+          {fileError}
+        </p>
+      )}
+      <p>
+        We try LRCLIB automatically. Supplied lyrics take priority; Japanese is
+        converted to romaji after syncing.
+      </p>
+    </fieldset>
+  );
 }
 
-function LyricCorrection({ job, save }: { job: Job; save: (settings: LyricSettings) => Promise<void> }) {
-  const [value, setValue] = useState<LyricSettings>({ ...emptyLyrics, ...job.lyric_settings });
+function LyricCorrection({
+  job,
+  save,
+}: {
+  job: Job;
+  save: (settings: LyricSettings) => Promise<void>;
+}) {
+  const [value, setValue] = useState<LyricSettings>({
+    ...emptyLyrics,
+    ...job.lyric_settings,
+  });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  return <details className="lyric-options">
-    <summary>Correct lyrics and rebuild</summary>
-    <form onSubmit={async e => {
-      e.preventDefault(); setSaving(true); setError("");
-      try { await save(value); } catch (err) { setError(err instanceof Error ? err.message : "Rebuild failed."); }
-      finally { setSaving(false); }
-    }}>
-      <LyricFields value={value} onChange={setValue} disabled={saving} />
-      <p>Prepared audio and melody analysis are reused. The previous export stays on disk until the new package is ready.</p>
-      {error && <p className="job-error" role="alert">{error}</p>}
-      <button className="create-button" disabled={saving}>{saving ? "Queueing…" : "Rebuild with corrections"}</button>
-    </form>
-  </details>;
+  return (
+    <details className="lyric-options">
+      <summary>Correct lyrics and rebuild</summary>
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          setSaving(true);
+          setError("");
+          try {
+            await save(value);
+          } catch (err) {
+            setError(err instanceof Error ? err.message : "Rebuild failed.");
+          } finally {
+            setSaving(false);
+          }
+        }}
+      >
+        <LyricFields value={value} onChange={setValue} disabled={saving} />
+        <p>
+          Prepared audio and melody analysis are reused. The previous export
+          stays on disk until the new package is ready.
+        </p>
+        {error && (
+          <p className="job-error" role="alert">
+            {error}
+          </p>
+        )}
+        <button className="create-button" disabled={saving}>
+          {saving ? "Queueing…" : "Rebuild with corrections"}
+        </button>
+      </form>
+    </details>
+  );
 }
+
+function Elapsed({ job }: { job: Job }) {
+  const [now, setNow] = useState(Date.now() / 1000);
+  useEffect(() => {
+    if (job.status !== "running") return;
+    const tick = () => {
+      if (!document.hidden) setNow(Date.now() / 1000);
+    };
+    const timer = window.setInterval(tick, 1000);
+    document.addEventListener("visibilitychange", tick);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", tick);
+    };
+  }, [job.status]);
+  return (
+    <span>
+      {formatElapsed(
+        (job.elapsed_seconds || 0) +
+          (job.started_at ? Math.max(0, now - job.started_at) : 0),
+      )}
+    </span>
+  );
+}
+
+type Api = (path: string, body?: object) => Promise<any>;
+class ApiError extends Error {
+  constructor(
+    message: string,
+    public code?: string,
+  ) {
+    super(message);
+  }
+}
+
+const JobCard = React.memo(function JobCard({
+  job,
+  position,
+  post,
+  update,
+  chooseFolder,
+  hasFolder,
+  folderBusy,
+}: {
+  job: Job;
+  position?: number;
+  post: Api;
+  update: (job: Job) => void;
+  chooseFolder: () => Promise<boolean>;
+  hasFolder: boolean;
+  folderBusy: boolean;
+}) {
+  const [pending, setPending] = useState("");
+  const [error, setError] = useState("");
+  const [conflict, setConflict] = useState(false);
+  const [cleanupBytes, setCleanupBytes] = useState<number | null>(null);
+  const [notice, setNotice] = useState("");
+  const active = ["running", "queued"].includes(job.status);
+  const cleaned = job.cleaned_at != null;
+  const available = !cleaned && job.local_available !== false;
+  async function action(name: string, body?: object) {
+    setPending(name);
+    setError("");
+    setNotice("");
+    try {
+      if (name === "export" && !hasFolder && !(await chooseFolder())) return;
+      const result = await post(`/api/jobs/${job.id}/${name}`, body);
+      if (result.id) update(result);
+      if (name === "export") {
+        setConflict(false);
+        setNotice("Added to your karaoke Songs folder.");
+      }
+      if (name === "cleanup") setCleanupBytes(null);
+    } catch (e) {
+      if (e instanceof ApiError && e.code === "destination_exists")
+        setConflict(true);
+      else setError(e instanceof Error ? e.message : "Please try again.");
+    } finally {
+      setPending("");
+    }
+  }
+  async function previewCleanup() {
+    setPending("cleanup-preview");
+    setError("");
+    try {
+      const response = await fetch(`/api/jobs/${job.id}/cleanup`);
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.detail || "Could not calculate disk usage.");
+      setCleanupBytes(data.bytes);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Please try again.");
+    } finally {
+      setPending("");
+    }
+  }
+  return (
+    <article
+      className={`song-card ${active ? "active-job" : ""}`}
+      aria-label={job.title}
+    >
+      <div className={`song-icon ${job.status}`}>
+        <Music2 size={22} />
+      </div>
+      <div className="song-body">
+        <div className="song-heading">
+          <h3>{job.title}</h3>
+          <span className={`status ${job.status}`}>
+            {job.status === "running" ? (
+              <LoaderCircle size={12} className="spin" />
+            ) : job.status === "completed" ? (
+              <Check size={12} />
+            ) : (
+              <Clock3 size={12} />
+            )}
+            {cleaned
+              ? "Cleaned up"
+              : job.status === "completed"
+                ? "Ready"
+                : job.status === "running"
+                  ? "Creating"
+                  : job.status === "queued"
+                    ? "Queued"
+                    : job.status === "failed"
+                      ? "Needs attention"
+                      : "Cancelled"}
+          </span>
+        </div>
+        <p className="song-meta">
+          {job.processing_mode === "fast" ? "Fast" : "Quality"} ·{" "}
+          {job.source_type === "youtube" ? "YouTube" : "MP4"}
+          {job.elapsed_seconds != null && job.status !== "queued" && (
+            <>
+              {" "}
+              · <Elapsed job={job} />
+            </>
+          )}
+        </p>
+        {job.status === "running" && (
+          <div className="job-progress">
+            <div
+              className="progress-track"
+              role="progressbar"
+              aria-label={`${job.title} progress`}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(job.progress * 100)}
+            >
+              <span style={{ width: `${Math.max(3, job.progress * 100)}%` }} />
+            </div>
+            <p>
+              {job.cancel_requested ? "Stopping safely…" : labels[job.stage]}{" "}
+              <span>
+                {stages.indexOf(job.stage) + 1} of {stages.length}
+              </span>
+            </p>
+            {job.activity && !job.cancel_requested && (
+              <p className="stage-activity">{job.activity}</p>
+            )}
+          </div>
+        )}
+        {job.status === "queued" && (
+          <p className="queued-note">
+            Queue position {position}. Your Mac processes one song at a time.
+          </p>
+        )}
+        {job.error && <p className="job-error">{job.error}</p>}
+        {job.warnings.length > 0 && (
+          <details className="quality">
+            <summary>
+              <AlertTriangle size={14} /> {job.warnings.length} quality{" "}
+              {job.warnings.length === 1 ? "notice" : "notices"}
+            </summary>
+            <ul>
+              {job.warnings.map((warning, i) => (
+                <li key={i}>{warning}</li>
+              ))}
+            </ul>
+          </details>
+        )}
+        {job.export_receipt?.path && (
+          <p className="export-path">
+            Last added to: <span>{job.export_receipt.path}</span>
+          </p>
+        )}
+        {cleaned && (
+          <p className="song-meta">
+            Local working files removed. Any copy in your karaoke folder is
+            kept.
+          </p>
+        )}
+        {notice && (
+          <p role="status" className="success-note">
+            {notice}
+          </p>
+        )}
+        {error && (
+          <p role="alert" className="job-error">
+            {error}
+          </p>
+        )}
+        {conflict && (
+          <div
+            className="inline-choice"
+            role="group"
+            aria-label="Existing song"
+          >
+            <p>
+              A song with this name already exists. Keep both creates a separate
+              copy.
+            </p>
+            <button
+              className="create-button"
+              disabled={!!pending}
+              onClick={() => void action("export", { collision: "keep_both" })}
+            >
+              Keep both
+            </button>
+            <button
+              disabled={!!pending}
+              onClick={() => {
+                if (
+                  window.confirm(
+                    "Replace the existing song folder with this version? Its current contents will be replaced.",
+                  )
+                )
+                  void action("export", { collision: "replace" });
+              }}
+            >
+              Replace existing
+            </button>
+            <button disabled={!!pending} onClick={() => setConflict(false)}>
+              Cancel
+            </button>
+          </div>
+        )}
+        {cleanupBytes !== null && (
+          <div
+            className="inline-choice"
+            role="group"
+            aria-label="Confirm cleanup"
+          >
+            <p>
+              Free {formatBytes(cleanupBytes)}. This removes local audio,
+              exports, and rebuild files. You will need the source again to make
+              corrections. Any copies saved elsewhere and export history are kept.
+              {!job.export_receipt?.path && " No direct folder export is recorded for this job. Keep a ZIP or add it to karaoke before cleanup if you want to keep the song."}
+            </p>
+            <button disabled={!!pending} onClick={() => void action("cleanup")}>
+              Clean up local files
+            </button>
+            <button disabled={!!pending} onClick={() => setCleanupBytes(null)}>
+              Keep files
+            </button>
+          </div>
+        )}
+        <div className="job-buttons">
+          {job.status === "completed" && available && (
+            <button
+              className="create-button"
+              disabled={!!pending || folderBusy}
+              onClick={() => void action("export", {})}
+            >
+              <FolderOpen size={16} />{" "}
+              {pending === "export" ? "Adding…" : "Add to karaoke"}
+            </button>
+          )}
+          {active && (
+            <button
+              disabled={!!pending || job.cancel_requested}
+              onClick={() => void action("cancel")}
+            >
+              <X size={15} /> Cancel
+            </button>
+          )}
+          {!active && !cleaned && job.status !== "completed" && (
+            <button disabled={!!pending} onClick={() => void action("retry")}>
+              <RotateCcw size={15} /> Retry
+            </button>
+          )}
+        </div>
+        {!active && !cleaned && (
+          <details className="job-options">
+            <summary>More options</summary>
+            <div className="secondary-actions">
+              {job.status === "completed" && available && (
+                <>
+                  <a href={`/api/jobs/${job.id}/download`}>
+                    <ArrowDownToLine size={15} /> Download ZIP
+                  </a>
+                  <button
+                    disabled={!!pending}
+                    onClick={() => void action("open-folder")}
+                  >
+                    <FolderOpen size={15} /> Open local folder
+                  </button>
+                  <a
+                    href={`/api/jobs/${job.id}/report`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Diagnostics
+                  </a>
+                </>
+              )}
+              <button
+                disabled={!!pending}
+                onClick={() => void previewCleanup()}
+              >
+                <Trash2 size={15} /> Clean up…
+              </button>
+            </div>
+            <LyricCorrection
+              job={job}
+              save={async (settings) => {
+                const updated = await post(
+                  `/api/jobs/${job.id}/rebuild`,
+                  settings,
+                );
+                update(updated);
+              }}
+            />
+            <p className="mode-rebuild">
+              <button
+                disabled={!!pending}
+                onClick={() =>
+                  void action("processing-mode", {
+                    processing_mode:
+                      job.processing_mode === "fast" ? "quality" : "fast",
+                  })
+                }
+              >
+                Rebuild in {job.processing_mode === "fast" ? "Quality" : "Fast"}{" "}
+                mode
+              </button>{" "}
+              Prepared audio and pitch are reused.
+            </p>
+          </details>
+        )}
+      </div>
+    </article>
+  );
+});
 
 function App() {
   const [page, setPage] = useState<"studio" | "benchmarks" | "about">("studio");
-  const [shutdown, setShutdown] = useState<"running" | "stopping" | "stopped">("running");
-  const [now, setNow] = useState(Date.now() / 1000);
-  const [deleting, setDeleting] = useState<string | null>(null);
-  const deletedIds = useRef(new Set<string>());
+  const [shutdown, setShutdown] = useState<"running" | "stopping" | "stopped">(
+    "running",
+  );
   const [health, setHealth] = useState<Health | null>(null);
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [next, setNext] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [songsFolder, setSongsFolder] = useState<string | null>(null);
+  const [choosing, setChoosing] = useState(false);
   const [mode, setMode] = useState<"youtube" | "file">("youtube");
+  const [processingMode, setProcessingMode] = useState<"quality" | "fast">(
+    "quality",
+  );
   const [url, setUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState("");
-  const [lyricSettings, setLyricSettings] = useState<LyricSettings>({ ...emptyLyrics });
+  const [lyricSettings, setLyricSettings] = useState<LyricSettings>({
+    ...emptyLyrics,
+  });
   const [connection, setConnection] = useState("");
-  const [filter, setFilter] = useState("all");
   const [help, setHelp] = useState(false);
   const input = useRef<HTMLInputElement>(null);
-  const compose = useRef<HTMLDivElement>(null);
+  const refreshNow = useRef<() => void>(() => {});
+  const folderPickerBusy = useRef(false);
+  const mutationVersion = useRef(0);
+  const hasOlder = useRef(false);
+  const requestVersion = useRef(0);
 
   useEffect(() => {
     if (shutdown !== "running") return;
-    let disposed = false;
+    let disposed = false,
+      fetching = false,
+      rerun = false;
+    let timer: number | undefined;
+    let controller: AbortController | undefined;
     const refresh = async () => {
+      clearTimeout(timer);
+      if (disposed || document.hidden) return;
+      if (fetching) {
+        rerun = true;
+        return;
+      }
+      fetching = true;
+      const version = mutationVersion.current;
+      const request = ++requestVersion.current;
+      controller = new AbortController();
+      const timeout = window.setTimeout(() => controller?.abort(), 10000);
+      let active = false;
       try {
-        const [h, j] = await Promise.all([
-          fetch("/api/health"),
-          fetch("/api/jobs"),
-        ]);
-        if (!h.ok || !j.ok)
-          throw new Error(
-            "Connection lost. Keep Start.command running; your songs are saved.",
-          );
-        const [healthData, jobData] = await Promise.all([h.json(), j.json()]);
-        if (!disposed) {
-          setHealth(healthData);
-          if (healthData.shutting_down) setShutdown("stopping");
-          setJobs(jobData.filter((job: Job) => !deletedIds.current.has(job.id)));
-          setConnection("");
+        const responses = await Promise.all(
+          ["/api/health", "/api/jobs/feed?limit=20", "/api/settings"].map(
+            (path) => fetch(path, { signal: controller!.signal }),
+          ),
+        );
+        if (responses.some((response) => !response.ok))
+          throw new Error("Connection unavailable");
+        const [h, feed, settings] = await Promise.all(
+          responses.map((response) => response.json()),
+        );
+        if (disposed) return;
+        setHealth(h);
+        setSongsFolder(settings.songs_folder);
+        if (h.shutting_down) setShutdown("stopping");
+        active = feed.active.length > 0;
+        if (
+          version === mutationVersion.current &&
+          request === requestVersion.current
+        ) {
+          const incoming: Job[] = [...feed.active, ...feed.recent];
+          setJobs((current) => {
+            const previous = new Map(current.map((job) => [job.id, job]));
+            const stable = incoming.map((job) => {
+              const old = previous.get(job.id);
+              return old && JSON.stringify(old) === JSON.stringify(job)
+                ? old
+                : job;
+            });
+            const ids = new Set(incoming.map((job) => job.id));
+            // Preserve explicitly loaded older pages. Remove stale active snapshots.
+            const older = hasOlder.current
+              ? current.filter(
+                  (job) =>
+                    !ids.has(job.id) &&
+                    !["running", "queued"].includes(job.status),
+                )
+              : [];
+            const result = [...stable, ...older];
+            return result.length === current.length &&
+              result.every((job, i) => job === current[i])
+              ? current
+              : result;
+          });
+          if (!hasOlder.current) setNext(feed.next);
         }
+        setConnection("");
       } catch {
         if (!disposed)
           setConnection(
             "Cannot reach the local app. Keep Start.command running; your songs are saved.",
           );
+      } finally {
+        clearTimeout(timeout);
+        fetching = false;
+        if (!disposed && !document.hidden) {
+          const delay = rerun ? 0 : active ? 2000 : 15000;
+          rerun = false;
+          timer = window.setTimeout(() => void refresh(), delay);
+        }
       }
     };
+    const visibility = () => {
+      clearTimeout(timer);
+      if (!document.hidden) void refresh();
+    };
+    refreshNow.current = () => void refresh();
+    document.addEventListener("visibilitychange", visibility);
     void refresh();
-    const timer = window.setInterval(() => void refresh(), 2000);
     return () => {
       disposed = true;
-      clearInterval(timer);
+      controller?.abort();
+      clearTimeout(timer);
+      document.removeEventListener("visibilitychange", visibility);
+      refreshNow.current = () => {};
     };
   }, [shutdown]);
 
@@ -226,76 +808,67 @@ function App() {
         if (!disposed) setShutdown("stopped");
       }
     }, 1000);
-    return () => { disposed = true; clearInterval(timer); };
+    return () => {
+      disposed = true;
+      clearInterval(timer);
+    };
   }, [shutdown]);
 
-  async function quitApp() {
-    if (!window.confirm("Quit Karapincho? Any song in progress will stop and resume from its last completed stage when you reopen the app.")) return;
-    setShutdown("stopping");
-    setError("");
-    try {
-      await post("/api/shutdown");
-    } catch (e) {
-      setShutdown("running");
-      setError(e instanceof Error ? e.message : "Could not shut down Karapincho.");
-    }
-  }
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(Date.now() / 1000), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  async function deleteSong(job: Job) {
-    if (!window.confirm(`Permanently delete “${job.title}” from disk? This erases its song folder, uploaded copy, generated files, and ZIP. Copies saved elsewhere are kept. This cannot be undone.`)) return;
-    setDeleting(job.id);
-    setError("");
-    try {
-      const response = await fetch(`/api/jobs/${job.id}`, {
-        method: "DELETE",
-        headers: { "X-Karapincho-Token": health?.token || "" },
+  const post = useCallback(
+    async (path: string, body?: object) => {
+      mutationVersion.current += 1;
+      const response = await fetch(path, {
+        method: "POST",
+        headers: {
+          "X-Karapincho-Token": health?.token || "",
+          ...(body ? { "Content-Type": "application/json" } : {}),
+        },
+        body: body ? JSON.stringify(body) : undefined,
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.detail || "Could not delete the song.");
-      deletedIds.current.add(job.id);
-      setJobs((current) => current.filter((j) => j.id !== job.id));
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not delete the song.");
+      mutationVersion.current += 1;
+      if (!response.ok)
+        throw new ApiError(
+          typeof data.detail === "string"
+            ? data.detail
+            : data.detail?.message || "Please check your input and try again.",
+          data.detail?.code,
+        );
+      return data;
+    },
+    [health?.token],
+  );
+  const update = useCallback((job: Job) => {
+    mutationVersion.current += 1;
+    setJobs((current) => [
+      job,
+      ...current.filter((item) => item.id !== job.id),
+    ]);
+    refreshNow.current();
+  }, []);
+  const chooseFolder = useCallback(async () => {
+    if (folderPickerBusy.current) return false;
+    folderPickerBusy.current = true;
+    setChoosing(true);
+    try {
+      const settings = await post("/api/settings/choose-folder");
+      setSongsFolder(settings.songs_folder);
+      return !settings.cancelled;
     } finally {
-      setDeleting(null);
+      folderPickerBusy.current = false;
+      setChoosing(false);
     }
-  }
-
-  async function post(path: string, body?: object) {
-    const response = await fetch(path, {
-      method: "POST",
-      headers: {
-        "X-Karapincho-Token": health?.token || "",
-        ...(body ? { "Content-Type": "application/json" } : {}),
-      },
-      body: body ? JSON.stringify(body) : undefined,
-    });
-    const data = await response.json();
-    if (!response.ok)
-      throw new Error(
-        typeof data.detail === "string"
-          ? data.detail
-          : "Please check your input and try again.",
-      );
-    return data;
-  }
-  function chooseFile(next?: File) {
+  }, [post]);
+  function chooseFile(selected?: File) {
+    if (!selected || busy) return;
     setError("");
-    if (!next) return;
-    if (!next.name.toLowerCase().endsWith(".mp4")) {
-      setError("Choose an MP4 video with an audio track.");
-      return;
-    }
-    if (next.size > (health?.max_bytes || 2 * 1024 ** 3)) {
-      setError("This video is larger than 2 GB. Please use a smaller MP4.");
-      return;
-    }
-    setFile(next);
+    if (!selected.name.toLowerCase().endsWith(".mp4"))
+      return setError("Choose an MP4 video with an audio track.");
+    if (selected.size > (health?.max_bytes || 2 * 1024 ** 3))
+      return setError(
+        "This video is larger than 2 GB. Please use a smaller MP4.",
+      );
+    setFile(selected);
     setMode("file");
   }
   function uploadFile(selected: File): Promise<Job> {
@@ -314,16 +887,21 @@ function App() {
           const data = JSON.parse(xhr.responseText);
           xhr.status < 300
             ? resolve(data)
-            : reject(new Error(data.detail || "Upload failed"));
+            : reject(
+                new Error(
+                  typeof data.detail === "string"
+                    ? data.detail
+                    : "Upload failed.",
+                ),
+              );
         } catch {
-          reject(
-            new Error("Upload failed. Please check that the app is running."),
-          );
+          reject(new Error("Upload failed. Check that the app is running."));
         }
       };
       const form = new FormData();
       form.append("file", selected);
       form.append("lyric_settings", JSON.stringify(lyricSettings));
+      form.append("processing_mode", processingMode);
       xhr.send(form);
     });
   }
@@ -332,54 +910,98 @@ function App() {
     setError("");
     setBusy(true);
     setUploadProgress(0);
+    mutationVersion.current += 1;
     try {
-      const job: Job =
+      const job =
         mode === "youtube"
-          ? await post("/api/jobs/url", { url: url.trim(), lyric_settings: lyricSettings })
+          ? await post("/api/jobs/url", {
+              url: url.trim(),
+              lyric_settings: lyricSettings,
+              processing_mode: processingMode,
+            })
           : await uploadFile(file!);
-      setJobs((current) => [job, ...current.filter((j) => j.id !== job.id)]);
-      setLyricSettings({ ...emptyLyrics });
+      update(job);
       setUrl("");
       setFile(null);
-      setFilter("all");
+      setLyricSettings({ ...emptyLyrics });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not create your song.");
+      setError(e instanceof Error ? e.message : "Could not create song.");
     } finally {
       setBusy(false);
     }
   }
-  async function action(id: string, name: string) {
+  async function loadMore() {
+    if (!next) return;
+    setLoadingMore(true);
     try {
-      const job = await post(`/api/jobs/${id}/${name}`);
-      if (job.id)
-        setJobs((current) => current.map((j) => (j.id === job.id ? job : j)));
+      const response = await fetch(
+        `/api/jobs/feed?limit=20&before=${encodeURIComponent(next)}`,
+      );
+      if (!response.ok) throw new Error("Could not load recent jobs.");
+      const feed = await response.json();
+      hasOlder.current = true;
+      setJobs((current) => {
+        const ids = new Set(current.map((job) => job.id));
+        return [
+          ...current,
+          ...feed.recent.filter((job: Job) => !ids.has(job.id)),
+        ];
+      });
+      setNext(feed.next);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Action failed");
+      setError(e instanceof Error ? e.message : "Could not load recent jobs.");
+    } finally {
+      setLoadingMore(false);
     }
   }
-  const completed = jobs.filter((j) => j.status === "completed").length;
-  const active = jobs.filter(
-    (j) => j.status === "queued" || j.status === "running",
-  ).length;
-  const visible = jobs.filter(
-    (j) =>
-      filter === "all" ||
-      (filter === "ready"
-        ? j.status === "completed"
-        : ["queued", "running"].includes(j.status)),
-  );
-
-  if (shutdown !== "running") return (
-    <div className="shutdown-screen" role="status" aria-live="polite">
-      <Power size={36} />
-      <h1>{shutdown === "stopped" ? "Karapincho is stopped." : "Karapincho is shutting down…"}</h1>
-      <p>Your songs are saved. Unfinished songs resume from their last completed stage.</p>
-      <p>You can close this tab. Open <strong>Start.command</strong> to run Karapincho again.</p>
-    </div>
-  );
+  async function quitApp() {
+    if (
+      !window.confirm(
+        "Quit Karapincho? Any song in progress will resume from its last completed stage when you reopen the app.",
+      )
+    )
+      return;
+    setShutdown("stopping");
+    try {
+      await post("/api/shutdown");
+    } catch (e) {
+      setShutdown("running");
+      setError(e instanceof Error ? e.message : "Could not shut down.");
+    }
+  }
+  const active = jobs
+    .filter((job) => ["running", "queued"].includes(job.status))
+    .sort((a, b) =>
+      a.status === "running"
+        ? -1
+        : b.status === "running"
+          ? 1
+          : a.created - b.created,
+    );
+  const recent = jobs
+    .filter((job) => !["running", "queued"].includes(job.status))
+    .sort((a, b) => b.created - a.created);
+  if (shutdown !== "running")
+    return (
+      <div className="shutdown-screen" role="status">
+        <Power size={36} />
+        <h1>
+          {shutdown === "stopped"
+            ? "Karapincho is stopped."
+            : "Karapincho is shutting down…"}
+        </h1>
+        <p>
+          Your songs are saved. Unfinished songs resume from their last
+          completed stage.
+        </p>
+        <p>
+          Open <strong>Start.command</strong> to run Karapincho again.
+        </p>
+      </div>
+    );
 
   return (
-    <div className="app-shell">
+    <div className="app-shell workflow-shell">
       <aside className="sidebar">
         <a className="brand" href="/" aria-label="Karapincho home">
           <span className="brand-icon">
@@ -389,42 +1011,39 @@ function App() {
         </a>
         <div className="workspace-label">YOUR STUDIO</div>
         <button
-          aria-label="Song studio"
-          title="Song studio"
           className={`nav-item ${page === "studio" ? "selected" : ""}`}
-          onClick={() => { setPage("studio"); compose.current?.scrollIntoView({ behavior: "smooth" }); }}
+          aria-label="Song studio"
+          onClick={() => setPage("studio")}
         >
-          <AudioLines size={19} /> Song studio{" "}
-          <span className="nav-count">{jobs.length}</span>
+          <AudioLines size={19} /> Song studio
         </button>
-        <button aria-label="Benchmarks" title="Benchmarks" className={`nav-item ${page === "benchmarks" ? "selected" : ""}`} onClick={() => setPage("benchmarks")}><Clock3 size={19} /> Benchmarks</button>
-        <button aria-label="About" title="About" className={`nav-item ${page === "about" ? "selected" : ""}`} onClick={() => setPage("about")}><Info size={19} /> About</button>
-        <div className="sidebar-note">
-          <span className="note-icon">
-            <Mic2 size={20} />
-          </span>
-          <h3>
-            Good songs.
-            <br />
-            Great company.
-          </h3>
-          <p>
-            You bring the song.
-            <br />
-            We’ll get it singalong-ready.
-          </p>
-          <div className="mini-wave">
-            {[8, 16, 27, 13, 33, 22, 11, 30, 18, 10, 23, 14].map((h, i) => (
-              <i key={i} style={{ height: h }} />
-            ))}
-          </div>
+        <div className="secondary-nav" aria-label="Studio information">
+          <button
+            className={`nav-item ${page === "benchmarks" ? "selected" : ""}`}
+            aria-label="Benchmarks"
+            onClick={() => setPage("benchmarks")}
+          >
+            <Clock3 size={18} /> Benchmarks
+          </button>
+          <button
+            className={`nav-item ${page === "about" ? "selected" : ""}`}
+            aria-label="About"
+            onClick={() => setPage("about")}
+          >
+            <Info size={18} /> About
+          </button>
         </div>
         <div className="sidebar-bottom">
           <div>
             <span className="live-dot" /> Runs on your Mac
           </div>
           <p>Local inference · no telemetry.</p>
-          <button onClick={() => setHelp(!help)}>
+          <button
+            onClick={() => {
+              setPage("studio");
+              setHelp(!help);
+            }}
+          >
             <CircleHelp size={16} /> How it works
           </button>
         </div>
@@ -432,45 +1051,26 @@ function App() {
       <main>
         <header className="topbar">
           <span>
-            {page === "benchmarks" ? "Benchmarks" : page === "about" ? "About" : "Song studio"} <span className="breadcrumb">/</span>{" "}
-            <span className="muted">Overview</span>
+            {page === "studio"
+              ? "Song studio"
+              : page === "benchmarks"
+                ? "Benchmarks"
+                : "About"}
           </span>
           <div className="topbar-actions">
-          <div className="local-badge">
-            <HardDrive size={14} /> LOCAL STUDIO <span className="live-dot" />
-          </div>
-          <button className="quit-button" disabled={!health || busy} onClick={() => void quitApp()}>
-            <Power size={16} /> Quit Karapincho
-          </button>
+            <div className="local-badge">
+              <HardDrive size={14} /> LOCAL STUDIO
+            </div>
+            <button
+              className="quit-button"
+              disabled={!health || busy}
+              onClick={() => void quitApp()}
+            >
+              <Power size={16} /> Quit Karapincho
+            </button>
           </div>
         </header>
         <div className="content">
-          {page === "benchmarks" ? <Benchmark post={post} /> : page === "about" ? <About version={health?.version} /> : <>
-          <div className="page-heading">
-            <div>
-              <p className="eyebrow">FROM SONG TO SINGALONG</p>
-              <h1>
-                Your next karaoke night
-                <br />
-                starts here<span>.</span>
-              </h1>
-              <p className="subtitle">
-                A video in. A ready-to-sing song out. Let AI handle the
-                in-between.
-              </p>
-            </div>
-            <div className="heading-art" aria-hidden="true">
-              <div className="disc">
-                <div className="disc-inner">
-                  <Mic2 size={30} />
-                </div>
-              </div>
-              <span className="art-star">✳</span>
-              <span className="art-note">
-                <Music2 size={23} />
-              </span>
-            </div>
-          </div>
           {(connection || error) && (
             <div className="alert error" role="alert">
               <AlertTriangle size={18} />
@@ -482,396 +1082,377 @@ function App() {
               )}
             </div>
           )}
-          {health && !health.ready && (
-            <div className="alert" role="status">
-              <AlertTriangle size={18} />
-              <span>
-                Setup is incomplete: {health.missing.join(", ")}. Run Setup.command,
-                then restart the app.
-              </span>
-            </div>
-          )}
-          {help && (
-            <div className="help-panel">
-              <button
-                className="close-help"
-                onClick={() => setHelp(false)}
-                aria-label="Close help"
-              >
-                <X size={18} />
-              </button>
-              <h3>One input. The whole song package.</h3>
-              <p>
-                We extract audio, isolate vocals for analysis, find lyrics online and
-                sync the lyrics, detect the melody, then create an UltraStar
-                chart with the original audio, video, and cover.
-              </p>
-              <p>
-                Spanish and English lyrics stay in their original language.
-                Japanese lyrics become romaji. Copy the finished folder into
-                your UltraStar WorldParty or Deluxe Songs folder.
-              </p>
-              <p>
-                Setup downloads the AI models. Processing can take longer
-                than the song itself. Difficult recordings may include accuracy
-                notices; no editing is required. If YouTube blocks a download,
-                use an MP4.
-              </p>
-            </div>
-          )}
-          <section className="creator-card" ref={compose}>
-            <div className="card-heading">
-              <span className="orange-icon">
-                <Plus size={20} />
-              </span>
-              <div>
-                <h2>Create a song</h2>
-                <p>Choose your source. We’ll take it from here.</p>
-              </div>
-              <span className="step-label">01 — THE INPUT</span>
-            </div>
-            <form onSubmit={submit}>
-              <details className="lyric-options">
-                <summary>Song details and lyrics (optional)</summary>
-                <LyricFields value={lyricSettings} onChange={setLyricSettings} disabled={busy} />
-              </details>
+          {page === "benchmarks" ? (
+            <Benchmark post={post} />
+          ) : page === "about" ? (
+            <About version={health?.version} />
+          ) : (
+            <>
               <div
-                className="source-tabs"
-                role="tablist"
-                aria-label="Song source"
+                className={`page-heading ${jobs.length ? "compact-heading" : ""}`}
               >
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={mode === "youtube"}
-                  onClick={() => setMode("youtube")}
-                  className={mode === "youtube" ? "active" : ""}
-                >
-                  <Link2 size={16} /> YouTube link
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={mode === "file"}
-                  onClick={() => setMode("file")}
-                  className={mode === "file" ? "active" : ""}
-                >
-                  <FileVideo size={16} /> Upload video
-                </button>
-              </div>
-              {mode === "youtube" ? (
-                <div className="url-area">
-                  <label htmlFor="youtube-url">YOUTUBE VIDEO URL</label>
-                  <div className="url-row">
-                    <div className="url-input">
-                      <Link2 size={20} />
-                      <input
-                        id="youtube-url"
-                        type="url"
-                        placeholder="https://www.youtube.com/watch?v=…"
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
-                        required
-                        autoComplete="off"
-                        disabled={busy}
-                      />
+                <div>
+                  <p className="eyebrow">CREATE → PROCESS → ADD TO KARAOKE</p>
+                  <h1>
+                    {jobs.length
+                      ? "Bring your next song."
+                      : "Your next karaoke night starts here."}
+                  </h1>
+                  {!jobs.length && (
+                    <p className="subtitle">
+                      A video in. A song ready for your karaoke folder.
+                    </p>
+                  )}
+                </div>
+                {!jobs.length && (
+                  <div className="heading-art" aria-hidden="true">
+                    <div className="disc">
+                      <div className="disc-inner">
+                        <Mic2 size={30} />
+                      </div>
                     </div>
+                  </div>
+                )}
+              </div>
+              {health && !health.ready && (
+                <div className="alert" role="status">
+                  <AlertTriangle size={18} />
+                  <span>
+                    Setup is incomplete: {health.missing.join(", ")}. Run
+                    Setup.command, then restart the app.
+                  </span>
+                </div>
+              )}
+              {help && (
+                <div className="help-panel">
+                  <button
+                    className="close-help"
+                    aria-label="Close help"
+                    onClick={() => setHelp(false)}
+                  >
+                    <X size={18} />
+                  </button>
+                  <h3>From video to karaoke folder.</h3>
+                  <p>
+                    Paste one public YouTube link or upload an MP4. Karapincho
+                    isolates vocals for analysis, syncs lyrics and melody, and
+                    builds an UltraStar package with the original vocals.
+                  </p>
+                  <p>
+                    Choose your karaoke Songs folder once. When a song finishes,
+                    check its quality notices and select Add to karaoke. ZIP
+                    downloads remain available under More options.
+                  </p>
+                  <p>
+                    Quality uses the established transcription model. Fast uses
+                    a smaller model and may miss lines or mishear lyrics. Processing may
+                    take longer than the song itself.
+                  </p>
+                </div>
+              )}
+              <section className="creator-card">
+                <div className="card-heading">
+                  <span className="orange-icon">
+                    <Plus size={20} />
+                  </span>
+                  <div>
+                    <h2>Create a song</h2>
+                    <p>One video. Ready for your next singalong.</p>
+                  </div>
+                </div>
+                <form onSubmit={submit}>
+                  <div
+                    className="source-tabs"
+                    role="tablist"
+                    aria-label="Song source"
+                  >
+                    {(["youtube", "file"] as const).map((source, i) => (
+                      <button
+                        key={source}
+                        type="button"
+                        role="tab"
+                        id={`source-${source}`}
+                        aria-controls="source-panel"
+                        aria-selected={mode === source}
+                        tabIndex={mode === source ? 0 : -1}
+                        disabled={busy}
+                        className={mode === source ? "active" : ""}
+                        onClick={() => setMode(source)}
+                        onKeyDown={(e) => {
+                          if (
+                            ["ArrowLeft", "ArrowRight", "Home", "End"].includes(
+                              e.key,
+                            )
+                          ) {
+                            e.preventDefault();
+                            const value =
+                              e.key === "Home"
+                                ? "youtube"
+                                : e.key === "End"
+                                  ? "file"
+                                  : i === 0
+                                    ? "file"
+                                    : "youtube";
+                            setMode(value);
+                            document.getElementById(`source-${value}`)?.focus();
+                          }
+                        }}
+                      >
+                        {source === "youtube" ? (
+                          <>
+                            <Link2 size={16} /> YouTube link
+                          </>
+                        ) : (
+                          <>
+                            <FileVideo size={16} /> Upload video
+                          </>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  <div
+                    id="source-panel"
+                    role="tabpanel"
+                    aria-labelledby={`source-${mode}`}
+                  >
+                    {mode === "youtube" ? (
+                      <div className="url-area">
+                        <label htmlFor="youtube-url">YOUTUBE VIDEO URL</label>
+                        <div className="url-input">
+                          <Link2 size={20} />
+                          <input
+                            id="youtube-url"
+                            type="url"
+                            placeholder="https://www.youtube.com/watch?v=…"
+                            value={url}
+                            onChange={(e) => setUrl(e.target.value)}
+                            required
+                            disabled={busy}
+                            autoComplete="off"
+                          />
+                        </div>
+                        <p className="input-hint">
+                          Download blocked?{" "}
+                          <button type="button" onClick={() => setMode("file")}>
+                            Upload an MP4 instead <ArrowRight size={12} />
+                          </button>
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="file-area">
+                        <input
+                          ref={input}
+                          type="file"
+                          accept=".mp4,video/mp4"
+                          aria-label="Choose MP4 video"
+                          onChange={(e) => chooseFile(e.target.files?.[0])}
+                          hidden
+                        />
+                        <button
+                          type="button"
+                          disabled={busy}
+                          className={`dropzone ${dragging ? "dragging" : ""}`}
+                          onClick={() => input.current?.click()}
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setDragging(true);
+                          }}
+                          onDragLeave={() => setDragging(false)}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            setDragging(false);
+                            chooseFile(e.dataTransfer.files[0]);
+                          }}
+                        >
+                          <Upload size={24} />
+                          <strong>
+                            {file ? file.name : "Drop your video here"}
+                          </strong>
+                          <span>
+                            {file
+                              ? `${formatBytes(file.size)} · Click to choose another`
+                              : "or click to browse · MP4 · Up to 2 GB / 20 minutes"}
+                          </span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <fieldset className="processing-options" disabled={busy}>
+                    <legend>Processing mode</legend>
+                    <label
+                      className={processingMode === "quality" ? "selected" : ""}
+                    >
+                      <input
+                        type="radio"
+                        name="processing-mode"
+                        value="quality"
+                        checked={processingMode === "quality"}
+                        onChange={() => setProcessingMode("quality")}
+                      />
+                      <span>
+                        <strong>Quality</strong>
+                        <small>Recommended · established accuracy</small>
+                      </span>
+                    </label>
+                    <label
+                      className={processingMode === "fast" ? "selected" : ""}
+                    >
+                      <input
+                        type="radio"
+                        name="processing-mode"
+                        value="fast"
+                        checked={processingMode === "fast"}
+                        onChange={() => setProcessingMode("fast")}
+                      />
+                      <span>
+                        <strong>Fast</strong>
+                        <small>
+                          Smaller model · may miss lines or mishear lyrics
+                        </small>
+                      </span>
+                    </label>
+                  </fieldset>
+                  <details className="lyric-options">
+                    <summary>Song details and lyrics (optional)</summary>
+                    <LyricFields
+                      value={lyricSettings}
+                      onChange={setLyricSettings}
+                      disabled={busy}
+                    />
+                  </details>
+                  <div className="create-row">
+                    <p>Local processing · original vocals kept</p>
                     <button
                       className="create-button"
                       disabled={
-                        busy || !url.trim() || !health?.ready || !!connection
+                        busy ||
+                        !health?.ready ||
+                        !!connection ||
+                        (mode === "youtube" ? !url.trim() : !file)
                       }
                     >
                       {busy ? (
                         <LoaderCircle size={18} className="spin" />
                       ) : (
                         <Sparkles size={18} />
-                      )}{" "}
-                      {busy ? "Adding song…" : "Create song"}{" "}
-                      {!busy && <ArrowRight size={17} />}
+                      )}
+                      {busy
+                        ? mode === "file"
+                          ? `Uploading ${uploadProgress}%`
+                          : "Adding song…"
+                        : "Create song"}
+                      <ArrowRight size={17} />
                     </button>
                   </div>
-                  <p className="input-hint">
-                    One song per link. Download blocked?{" "}
-                    <button type="button" onClick={() => setMode("file")}>
-                      Upload an MP4 instead <ArrowRight size={12} />
-                    </button>
+                </form>
+              </section>
+              {active.length > 0 && (
+                <section
+                  className="queue-section"
+                  aria-labelledby="queue-title"
+                >
+                  <div className="section-heading">
+                    <h2 id="queue-title">
+                      In progress <span>{active.length}</span>
+                    </h2>
+                    <p>One song at a time, with safe restart.</p>
+                  </div>
+                  <div className="song-list">
+                    {active.map((job) => (
+                      <JobCard
+                        key={job.id}
+                        job={job}
+                        position={
+                          active
+                            .filter((item) => item.status === "queued")
+                            .findIndex((item) => item.id === job.id) + 1
+                        }
+                        post={post}
+                        update={update}
+                        chooseFolder={chooseFolder}
+                        hasFolder={!!songsFolder}
+                        folderBusy={choosing}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+              <section
+                className="destination-card"
+                aria-label="Karaoke destination"
+              >
+                <FolderOpen size={21} />
+                <div>
+                  <h2>Your karaoke Songs folder</h2>
+                  <p>
+                    {songsFolder ||
+                      "Choose once, then add each finished song with one click."}
                   </p>
                 </div>
-              ) : (
-                <div className="file-area">
-                  <input
-                    ref={input}
-                    type="file"
-                    accept=".mp4,video/mp4"
-                    aria-label="Choose MP4 video"
-                    onChange={(e) => chooseFile(e.target.files?.[0])}
-                    hidden
-                  />
-                  <button
-                    type="button"
-                    className={`dropzone ${dragging ? "dragging" : ""}`}
-                    onClick={() => !busy && input.current?.click()}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      setDragging(true);
-                    }}
-                    onDragLeave={() => setDragging(false)}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      setDragging(false);
-                      if (!busy) chooseFile(e.dataTransfer.files[0]);
-                    }}
-                  >
-                    <Upload size={25} />
-                    <strong>{file ? file.name : "Drop your video here"}</strong>
-                    <span>
-                      {file
-                        ? `${(file.size / 1024 ** 2).toFixed(1)} MB · Click to choose another`
-                        : "or click to browse · MP4 · Up to 2 GB / 20 minutes"}
-                    </span>
-                  </button>
-                  <button
-                    className="create-button file-submit"
-                    disabled={busy || !file || !health?.ready || !!connection}
-                  >
-                    {busy ? (
-                      <LoaderCircle size={18} className="spin" />
-                    ) : (
-                      <Sparkles size={18} />
-                    )}{" "}
-                    {busy ? `Uploading ${uploadProgress}%` : "Create song"}{" "}
-                    {!busy && <ArrowRight size={17} />}
-                  </button>
+                <button
+                  disabled={choosing || !health}
+                  onClick={() =>
+                    void chooseFolder().catch((e) => setError(e.message))
+                  }
+                >
+                  {choosing
+                    ? "Choosing…"
+                    : songsFolder
+                      ? "Change folder"
+                      : "Choose folder"}
+                </button>
+              </section>
+              <section
+                className="recent-section"
+                aria-labelledby="recent-title"
+              >
+                <div className="section-heading">
+                  <h2 id="recent-title">Recent jobs</h2>
+                  <p>
+                    Check results, add to karaoke, or recover a previous
+                    attempt.
+                  </p>
                 </div>
-              )}
-            </form>
-            <div className="creator-footer">
-              <span>
-                <ShieldCheck size={15} /> Local inference · no telemetry
-              </span>
-              <span>
-                <Globe2 size={15} /> Español · English · 日本語 → Romaji
-              </span>
-              <span>
-                <Check size={15} /> Original vocals kept
-              </span>
-            </div>
-          </section>
-          <div className="process-strip">
-            <span className="small-eyebrow">AUTOMATICALLY YOURS</span>
-            <div>
-              <AudioLines size={17} /> Extract audio <ArrowRight size={13} />
-              <Mic2 size={17} /> Sync lyrics & notes <ArrowRight size={13} />
-              <FolderOpen size={17} /> Package for UltraStar
-            </div>
-          </div>
-          <section className="library">
-            <div className="library-title">
-              <div>
-                <h2>
-                  Your songs <span>{jobs.length}</span>
-                </h2>
-                <p>A little less setup. A lot more singing.</p>
-              </div>
-              <span className="library-count">
-                {completed} ready <span>·</span> {active} processing
-              </span>
-            </div>
-            <div className="library-toolbar">
-              <div className="library-tabs">
-                {[
-                  ["all", "All songs"],
-                  ["ready", "Ready to sing"],
-                  ["active", "In progress"],
-                ].map(([value, label]) => (
+                {recent.length ? (
+                  <div className="song-list">
+                    {recent.map((job) => (
+                      <JobCard
+                        key={job.id}
+                        job={job}
+                        post={post}
+                        update={update}
+                        chooseFolder={chooseFolder}
+                        hasFolder={!!songsFolder}
+                        folderBusy={choosing}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="recent-empty">
+                    <Disc3 size={24} />
+                    <p>
+                      {active.length
+                        ? "Finished songs will appear here."
+                        : "Your first song starts with a link or a video above."}
+                    </p>
+                  </div>
+                )}
+                {next && (
                   <button
-                    key={value}
-                    className={filter === value ? "chosen" : ""}
-                    onClick={() => setFilter(value)}
+                    className="load-more"
+                    disabled={loadingMore}
+                    onClick={() => void loadMore()}
                   >
-                    {label}
+                    {loadingMore ? "Loading…" : "Load older jobs"}
                   </button>
-                ))}
-              </div>
-              <span className="sort-label">
-                Newest first <ChevronDown size={13} />
-              </span>
-            </div>
-            {visible.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-icon">
-                  <Disc3 size={30} />
-                  <span>
-                    <Plus size={12} />
-                  </span>
-                </div>
-                <h3>
-                  {jobs.length
-                    ? "Nothing here just yet"
-                    : "Your first song is waiting to happen"}
-                </h3>
-                <p>
-                  {jobs.length
-                    ? "Songs will appear here as they move through your studio."
-                    : "Paste a link or drop a video above. We’ll do the heavy lifting."}
-                </p>
-                <span className="format-pill">
-                  .TXT <span>+</span> .MP3 <span>+</span> .MP4 <span>+</span>{" "}
-                  COVER
-                </span>
-              </div>
-            ) : (
-              <div className="song-list">
-                {visible.map((job) => (
-                  <article key={job.id} className="song-card">
-                    <div className={`song-icon ${job.status}`}>
-                      <Music2 size={23} />
-                    </div>
-                    <div className="song-body">
-                      <div className="song-heading">
-                        <h3>{job.title}</h3>
-                        <span className={`status ${job.status}`}>
-                          {job.status === "completed" ? (
-                            <Check size={12} />
-                          ) : job.status === "running" ? (
-                            <LoaderCircle size={12} className="spin" />
-                          ) : (
-                            <Clock3 size={12} />
-                          )}{" "}
-                          {job.status === "completed"
-                            ? "Ready to sing"
-                            : job.status === "running"
-                              ? "Creating"
-                              : job.status[0].toUpperCase() +
-                                job.status.slice(1)}
-                        </span>
-                      </div>
-                      <p className="song-meta">
-                        {job.source_type === "youtube"
-                          ? "YouTube"
-                          : "MP4 upload"}{" "}
-                        <span>·</span>{" "}
-                        {new Date(job.created * 1000).toLocaleDateString(
-                          undefined,
-                          { month: "short", day: "numeric" },
-                        )}
-                        {job.status === "completed"
-                          ? " · UltraStar package"
-                          : ""}
-                      </p>
-                      {job.elapsed_seconds != null && job.status !== "queued" && (
-                        <p className="song-timing">
-                          <Clock3 size={13} />
-                          {job.status === "running" ? "Elapsed" : "Total processing time"}: {formatElapsed(
-                            job.elapsed_seconds + (job.started_at != null ? Math.max(0, now - job.started_at) : 0),
-                          )}
-                        </p>
-                      )}
-                      {job.status === "running" && (
-                        <div className="job-progress">
-                          <div className="progress-track" role="progressbar" aria-label={`${job.title} progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(job.progress * 100)}>
-                            <span
-                              style={{
-                                width: `${Math.max(3, job.progress * 100)}%`,
-                              }}
-                            />
-                          </div>
-                          <p>
-                            {job.cancel_requested
-                              ? "Stopping safely…"
-                              : labels[job.stage]}{" "}
-                            <span>{stages.indexOf(job.stage) + 1} of {stages.length}</span>
-                          </p>
-                        </div>
-                      )}
-                      {job.status === "queued" && (
-                        <p className="queued-note">
-                          In line. Your Mac processes one song at a time.
-                        </p>
-                      )}
-                      {job.lyric_source && <p className="song-meta">Lyrics: {{ lrclib: "LRCLIB", "lrclib+transcription": "LRCLIB + local transcription", user: "Supplied by you", transcription: "Local transcription" }[job.lyric_source] || job.lyric_source}</p>}
-                      {["completed", "failed", "cancelled"].includes(job.status) && <LyricCorrection job={job} save={async settings => {
-                        const updated = await post(`/api/jobs/${job.id}/rebuild`, settings);
-                        setJobs(current => current.map(j => j.id === job.id ? updated : j));
-                      }} />}
-                      {job.error && <p className="job-error">{job.error}</p>}
-                      {job.warnings.length > 0 && (
-                        <details className="quality">
-                          <summary>
-                            <AlertTriangle size={13} /> {job.warnings.length}{" "}
-                            quality{" "}
-                            {job.warnings.length === 1 ? "notice" : "notices"}{" "}
-                            <ChevronDown size={12} />
-                          </summary>
-                          <ul>
-                            {job.warnings.map((w, i) => (
-                              <li key={i}>{w}</li>
-                            ))}
-                          </ul>
-                        </details>
-                      )}
-                    </div>
-                    <div className="song-actions">
-                      {job.status === "completed" ? (
-                        <>
-                          <a
-                            className="download-button"
-                            href={`/api/jobs/${job.id}/download`}
-                          >
-                            <ArrowDownToLine size={16} /> Download
-                          </a>
-                          <button
-                            title="Open song folder"
-                            aria-label={`Open folder for ${job.title}`}
-                            onClick={() => void action(job.id, "open-folder")}
-                          >
-                            <FolderOpen size={18} />
-                          </button>
-                          <a
-                            className="report-link"
-                            href={`/api/jobs/${job.id}/report`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Report
-                          </a>
-                        </>
-                      ) : ["queued", "running"].includes(job.status) ? (
-                        <button
-                          disabled={job.cancel_requested}
-                          onClick={() => void action(job.id, "cancel")}
-                        >
-                          <X size={15} /> Cancel
-                        </button>
-                      ) : (
-                        <button onClick={() => void action(job.id, "retry")}>
-                          <RotateCcw size={15} /> Retry
-                        </button>
-                      )}
-                      {["completed", "failed", "cancelled"].includes(job.status) && (
-                        <button
-                          className="delete-button"
-                          aria-label={`Delete ${job.title} from disk`}
-                          title="Permanently delete song from disk"
-                          disabled={deleting !== null}
-                          onClick={() => void deleteSong(job)}
-                        >
-                          <Trash2 size={15} /> {deleting === job.id ? "Deleting…" : "Delete"}
-                        </button>
-                      )}
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </section>
-          </>}
+                )}
+              </section>
+            </>
+          )}
           <footer className="page-footer">
             <span>Made for the songs you can’t help singing.</span>
             <span>
-              UltraStar WorldParty & Deluxe{" "}
-              <span className="footer-dot">●</span> Local AI{health?.version ? ` · v${health.version}` : ""}
+              Local AI{health?.version ? ` · v${health.version}` : ""}
             </span>
           </footer>
         </div>
@@ -880,12 +1461,20 @@ function App() {
   );
 }
 
+function formatBytes(bytes: number) {
+  return bytes >= 1024 ** 3
+    ? `${(bytes / 1024 ** 3).toFixed(1)} GB`
+    : `${(bytes / 1024 ** 2).toFixed(1)} MB`;
+}
+
 function formatElapsed(seconds: number) {
   const total = Math.max(0, Math.floor(seconds));
   const hours = Math.floor(total / 3600);
   const minutes = Math.floor((total % 3600) / 60);
   const remainder = total % 60;
-  return hours ? `${hours}h ${minutes}m ${remainder}s` : `${minutes}m ${remainder}s`;
+  return hours
+    ? `${hours}h ${minutes}m ${remainder}s`
+    : `${minutes}m ${remainder}s`;
 }
 
 createRoot(document.getElementById("root")!).render(

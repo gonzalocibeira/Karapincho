@@ -34,7 +34,13 @@ MLX transcription is optional and requires a compatible macOS build. If unavaila
 2. Control-click **Setup.command**, choose **Open**, and let setup install dependencies, build the interface, and download approximately 7 GB of models.
 3. Open **Start.command**. Karapincho opens at `http://127.0.0.1:8765`; keep its Terminal window open while processing.
 
-Paste one public YouTube URL or select/drop an MP4, then choose **Create song**. Finished songs can be downloaded as ZIP files or opened in Finder. Use **Quit Karapincho** before moving its folder or deleting local data.
+Paste one public YouTube URL or select/drop an MP4. Keep **Quality** for the established transcription settings, or choose **Fast** for a smaller model that can be less accurate, then select **Create song**.
+
+Choose your karaoke **Songs** folder once. When processing finishes, review quality notices and select **Add to karaoke**. Karapincho copies the complete song directly into that folder. Existing names offer **Keep both** or explicit replacement; an export failure keeps your completed local song available for retry. ZIP download and lyric correction remain under **More options**.
+
+Recent jobs are a processing history, not a second karaoke library. **Clean up…** shows reclaimable disk space and removes local working and rebuild files after confirmation. Copies in your karaoke folder and export history are kept. Reprocessing after cleanup requires the original source again. Use **Quit Karapincho** before moving Karapincho’s folder or deleting local data.
+
+![Completed song with quality notices and direct karaoke export](docs/assets/screenshot-ready.png)
 
 If Finder will not run a launcher, open Terminal in the Karapincho folder and run `./Setup.command` or `./Start.command`. See [Troubleshooting](docs/TROUBLESHOOTING.md) for common failures.
 
@@ -87,6 +93,7 @@ AI assistance does not replace review: release claims are backed by automated te
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
 - [Validation evidence and limitations](VALIDATION.md)
 - [v0.1.0 release notes](docs/RELEASE_NOTES_v0.1.0.md)
+- [Creation workflow validation and remaining release gates](docs/WORKFLOW_VALIDATION.md)
 
 ## Development
 
