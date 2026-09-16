@@ -16,6 +16,12 @@ Keep the `Start.command` Terminal window open and reload `http://127.0.0.1:8765`
 
 Only single public video URLs are supported. Playlists, live links, authentication, and browser cookies are intentionally unsupported. Download or obtain an MP4 lawfully and use **Upload video** instead.
 
+## Processing pauses when I leave my Mac
+
+Karapincho automatically prevents macOS idle sleep while generating or rebuilding a song, and releases that protection when the job finishes, fails, or is cancelled. The display can still turn off, and the browser does not need to stay in the foreground. Your system sleep settings are not changed.
+
+Keep a MacBook's lid open and leave the `Start.command` Terminal window running. Closing the lid, choosing **Sleep**, or running critically low on battery can still suspend processing. Connect power for long queues. If you updated Karapincho while it was running, quit and reopen it after the current work finishes to load the updated worker.
+
 ## A song fails or looks inaccurate
 
 Use **View report** for the exact failed stage and quality notices. Correct lyrics and rebuild, or retry a failed/cancelled job. Automatic transcription, alignment, romanization, and pitch detection are best-effort.

@@ -12,6 +12,7 @@ import time
 
 from . import acceleration, config
 from .media import read_json, write_json
+from .power import keep_awake
 
 OUTPUTS = {
     "acquire": [],
@@ -106,6 +107,7 @@ class Worker:
             except Exception as exc:
                 self.store.update(job["id"], status="failed", error=str(exc)[-2000:])
 
+    @keep_awake()
     def execute(self, job):
         folder = config.DATA / "jobs" / job["id"]
         folder.mkdir(parents=True, exist_ok=True)
