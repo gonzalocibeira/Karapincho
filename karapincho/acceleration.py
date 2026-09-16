@@ -88,6 +88,12 @@ def configure(stage, reduced=False, backend=None):
     if platform.system() != "Darwin" or platform.machine() != "arm64":
         runtime.reason = "Apple Silicon unavailable"
         return cpu_runtime(runtime)
+    if stage == "transcribe" and backend is None and memory.total <= 8 * GIB:
+        # On the validated 8 GB profile, speculative MLX recognition repeatedly required
+        # a complete CPU retry. Start with the established medium/int8 beam-search path.
+        runtime.selected_backend = "cpu"
+        runtime.reason = "8 GB profile uses CPU transcription to avoid speculative recognition and full-stage retries"
+        return cpu_runtime(runtime)
     if desired != "videotoolbox" and limit < GIB:
         runtime.reason = "Insufficient available memory for acceleration"
         return cpu_runtime(runtime)
@@ -97,6 +103,10 @@ def configure(stage, reduced=False, backend=None):
             runtime.reason = "MPS unavailable"
             return cpu_runtime(runtime)
         runtime.backend = desired
+        if (stage == "pitch" and not reduced and memory.total <= 8 * GIB
+                and memory.available >= 2 * GIB):
+            # Keep 16-frame Viterbi boundaries; batch only neural inference.
+            runtime.batch_size = 16
         recommended = torch.mps.recommended_max_memory()
         runtime.memory_limit_bytes = min(limit, recommended)
         torch.mps.set_per_process_memory_fraction(runtime.memory_limit_bytes / recommended)
@@ -161,7 +171,7 @@ def provenance(stage):
             versions[name] = importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError:
             versions[name] = None
-    return {"revision": 3, "mode": os.environ.get("KARAPINCHO_ACCELERATION", "auto"),
+    return {"revision": 4 if stage in ("transcribe", "pitch") else 3, "mode": os.environ.get("KARAPINCHO_ACCELERATION", "auto"),
             "validated": stage in VALIDATED, "versions": versions,
             "model_revision": MLX_REVISION if stage == "transcribe" else "packaged-model",
             "whisper_model": os.environ.get("KARAPINCHO_WHISPER_MODEL", "medium") if stage == "transcribe" else None}

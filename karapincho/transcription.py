@@ -4,6 +4,7 @@
 import math
 
 from . import acceleration, config
+from .metrics import model_loading
 from .media import read_json, write_json
 
 
@@ -49,6 +50,10 @@ def transcribe_mlx(folder):
         raise QualityRetry("quality retry: no recognizable vocals on GPU")
     mx.random.seed(0)
     path = model_path()
+    # Load explicitly so model startup is measured independently of decoding.
+    module = importlib.import_module("mlx_whisper.transcribe")
+    with model_loading("whisper-mlx"):
+        module.ModelHolder.get_model(path, mx.float16)
     output = mlx_whisper.transcribe(audio, path_or_hf_repo=path, language=settings.get("language") or None,
                                    task="transcribe", word_timestamps=True, temperature=0.0,
                                    condition_on_previous_text=False, verbose=False)

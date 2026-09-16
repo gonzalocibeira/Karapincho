@@ -7,6 +7,8 @@ import subprocess
 import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Literal
+from functools import wraps
 
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
@@ -14,7 +16,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, ValidationError
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from . import __version__, config
+from . import __version__, config, handoff
 from .benchmark import Benchmarks, baseline
 from .export import download_name, update_archive_name
 from .media import youtube_url
@@ -25,7 +27,16 @@ from .worker import Worker
 
 class URLInput(BaseModel):
     url: str = Field(max_length=2048)
+    processing_mode: Literal["quality", "fast"] = "quality"
     lyric_settings: LyricSettings = Field(default_factory=LyricSettings)
+
+
+class ProcessingMode(BaseModel):
+    processing_mode: Literal["quality", "fast"]
+
+
+class ExportInput(BaseModel):
+    collision: Literal["ask", "keep_both", "replace"] = "ask"
 
 
 def create_app(run_worker=True):
@@ -88,6 +99,13 @@ def create_app(run_worker=True):
         if request.url.path.startswith("/api/"):
             response.headers["Cache-Control"] = "no-store"
         return response
+
+    def serialized(function):
+        @wraps(function)
+        def call(*args, **kwargs):
+            with handoff.locked():
+                return function(*args, **kwargs)
+        return call
 
     def store():
         return app.state.store
@@ -165,10 +183,74 @@ def create_app(run_worker=True):
         return JSONResponse({"baseline": baseline(), "latest": app.state.benchmarks.snapshot()},
                             headers={"Content-Disposition": 'attachment; filename="karapincho-benchmark.json"'})
 
+    @app.get("/api/settings")
+    def settings():
+        return {"songs_folder": store().settings().get("songs_folder")}
+
+    @app.post("/api/settings/choose-folder")
+    def choose_folder():
+        try:
+            selected = handoff.choose_folder()
+            if selected:
+                root = handoff.destination_folder(selected)
+                store().set_setting("songs_folder", str(root))
+            return {**settings(), "cancelled": selected is None}
+        except (ValueError, OSError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @app.get("/api/jobs/feed")
+    def feed(limit: int = 20, before: str | None = None):
+        result = store().feed(max(1, min(limit, 50)), before)
+        for job in [*result["active"], *result["recent"]]:
+            job["local_available"] = job["cleaned_at"] is None and song_available(job)
+            if job["status"] == "running":
+                log = config.DATA / "jobs" / job["id"] / f"{job['stage']}.log"
+                if log.is_file():
+                    with log.open("rb") as stream:
+                        stream.seek(max(0, log.stat().st_size - 2048))
+                        lines = stream.read().decode("utf-8", errors="replace").splitlines()
+                    job["activity"] = next((line for line in reversed(lines)
+                        if line.startswith(("Separated ", "Transcribed through ", "Detected pitch "))), None)
+        return result
+
+    @app.post("/api/jobs/{job_id}/export")
+    def export_song(job_id: str, body: ExportInput):
+        get_job(job_id)
+        try:
+            return handoff.export_song(store(), job_id, body.collision)
+        except handoff.Conflict as exc:
+            raise HTTPException(409, {"code": "destination_exists", "message": str(exc)}) from exc
+        except (ValueError, OSError) as exc:
+            raise HTTPException(400, f"Could not add to karaoke: {exc}") from exc
+
+    @app.get("/api/jobs/{job_id}/cleanup")
+    def cleanup_preview(job_id: str):
+        get_job(job_id)
+        return {"bytes": handoff.cleanup_size(job_id)}
+
+    @app.post("/api/jobs/{job_id}/cleanup")
+    def cleanup_job(job_id: str):
+        get_job(job_id)
+        try:
+            return handoff.cleanup(store(), job_id)
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from exc
+        except OSError as exc:
+            raise HTTPException(500, "Cleanup could not finish. Check disk permissions and retry.") from exc
+
+    @app.post("/api/jobs/{job_id}/processing-mode", status_code=202)
+    def processing_mode(job_id: str, body: ProcessingMode):
+        with handoff.locked():
+            job = get_job(job_id)
+            try:
+                return store().rebuild(job_id, job["lyric_settings"], body.processing_mode)
+            except ValueError as exc:
+                raise HTTPException(409, str(exc)) from exc
+
     @app.get("/api/jobs/{job_id}")
     def job(job_id: str):
         result = get_job(job_id)
-        return ready_job(job_id) if result["status"] == "completed" else result
+        return ready_job(job_id) if result["status"] == "completed" and result["cleaned_at"] is None else result
 
     @app.post("/api/jobs/url", status_code=202)
     def submit_url(body: URLInput):
@@ -176,10 +258,12 @@ def create_app(run_worker=True):
             url = youtube_url(body.url)
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from exc
-        return store().create("youtube", url, "YouTube song", lyric_settings=body.lyric_settings.model_dump())
+        return store().create("youtube", url, "YouTube song", lyric_settings=body.lyric_settings.model_dump(),
+                              processing_mode=body.processing_mode)
 
     @app.post("/api/jobs/upload", status_code=202)
-    async def upload(file: UploadFile = File(...), lyric_settings: str = Form("{}")):
+    async def upload(file: UploadFile = File(...), lyric_settings: str = Form("{}"),
+                     processing_mode: Literal["quality", "fast"] = Form("quality")):
         try:
             settings = LyricSettings.model_validate_json(lyric_settings).model_dump()
         except ValidationError as exc:
@@ -200,7 +284,7 @@ def create_app(run_worker=True):
             if not size:
                 raise HTTPException(422, "The MP4 file is empty")
             return store().create(
-                "file", "input.mp4", Path(file.filename.replace("\\", "/")).stem[:200], job_id, lyric_settings=settings
+                "file", "input.mp4", Path(file.filename.replace("\\", "/")).stem[:200], job_id, lyric_settings=settings, processing_mode=processing_mode
             )
         except BaseException:
             __import__("shutil").rmtree(folder, ignore_errors=True)
@@ -217,14 +301,18 @@ def create_app(run_worker=True):
         return store().get(job_id)
 
     @app.post("/api/jobs/{job_id}/retry")
+    @serialized
     def retry(job_id: str):
         job = get_job(job_id)
+        if job["cleaned_at"] is not None:
+            raise HTTPException(409, "Working files were cleaned up. Create a new job.")
         if job["status"] not in ("failed", "cancelled"):
             raise HTTPException(409, "Only failed or cancelled songs can be retried")
         store().update(job_id, status="queued", cancel_requested=0, error=None)
         return store().get(job_id)
 
     @app.post("/api/jobs/{job_id}/rebuild", status_code=202)
+    @serialized
     def rebuild(job_id: str, body: LyricSettings):
         get_job(job_id)
         try:
@@ -233,6 +321,7 @@ def create_app(run_worker=True):
             raise HTTPException(409, str(exc)) from exc
 
     @app.delete("/api/jobs/{job_id}")
+    @serialized
     def delete_song(job_id: str):
         get_job(job_id)
         try:

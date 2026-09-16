@@ -1174,3 +1174,94 @@ h2 {
   .sidebar .brand { flex-basis: 100%; margin-bottom: 6px; }
   .sidebar .nav-item { display: flex; width: auto; }
 }
+
+/* Creation workflow */
+.workflow-shell .content { max-width: 1180px; }
+.workflow-shell .page-heading { margin-bottom: 28px; }
+.workflow-shell .page-heading h1 { max-width: 620px; }
+.workflow-shell .compact-heading { margin: 0 0 24px; }
+.workflow-shell .compact-heading h1 { font-size: 30px; line-height: 1.2; }
+.workflow-shell .compact-heading .eyebrow { margin-bottom: 10px; }
+.workflow-shell .card-heading { padding-bottom: 16px; }
+.workflow-shell .creator-card form { padding-bottom: 20px; }
+.workflow-shell .url-area, .workflow-shell .file-area { padding-bottom: 8px; }
+.workflow-shell .url-input { width: 100%; }
+.secondary-nav { margin-top: auto; padding-top: 32px; }
+.workflow-shell .sidebar-bottom { margin-top: 28px; }
+.processing-options { display: flex; flex-wrap: wrap; gap: 10px; padding: 0; margin: 14px 0 18px; border: 0; }
+.processing-options legend { font-size: 12px; font-weight: 650; padding: 0 0 8px; color: var(--muted); }
+.processing-options label { display: flex; flex: 1 1 210px; gap: 10px; align-items: center; padding: 13px 16px; border: 1px solid #deded3; border-radius: 9px; cursor: pointer; }
+.processing-options label.selected { border-color: #61704f; background: #edf0e6; }
+.processing-options input { accent-color: var(--sage); width: 16px; height: 16px; flex-shrink: 0; }
+.processing-options strong, .processing-options small { display: block; }
+.processing-options small { margin-top: 4px; font-size: 12px; color: #51594b; line-height: 1.5; }
+.create-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; }
+.create-row p { font-size: 12px; color: #51594b; }
+.section-heading { margin: 28px 0 14px; }
+.section-heading h2 { margin: 0; font-size: 19px; }
+.section-heading h2 span { font-size: 12px; border-radius: 4px; padding: 2px 7px; background: #e5e9dc; }
+.section-heading p { margin: 6px 0 0; color: #51594b; font-size: 13px; }
+.destination-card { display: flex; gap: 14px; align-items: center; padding: 20px; margin: 26px 0; background: #edf0e6; border: 1px solid #dce2d1; border-radius: 10px; }
+.destination-card > div { flex: 1; min-width: 0; }
+.destination-card h2 { margin: 0; font-size: 14px; }
+.destination-card p { font-size: 12px; line-height: 1.6; margin: 5px 0 0; overflow-wrap: anywhere; color: #51594b; }
+.destination-card button, .job-buttons > button:not(.create-button), .secondary-actions button, .mode-rebuild button, .inline-choice button:not(.create-button), .load-more { border: 1px solid #cbd1c2; background: #fafbf7; padding: 9px 12px; border-radius: 6px; min-height: 40px; }
+.workflow-shell .song-card { align-items: flex-start; padding: 20px; }
+.workflow-shell .song-body { min-width: 0; }
+.workflow-shell .song-heading { flex-wrap: wrap; gap: 8px; }
+.workflow-shell .song-heading h3 { overflow-wrap: anywhere; }
+.active-job { border-left: 3px solid #637551; }
+.job-buttons, .secondary-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+.job-buttons button, .secondary-actions a, .secondary-actions button { display: inline-flex; gap: 7px; align-items: center; }
+.secondary-actions a { text-decoration: underline; text-underline-offset: 3px; padding: 8px 0; font-size: 12px; }
+.job-options { margin-top: 14px; border-top: 1px solid #e6e7df; padding-top: 12px; }
+.job-options > summary { color: #51594b; font-size: 12px; cursor: pointer; width: fit-content; }
+.job-options .lyric-options { margin-top: 16px; }
+.job-options .lyric-options form { padding: 10px 0 0; }
+.job-options .mode-rebuild { font-size: 12px; line-height: 1.8; color: #51594b; }
+.export-path { font-size: 12px; color: #51594b; line-height: 1.6; overflow-wrap: anywhere; }
+.export-path span { color: #3b4c35; }
+.success-note { color: #36532b; font-size: 13px; }
+.inline-choice { margin: 14px 0; padding: 14px; background: #f5f1e5; border: 1px solid #ddd5bd; border-radius: 8px; }
+.inline-choice p { font-size: 13px; line-height: 1.6; margin: 0 0 12px; }
+.inline-choice button { margin: 0 8px 8px 0; }
+.recent-empty { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 26px 16px; border: 1px dashed #d9ddcf; border-radius: 10px; color: #51594b; }
+.recent-empty p { font-size: 13px; }
+.load-more { margin-top: 18px; }
+.stage-activity { font-size: 12px; color: #51594b; }
+@media (max-width: 900px) {
+  .secondary-nav { margin-top: 0; padding-top: 0; }
+}
+@media (max-width: 600px) {
+  .workflow-shell .compact-heading h1 { font-size: 26px; }
+  .create-row { align-items: stretch; flex-direction: column; gap: 6px; }
+  .create-row p { margin: 0 0 8px; }
+  .destination-card { flex-wrap: wrap; padding: 16px; }
+  .destination-card button { width: 100%; }
+  .workflow-shell .song-card { padding: 16px; gap: 10px; }
+  .workflow-shell .song-icon { display: none; }
+  .job-buttons .create-button { width: 100%; }
+  .processing-options label { flex-basis: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+}
+.workflow-shell .status.running { color: #775324; }
+.workflow-shell .status.queued, .workflow-shell .status.cancelled { color: #515d43; }
+.workflow-shell .quality summary { color: #75613b; }
+.workflow-shell .create-button { background: #a34e2b; color: #fffaf3; }
+.workflow-shell .create-button:hover:not(:disabled) { background: #883d20; }
+.workflow-shell .status.completed { color: #4c6137; }
+.workflow-shell .card-heading { padding: 18px 24px 12px; }
+.workflow-shell .creator-card form { padding: 0 24px 18px; }
+.workflow-shell .source-tabs { margin-bottom: 16px; }
+.workflow-shell .processing-options { margin: 8px 0 12px; }
+.workflow-shell .create-row { margin-top: 12px; }
+@media (max-width: 760px) {
+  .workflow-shell .sidebar { gap: 6px; }
+  .workflow-shell .secondary-nav { display: flex; gap: 4px; }
+  .workflow-shell .sidebar .nav-item { font-size: 11px; gap: 5px; padding: 8px; height: 38px; }
+  .workflow-shell .sidebar .nav-item svg { width: 15px; height: 15px; }
+  .workflow-shell .creator-card form { padding: 0 18px 18px; }
+  .workflow-shell .card-heading { padding: 18px; }
+}

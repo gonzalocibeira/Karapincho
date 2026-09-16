@@ -6,6 +6,7 @@ import math
 import os
 
 from . import acceleration, config
+from .metrics import model_loading
 from .models import japanese_alignment_path, spanish_alignment_path, whisper_path
 from .media import read_json, write_json
 
@@ -35,7 +36,8 @@ def separate(folder, low_memory=False):
 
     torch.set_num_threads(4)
     device = acceleration.CURRENT.backend
-    model = get_model("htdemucs").to(device).eval()
+    with model_loading("demucs"):
+        model = get_model("htdemucs").to(device).eval()
     bounded = low_memory or acceleration.CURRENT.reduced
     length = 10 if bounded else 20
     with sf.SoundFile(folder / "original.wav") as source:
@@ -73,22 +75,25 @@ def separate(folder, low_memory=False):
 
 
 def transcribe_audio(folder, low_memory=False):
-    if acceleration.CURRENT.backend == "mlx":
+    job = read_json(folder / "job.json") if (folder / "job.json").exists() else {}
+    fast = job.get("processing_mode") == "fast"
+    if acceleration.CURRENT.backend == "mlx" and not fast:
         from .transcription import transcribe_mlx
         return transcribe_mlx(folder)
     import soundfile as sf
     from faster_whisper import WhisperModel
 
-    model_name = "small" if low_memory else os.environ.get("KARAPINCHO_WHISPER_MODEL", "medium")
+    model_name = "small" if low_memory or fast else os.environ.get("KARAPINCHO_WHISPER_MODEL", "medium")
     model_source = str(whisper_path(model_name)) if model_name in ("medium", "small") else model_name
-    model = WhisperModel(
-        model_source,
-        device="cpu",
-        compute_type="int8",
-        cpu_threads=4,
-        num_workers=1,
-        download_root=str(config.DATA / "models" / "whisper"),
-    )
+    with model_loading("whisper"):
+        model = WhisperModel(
+            model_source,
+            device="cpu",
+            compute_type="int8",
+            cpu_threads=4,
+            num_workers=1,
+            download_root=str(config.DATA / "models" / "whisper"),
+        )
     settings = read_json(folder / "job.json").get("lyric_settings", {}) if (folder / "job.json").exists() else {}
     duration = sf.info(folder / "vocals.wav").duration
     segments, warnings = [], []
@@ -98,7 +103,7 @@ def transcribe_audio(folder, low_memory=False):
             audio,
             language=settings.get("language") or None,
             task="transcribe",
-            beam_size=5,
+            beam_size=1 if fast else 5,
             word_timestamps=True,
             vad_filter=False,
             condition_on_previous_text=False,
@@ -176,7 +181,9 @@ def transcribe_audio(folder, low_memory=False):
         raise ValueError(
             "No intelligible vocals were detected. An instrumental-only video cannot produce a lyric chart."
         )
-    if low_memory:
+    if fast:
+        warnings.append("Fast mode uses a smaller transcription model; lyrics may be less accurate.")
+    elif low_memory:
         warnings.append(
             "Used the smaller Whisper model after a memory failure; transcription may be less accurate."
         )
@@ -227,16 +234,17 @@ def align(folder, low_memory=False):
     for language in languages:
         model = None
         try:
-            model, metadata = load_align_model(
-                language,
-                acceleration.CURRENT.backend,
-                model_name=(
-                    str(japanese_alignment_path()) if language == "ja"
-                    else str(spanish_alignment_path()) if language == "es"
-                    else None
-                ),
-                model_dir=str(config.DATA / "models" / "alignment"),
-            )
+            with model_loading(f"alignment/{language}"):
+                model, metadata = load_align_model(
+                    language,
+                    acceleration.CURRENT.backend,
+                    model_name=(
+                        str(japanese_alignment_path()) if language == "ja"
+                        else str(spanish_alignment_path()) if language == "es"
+                        else None
+                    ),
+                    model_dir=str(config.DATA / "models" / "alignment"),
+                )
         except Exception as exc:
             if (acceleration.failure_kind(f"{type(exc).__name__}: {exc}", acceleration.CURRENT.backend) != "application"
                     or (acceleration.CURRENT.backend != "cpu" and isinstance(exc, RuntimeError))):
@@ -354,6 +362,23 @@ def align(folder, low_memory=False):
             "source": result["source"]}
 
 
+def pitch_energy(audio, count):
+    """Same 320-sample RMS windows, evaluated in a vectorized view."""
+    import numpy as np
+    energies = np.zeros(count, dtype=np.float32)
+    if not len(audio) or not count:
+        return energies
+    energies[0] = np.sqrt(np.mean(audio[:160] ** 2))
+    full = min(count - 1, max(0, (len(audio) - 320) // 160 + 1))
+    if full:
+        windows = np.lib.stride_tricks.sliding_window_view(audio, 320)[::160][:full]
+        energies[1:full + 1] = np.sqrt(np.mean(windows ** 2, axis=1))
+    for index in range(full + 1, count):
+        sample = audio[max(0, index * 160 - 160):min(len(audio), index * 160 + 160)]
+        energies[index] = np.sqrt(np.mean(sample ** 2)) if len(sample) else 0
+    return energies
+
+
 def pitch(folder, low_memory=False):
     import numpy as np
     import soundfile as sf
@@ -362,6 +387,8 @@ def pitch(folder, low_memory=False):
 
     torch.set_num_threads(4)
     duration = sf.info(folder / "vocals.wav").duration
+    with model_loading("torchcrepe"):
+        torchcrepe.load.model(acceleration.CURRENT.backend, "full")
     tracks = {"time": [], "hz": [], "confidence": [], "energy": []}
     for start in range(0, math.ceil(duration), 15):
         left = max(0, start - 0.1)
@@ -385,20 +412,14 @@ def pitch(folder, low_memory=False):
             confidence = torchcrepe.filter.median(confidence, 3)
             f0 = torchcrepe.filter.median(f0, 5)
         values, conf = f0[0].numpy(), confidence[0].numpy()
-        for index in range(len(values)):
-            timestamp = left + index / 100
-            if not start <= timestamp < min(start + 15, duration):
-                continue
-            sample = audio[max(0, index * 160 - 160) : min(len(audio), index * 160 + 160)]
-            energy = float(np.sqrt(np.mean(sample**2))) if len(sample) else 0
-            tracks["time"].append(timestamp)
-            tracks["hz"].append(float(values[index]) if np.isfinite(values[index]) else 0)
-            # Spectral-average loudness can mistake sustained vowels/tones for silence.
-            # Use waveform RMS (-60 dBFS) together with the model's voicing confidence.
-            tracks["confidence"].append(
-                float(conf[index]) if energy > 0.001 and np.isfinite(conf[index]) else 0
-            )
-            tracks["energy"].append(energy)
+        timestamps = left + np.arange(len(values)) / 100
+        keep = (timestamps >= start) & (timestamps < min(start + 15, duration))
+        energy = pitch_energy(audio, len(values))
+        tracks["time"].extend(timestamps[keep].tolist())
+        tracks["hz"].extend(np.where(np.isfinite(values), values, 0)[keep].tolist())
+        # Retain the same waveform RMS and voicing policy, including sustained vowels.
+        tracks["confidence"].extend(np.where((energy > 0.001) & np.isfinite(conf), conf, 0)[keep].tolist())
+        tracks["energy"].extend(energy[keep].tolist())
         print(f"Detected pitch {min(start + 15, duration) / duration:.0%}", flush=True)
     np.savez_compressed(folder / "pitch.npz", **{k: np.asarray(v) for k, v in tracks.items()})
     return {"model": "torchcrepe/full", "warnings": []}

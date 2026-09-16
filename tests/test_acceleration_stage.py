@@ -42,7 +42,7 @@ def test_success_publishes_outputs_and_provenance(tmp_path, monkeypatch):
     assert (tmp_path / 'pitch.npz').read_bytes() == b'completed'
     report = read_json(tmp_path / 'pitch.json')
     assert report['runtime']['backend'] == 'cpu'
-    assert report['provenance']['revision'] == 3
+    assert report['provenance']['revision'] == 4
     assert not list(tmp_path.glob('.attempt-*'))
     acceleration.CURRENT = acceleration.Runtime()
 

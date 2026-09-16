@@ -14,6 +14,7 @@ import traceback
 import zipfile
 
 from . import acceleration, config
+from .metrics import MODEL_LOADS
 from .export import download_name
 from .media import acquire, prepare, read_json, write_json
 
@@ -74,6 +75,9 @@ def main():
         # Keep its children on CPU until the app is restarted with the new worker.
         legacy_worker = args.backend is None and os.environ.get("KARAPINCHO_WORKER_PROTOCOL") != "gpu-v1"
         backend = "cpu" if legacy_worker else args.backend
+        job = read_json(original_folder / "job.json") if (original_folder / "job.json").exists() else {}
+        if args.stage == "transcribe" and job.get("processing_mode") == "fast":
+            backend = "cpu"
         runtime = acceleration.configure(args.stage, args.reduced or args.low_memory, backend)
         if legacy_worker and os.environ.get("KARAPINCHO_ACCELERATION", "auto") == "auto":
             runtime.reason = "Restart the app to enable automatic acceleration with the upgraded worker"
@@ -109,6 +113,8 @@ def main():
             result = create_chart(args.folder)
         else:
             result = package(args.folder)
+        result["model_load_seconds"] = dict(MODEL_LOADS)
+        result["processing_mode"] = job.get("processing_mode", "quality")
         result["runtime"] = runtime.report()
         result["provenance"] = acceleration.provenance(args.stage)
         if scratch:
@@ -129,6 +135,9 @@ def main():
     except Exception as exc:
         write_json(original_folder / "stage-error.json", {"message": str(exc), "type": type(exc).__name__,
                    "backend": acceleration.CURRENT.backend,
+                   "model_load_seconds": dict(MODEL_LOADS),
+                   "peak_rss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                                        / (1024**2 if sys.platform == "darwin" else 1024), 1),
                    "runtime": asdict(acceleration.CURRENT),
                    "kind": acceleration.failure_kind(f"{type(exc).__name__}: {exc}", acceleration.CURRENT.backend),
                    "elapsed_seconds": round(time.monotonic() - start, 2)})
