@@ -36,6 +36,8 @@ MLX transcription is optional and requires a compatible macOS build. If unavaila
 
 Paste one public YouTube URL or select/drop an MP4. Keep **Quality** for the established transcription settings, or choose **Fast** for a smaller model that can be less accurate, then select **Create song**.
 
+To queue several YouTube songs at once, check **Add multiple songs**, paste one public video link per line (up to 50), and select **Queue**. Songs queue in the order entered using the selected processing mode. All links are checked before any songs are added; if a link is invalid, correct it and submit the list again. Song details and lyrics are detected separately for each song.
+
 Karapincho keeps your Mac awake while processing songs, including queued songs and lyric rebuilds. The screen can turn off and you can use other apps. Normal idle sleep resumes when processing finishes. Keep a MacBook's lid open and leave Karapincho's Terminal window running; closing the lid or choosing **Sleep** can still pause processing.
 
 Choose your karaoke **Songs** folder once. When processing finishes, review quality notices and select **Add to karaoke**. Karapincho copies the complete song directly into that folder. Existing names offer **Keep both** or explicit replacement; an export failure keeps your completed local song available for retry. ZIP download and lyric correction remain under **More options**.
@@ -58,7 +60,7 @@ Artist - Song/
 
 The MP3 keeps the original vocals. Separation is used only for analysis. Spanish and English remain in their original language; Japanese is aligned in its original script and exported as ASCII Hepburn romaji. Exports target the classic UltraStar format used by UltraStar Deluxe and WorldParty.
 
-Inputs are limited to one song, 20 minutes, and 2 GB. YouTube may reject downloads because of access restrictions or anti-bot checks; Karapincho never asks for browser cookies or login. Use an MP4 instead.
+Each video is limited to one song, 20 minutes, and 2 GB. YouTube may reject downloads because of access restrictions or anti-bot checks; Karapincho never asks for browser cookies or login. Use an MP4 instead.
 
 ## Privacy and responsible use
 

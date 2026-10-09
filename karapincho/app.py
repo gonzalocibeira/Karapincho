@@ -35,6 +35,11 @@ class ProcessingMode(BaseModel):
     processing_mode: Literal["quality", "fast"]
 
 
+class URLsInput(BaseModel):
+    urls: list[str] = Field(min_length=1, max_length=50)
+    processing_mode: Literal["quality", "fast"] = "quality"
+
+
 class ExportInput(BaseModel):
     collision: Literal["ask", "keep_both", "replace"] = "ask"
 
@@ -260,6 +265,20 @@ def create_app(run_worker=True):
             raise HTTPException(422, str(exc)) from exc
         return store().create("youtube", url, "YouTube song", lyric_settings=body.lyric_settings.model_dump(),
                               processing_mode=body.processing_mode)
+
+    @app.post("/api/jobs/urls", status_code=202)
+    def submit_urls(body: URLsInput):
+        urls = []
+        for index, value in enumerate(body.urls, start=1):
+            try:
+                if len(value) > 2048:
+                    raise ValueError("Link is too long")
+                urls.append(youtube_url(value.strip()))
+            except ValueError as exc:
+                raise HTTPException(422, f"Link {index}: {exc}. No songs were added.") from exc
+        jobs = store()
+        return {"jobs": [jobs.create("youtube", url, "YouTube song", processing_mode=body.processing_mode)
+                         for url in urls]}
 
     @app.post("/api/jobs/upload", status_code=202)
     async def upload(file: UploadFile = File(...), lyric_settings: str = Form("{}"),
