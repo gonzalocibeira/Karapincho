@@ -61,6 +61,34 @@ def test_job_lifecycle_and_recovery(client):
     assert client.get(f"/api/jobs/{job_id}/download").status_code == 409
 
 
+def test_batch_urls_queue_in_order_with_selected_mode(client):
+    response = client.post("/api/jobs/urls", json={
+        "urls": [" https://youtu.be/abcdefghijk ", "https://youtube.com/shorts/lmnopqrstuv"],
+        "processing_mode": "fast",
+    })
+    assert response.status_code == 202
+    jobs = response.json()["jobs"]
+    assert [job["source"] for job in jobs] == [
+        "https://www.youtube.com/watch?v=abcdefghijk",
+        "https://www.youtube.com/watch?v=lmnopqrstuv",
+    ]
+    assert all(job["status"] == "queued" and job["processing_mode"] == "fast" for job in jobs)
+    assert all(job["lyric_settings"] == {} for job in jobs)
+    assert [job["id"] for job in Store().feed()["active"]] == [job["id"] for job in jobs]
+    assert Store().next()["id"] == jobs[0]["id"]
+
+
+@pytest.mark.parametrize("urls", [[], ["https://youtu.be/abcdefghijk"] * 51,
+                                  ["https://youtu.be/abcdefghijk", "https://example.com/song"],
+                                  ["x" * 2049]])
+def test_batch_rejects_invalid_input_without_adding_songs(client, urls):
+    response = client.post("/api/jobs/urls", json={"urls": urls})
+    assert response.status_code == 422
+    if len(urls) == 2:
+        assert "Link 2" in response.json()["detail"]
+    assert Store().all() == []
+
+
 def test_upload_empty_wrong_extension_and_size(client, monkeypatch):
     assert client.post("/api/jobs/upload", files={"file": ("x.mp4", b"")}).status_code == 422
     assert client.post("/api/jobs/upload", files={"file": ("x.txt", b"hi")}).status_code == 422

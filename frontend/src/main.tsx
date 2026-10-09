@@ -683,6 +683,10 @@ function App() {
     "quality",
   );
   const [url, setUrl] = useState("");
+  const [multiple, setMultiple] = useState(false);
+  const [bulkUrls, setBulkUrls] = useState("");
+  const links = bulkUrls.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const isBatch = mode === "youtube" && multiple;
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -912,6 +916,18 @@ function App() {
     setUploadProgress(0);
     mutationVersion.current += 1;
     try {
+      if (isBatch) {
+        const result = await post("/api/jobs/urls", {
+          urls: links,
+          processing_mode: processingMode,
+        });
+        const added: Job[] = result.jobs;
+        const ids = new Set(added.map((job) => job.id));
+        setJobs((current) => [...added, ...current.filter((job) => !ids.has(job.id))]);
+        refreshNow.current();
+        setBulkUrls("");
+        return;
+      }
       const job =
         mode === "youtube"
           ? await post("/api/jobs/url", {
@@ -1134,7 +1150,7 @@ function App() {
                   </button>
                   <h3>From video to karaoke folder.</h3>
                   <p>
-                    Paste one public YouTube link or upload an MP4. Karapincho
+                    Paste public YouTube links or upload an MP4. Karapincho
                     isolates vocals for analysis, syncs lyrics and melody, and
                     builds an UltraStar package with the original vocals.
                   </p>
@@ -1157,7 +1173,7 @@ function App() {
                   </span>
                   <div>
                     <h2>Create a song</h2>
-                    <p>One video. Ready for your next singalong.</p>
+                    <p>Queue videos for your next singalong.</p>
                   </div>
                 </div>
                 <form onSubmit={submit}>
@@ -1217,20 +1233,53 @@ function App() {
                   >
                     {mode === "youtube" ? (
                       <div className="url-area">
-                        <label htmlFor="youtube-url">YOUTUBE VIDEO URL</label>
-                        <div className="url-input">
-                          <Link2 size={20} />
+                        <label className="batch-toggle">
                           <input
-                            id="youtube-url"
-                            type="url"
-                            placeholder="https://www.youtube.com/watch?v=…"
-                            value={url}
-                            onChange={(e) => setUrl(e.target.value)}
-                            required
+                            type="checkbox"
+                            checked={multiple}
+                            onChange={(e) => setMultiple(e.target.checked)}
                             disabled={busy}
-                            autoComplete="off"
                           />
-                        </div>
+                          Add multiple songs
+                        </label>
+                        {multiple ? (
+                          <>
+                            <label htmlFor="youtube-urls">YOUTUBE VIDEO URLS</label>
+                            <textarea
+                              id="youtube-urls"
+                              className="batch-urls"
+                              placeholder={"https://www.youtube.com/watch?v=…\nhttps://youtu.be/…"}
+                              value={bulkUrls}
+                              onChange={(e) => setBulkUrls(e.target.value)}
+                              rows={5}
+                              required
+                              disabled={busy}
+                              autoComplete="off"
+                              aria-describedby="batch-hint"
+                            />
+                            <p id="batch-hint" className="input-hint">
+                              One link per line, up to 50. Songs queue in this order.
+                              {links.length > 0 && ` ${links.length} ${links.length === 1 ? "song" : "songs"} entered.`}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <label htmlFor="youtube-url">YOUTUBE VIDEO URL</label>
+                            <div className="url-input">
+                              <Link2 size={20} />
+                              <input
+                                id="youtube-url"
+                                type="url"
+                                placeholder="https://www.youtube.com/watch?v=…"
+                                value={url}
+                                onChange={(e) => setUrl(e.target.value)}
+                                required
+                                disabled={busy}
+                                autoComplete="off"
+                              />
+                            </div>
+                          </>
+                        )}
                         <p className="input-hint">
                           Download blocked?{" "}
                           <button type="button" onClick={() => setMode("file")}>
@@ -1312,14 +1361,18 @@ function App() {
                       </span>
                     </label>
                   </fieldset>
-                  <details className="lyric-options">
-                    <summary>Song details and lyrics (optional)</summary>
-                    <LyricFields
-                      value={lyricSettings}
-                      onChange={setLyricSettings}
-                      disabled={busy}
-                    />
-                  </details>
+                  {isBatch ? (
+                    <p className="input-hint">Song details and lyrics are detected separately for each song.</p>
+                  ) : (
+                    <details className="lyric-options">
+                      <summary>Song details and lyrics (optional)</summary>
+                      <LyricFields
+                        value={lyricSettings}
+                        onChange={setLyricSettings}
+                        disabled={busy}
+                      />
+                    </details>
+                  )}
                   <div className="create-row">
                     <p>Local processing · original vocals kept</p>
                     <button
@@ -1328,7 +1381,7 @@ function App() {
                         busy ||
                         !health?.ready ||
                         !!connection ||
-                        (mode === "youtube" ? !url.trim() : !file)
+                        (isBatch ? links.length === 0 || links.length > 50 : mode === "youtube" ? !url.trim() : !file)
                       }
                     >
                       {busy ? (
@@ -1339,8 +1392,8 @@ function App() {
                       {busy
                         ? mode === "file"
                           ? `Uploading ${uploadProgress}%`
-                          : "Adding song…"
-                        : "Create song"}
+                          : isBatch ? "Adding songs…" : "Adding song…"
+                        : isBatch ? `Queue ${links.length} ${links.length === 1 ? "song" : "songs"}` : "Create song"}
                       <ArrowRight size={17} />
                     </button>
                   </div>

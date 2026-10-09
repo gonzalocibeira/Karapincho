@@ -251,6 +251,56 @@ test("Fast creation shows active progress and queue with usable source tabs", as
   ).toEqual([]);
 });
 
+test("multiple YouTube songs can be corrected and queued together", async ({ page }) => {
+  let active: any[] = [];
+  let attempts = 0;
+  await page.route("**/api/jobs/feed?*", (route) =>
+    route.fulfill({ json: { active, recent: [], next: null } }),
+  );
+  await page.route("**/api/jobs/urls", async (route) => {
+    const body = route.request().postDataJSON();
+    expect(body.processing_mode).toBe("fast");
+    expect(body.lyric_settings).toBeUndefined();
+    attempts += 1;
+    if (attempts === 1) {
+      await route.fulfill({ status: 422, json: { detail: "Link 2: Invalid YouTube link. No songs were added." } });
+      return;
+    }
+    expect(body.urls).toEqual(["https://youtu.be/abcdefghijk", "https://youtu.be/lmnopqrstuv"]);
+    active = body.urls.map((source: string, index: number) => ({
+      ...completed,
+      id: String(index + 1).repeat(32),
+      title: `Queued song ${index + 1}`,
+      source,
+      source_type: "youtube",
+      status: "queued",
+      stage: "acquire",
+      progress: 0,
+      processing_mode: "fast",
+      created: completed.created + index,
+    }));
+    await route.fulfill({ status: 202, json: { jobs: active } });
+  });
+  await page.getByLabel("Add multiple songs").check();
+  const input = page.getByLabel("YOUTUBE VIDEO URLS", { exact: true });
+  await expect(page.getByRole("button", { name: "Queue 0 songs" })).toBeDisabled();
+  await expect(page.getByText("Song details and lyrics (optional)")).toHaveCount(0);
+  await input.fill("https://youtu.be/abcdefghijk\ninvalid");
+  await page.getByRole("radio", { name: /Fast/ }).check();
+  await page.getByRole("button", { name: "Queue 2 songs" }).click();
+  await expect(page.getByText(/Link 2: Invalid YouTube link/)).toBeVisible();
+  await expect(input).toHaveValue("https://youtu.be/abcdefghijk\ninvalid");
+  await input.fill("https://youtu.be/abcdefghijk\n\n https://youtu.be/lmnopqrstuv \n");
+  await page.getByRole("button", { name: "Queue 2 songs" }).click();
+  await expect(page.getByRole("heading", { name: "In progress 2" })).toBeVisible();
+  await expect(page.getByText("Queued song 1", { exact: true })).toBeVisible();
+  await expect(page.getByText("Queued song 2", { exact: true })).toBeVisible();
+  await expect(input).toHaveValue("");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+  await page.getByLabel("Add multiple songs").uncheck();
+  await expect(page.getByLabel("YOUTUBE VIDEO URL", { exact: true })).toBeVisible();
+});
+
 test("folder picker cancellation does not export or show success", async ({
   page,
 }) => {
