@@ -251,27 +251,29 @@ test("Fast creation shows active progress and queue with usable source tabs", as
   ).toEqual([]);
 });
 
-test("multiple YouTube songs can be corrected and queued together", async ({ page }) => {
+test("multiple songs are uploaded from CSV with metadata and can be corrected", async ({ page }) => {
   let active: any[] = [];
   let attempts = 0;
   await page.route("**/api/jobs/feed?*", (route) =>
     route.fulfill({ json: { active, recent: [], next: null } }),
   );
-  await page.route("**/api/jobs/urls", async (route) => {
-    const body = route.request().postDataJSON();
-    expect(body.processing_mode).toBe("fast");
-    expect(body.lyric_settings).toBeUndefined();
+  await page.route("**/api/jobs/csv", async (route) => {
+    const body = route.request().postDataBuffer()!.toString();
+    expect(route.request().headers()["content-type"]).toContain("multipart/form-data");
+    expect(body).toContain('name="processing_mode"\r\n\r\nfast');
+    expect(body).toContain('filename="songs.csv"');
+    expect(body).toContain("url,artist,song_name");
     attempts += 1;
     if (attempts === 1) {
-      await route.fulfill({ status: 422, json: { detail: "Link 2: Invalid YouTube link. No songs were added." } });
+      await route.fulfill({ status: 422, json: { detail: "CSV row 3: Invalid YouTube link. No songs were added." } });
       return;
     }
-    expect(body.urls).toEqual(["https://youtu.be/abcdefghijk", "https://youtu.be/lmnopqrstuv"]);
-    active = body.urls.map((source: string, index: number) => ({
+    expect(body).toContain('https://youtu.be/abcdefghijk,"Artist, Jr.",First song');
+    expect(body).toContain("https://youtu.be/lmnopqrstuv,Artista,Canción");
+    active = ["First song", "Canción"].map((title, index) => ({
       ...completed,
       id: String(index + 1).repeat(32),
-      title: `Queued song ${index + 1}`,
-      source,
+      title,
       source_type: "youtube",
       status: "queued",
       stage: "acquire",
@@ -282,20 +284,24 @@ test("multiple YouTube songs can be corrected and queued together", async ({ pag
     await route.fulfill({ status: 202, json: { jobs: active } });
   });
   await page.getByLabel("Add multiple songs").check();
-  const input = page.getByLabel("YOUTUBE VIDEO URLS", { exact: true });
-  await expect(page.getByRole("button", { name: "Queue 0 songs" })).toBeDisabled();
+  const input = page.getByLabel("SONGS CSV FILE", { exact: true });
+  const queue = page.getByRole("button", { name: "Queue songs from CSV" });
+  await expect(queue).toBeDisabled();
   await expect(page.getByText("Song details and lyrics (optional)")).toHaveCount(0);
-  await input.fill("https://youtu.be/abcdefghijk\ninvalid");
+  await expect(page.getByRole("textbox")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Download CSV template" })).toHaveAttribute("download", "songs-template.csv");
+  await input.setInputFiles({ name: "songs.csv", mimeType: "text/csv", buffer: Buffer.from("url,artist,song_name\nhttps://youtu.be/abcdefghijk,Artist,First song\ninvalid,,\n") });
   await page.getByRole("radio", { name: /Fast/ }).check();
-  await page.getByRole("button", { name: "Queue 2 songs" }).click();
-  await expect(page.getByText(/Link 2: Invalid YouTube link/)).toBeVisible();
-  await expect(input).toHaveValue("https://youtu.be/abcdefghijk\ninvalid");
-  await input.fill("https://youtu.be/abcdefghijk\n\n https://youtu.be/lmnopqrstuv \n");
-  await page.getByRole("button", { name: "Queue 2 songs" }).click();
+  await queue.click();
+  await expect(page.getByText(/CSV row 3: Invalid YouTube link/)).toBeVisible();
+  await expect(input).not.toHaveValue("");
+  await input.setInputFiles({ name: "songs.csv", mimeType: "text/csv", buffer: Buffer.from('url,artist,song_name\nhttps://youtu.be/abcdefghijk,"Artist, Jr.",First song\nhttps://youtu.be/lmnopqrstuv,Artista,Canción\n') });
+  await queue.click();
   await expect(page.getByRole("heading", { name: "In progress 2" })).toBeVisible();
-  await expect(page.getByText("Queued song 1", { exact: true })).toBeVisible();
-  await expect(page.getByText("Queued song 2", { exact: true })).toBeVisible();
+  await expect(page.getByText("First song", { exact: true })).toBeVisible();
+  await expect(page.getByText("Canción", { exact: true })).toBeVisible();
   await expect(input).toHaveValue("");
+  await expect(queue).toBeDisabled();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
   await page.getByLabel("Add multiple songs").uncheck();
   await expect(page.getByLabel("YOUTUBE VIDEO URL", { exact: true })).toBeVisible();
@@ -404,4 +410,40 @@ test("refresh waits for completion, slows when idle, and suspends while hidden",
     document.dispatchEvent(new Event("visibilitychange"));
   });
   await expect.poll(() => calls).toBe(3);
+});
+
+test("move all transfers completed songs and shows cleanup and failures", async ({ page }) => {
+  let moved = false;
+  await page.route("**/api/settings", (route) =>
+    route.fulfill({ json: { songs_folder: "/Music/Songs" } }),
+  );
+  await page.route("**/api/jobs/feed?*", (route) =>
+    route.fulfill({ json: { active: [], recent: [{ ...completed, cleaned_at: moved ? 123 : null }], next: null } }),
+  );
+  let finish: (() => void) | undefined;
+  const pending = new Promise<void>((resolve) => { finish = resolve; });
+  await page.route("**/api/jobs/move-all", async (route) => {
+    expect(route.request().method()).toBe("POST");
+    await pending;
+    moved = true;
+    await route.fulfill({ json: {
+      jobs: [{ ...completed, cleaned_at: 123, export_receipt: { path: "/Music/Songs/Artist - Song" } }],
+      failed: [{ title: "Other song", error: "Disk unavailable" }],
+    } });
+  });
+  await page.reload();
+  const button = page.getByRole("button", { name: "Move all to karaoke & remove local files" });
+  await expect(button).toBeEnabled();
+  await button.click();
+  await expect(page.getByRole("button", { name: "Moving songs…" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Change folder" })).toBeDisabled();
+  finish!();
+  await expect(page.getByRole("status").filter({ hasText: "1 song added to karaoke" })).toContainText("Other song: Disk unavailable");
+  await expect(page.getByText(/Local working files removed/)).toBeVisible();
+  await expect(button).toBeEnabled();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+});
+
+test("move all requires a configured karaoke folder", async ({ page }) => {
+  await expect(page.getByRole("button", { name: "Move all to karaoke & remove local files" })).toBeDisabled();
 });

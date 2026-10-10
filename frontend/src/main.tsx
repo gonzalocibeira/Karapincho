@@ -678,14 +678,16 @@ function App() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [songsFolder, setSongsFolder] = useState<string | null>(null);
   const [choosing, setChoosing] = useState(false);
+  const [movingAll, setMovingAll] = useState(false);
+  const [moveNotice, setMoveNotice] = useState("");
   const [mode, setMode] = useState<"youtube" | "file">("youtube");
   const [processingMode, setProcessingMode] = useState<"quality" | "fast">(
     "quality",
   );
   const [url, setUrl] = useState("");
   const [multiple, setMultiple] = useState(false);
-  const [bulkUrls, setBulkUrls] = useState("");
-  const links = bulkUrls.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const csvInput = useRef<HTMLInputElement>(null);
   const isBatch = mode === "youtube" && multiple;
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -819,15 +821,15 @@ function App() {
   }, [shutdown]);
 
   const post = useCallback(
-    async (path: string, body?: object) => {
+    async (path: string, body?: object | FormData) => {
       mutationVersion.current += 1;
       const response = await fetch(path, {
         method: "POST",
         headers: {
           "X-Karapincho-Token": health?.token || "",
-          ...(body ? { "Content-Type": "application/json" } : {}),
+          ...(body && !(body instanceof FormData) ? { "Content-Type": "application/json" } : {}),
         },
-        body: body ? JSON.stringify(body) : undefined,
+        body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
       });
       const data = await response.json();
       mutationVersion.current += 1;
@@ -917,15 +919,16 @@ function App() {
     mutationVersion.current += 1;
     try {
       if (isBatch) {
-        const result = await post("/api/jobs/urls", {
-          urls: links,
-          processing_mode: processingMode,
-        });
+        const form = new FormData();
+        form.append("file", csvFile!);
+        form.append("processing_mode", processingMode);
+        const result = await post("/api/jobs/csv", form);
         const added: Job[] = result.jobs;
         const ids = new Set(added.map((job) => job.id));
         setJobs((current) => [...added, ...current.filter((job) => !ids.has(job.id))]);
         refreshNow.current();
-        setBulkUrls("");
+        setCsvFile(null);
+        if (csvInput.current) csvInput.current.value = "";
         return;
       }
       const job =
@@ -944,6 +947,28 @@ function App() {
       setError(e instanceof Error ? e.message : "Could not create song.");
     } finally {
       setBusy(false);
+    }
+  }
+  async function moveAllSongs() {
+    setMovingAll(true);
+    setMoveNotice("");
+    setError("");
+    try {
+      const result = await post("/api/jobs/move-all");
+      const moved: Job[] = result.jobs;
+      const updates = new Map(moved.map((job) => [job.id, job]));
+      setJobs((current) => current.map((job) => updates.get(job.id) || job));
+      setMoveNotice(moved.length
+        ? `${moved.length} ${moved.length === 1 ? "song added" : "songs added"} to karaoke. Local files removed.`
+        : "No songs were moved.");
+      if (result.failed.length) {
+        setMoveNotice((notice) => `${notice} ${result.failed.length} could not finish; retry to continue. ${result.failed.map((job: { title: string; error: string }) => `${job.title}: ${job.error}`).join("; ")}`);
+      }
+    } catch (e) {
+      setMoveNotice(e instanceof Error ? e.message : "Could not move songs. Retry to continue.");
+    } finally {
+      refreshNow.current();
+      setMovingAll(false);
     }
   }
   async function loadMore() {
@@ -1244,23 +1269,36 @@ function App() {
                         </label>
                         {multiple ? (
                           <>
-                            <label htmlFor="youtube-urls">YOUTUBE VIDEO URLS</label>
-                            <textarea
-                              id="youtube-urls"
-                              className="batch-urls"
-                              placeholder={"https://www.youtube.com/watch?v=…\nhttps://youtu.be/…"}
-                              value={bulkUrls}
-                              onChange={(e) => setBulkUrls(e.target.value)}
-                              rows={5}
+                            <label htmlFor="songs-csv">SONGS CSV FILE</label>
+                            <input
+                              ref={csvInput}
+                              id="songs-csv"
+                              className="batch-csv"
+                              type="file"
+                              accept=".csv,text/csv"
+                              onChange={(e) => {
+                                setError("");
+                                const selected = e.target.files?.[0];
+                                if (selected && (!selected.name.toLowerCase().endsWith(".csv") || selected.size > 1024 * 1024)) {
+                                  setCsvFile(null);
+                                  e.target.value = "";
+                                  setError("Choose a UTF-8 CSV file smaller than 1 MB.");
+                                  return;
+                                }
+                                setCsvFile(selected || null);
+                              }}
                               required
                               disabled={busy}
-                              autoComplete="off"
                               aria-describedby="batch-hint"
                             />
                             <p id="batch-hint" className="input-hint">
-                              One link per line, up to 50. Songs queue in this order.
-                              {links.length > 0 && ` ${links.length} ${links.length === 1 ? "song" : "songs"} entered.`}
+                              Upload a UTF-8 CSV with three columns: url, artist, song_name.
+                              Include this header row. Up to 50 songs, queued in file order.
+                              Leave artist or song_name blank for automatic detection.
                             </p>
+                            <a className="input-hint" href="data:text/csv;charset=utf-8,url%2Cartist%2Csong_name%0Ahttps%3A%2F%2Fyoutu.be%2FVIDEO_ID%2CArtist%20name%2CSong%20name%0A" download="songs-template.csv">
+                              Download CSV template
+                            </a>
                           </>
                         ) : (
                           <>
@@ -1362,7 +1400,7 @@ function App() {
                     </label>
                   </fieldset>
                   {isBatch ? (
-                    <p className="input-hint">Song details and lyrics are detected separately for each song.</p>
+                    <p className="input-hint">Artist and song name from each CSV row are used for that song. Lyrics are detected separately.</p>
                   ) : (
                     <details className="lyric-options">
                       <summary>Song details and lyrics (optional)</summary>
@@ -1381,7 +1419,7 @@ function App() {
                         busy ||
                         !health?.ready ||
                         !!connection ||
-                        (isBatch ? links.length === 0 || links.length > 50 : mode === "youtube" ? !url.trim() : !file)
+                        (isBatch ? !csvFile : mode === "youtube" ? !url.trim() : !file)
                       }
                     >
                       {busy ? (
@@ -1393,7 +1431,7 @@ function App() {
                         ? mode === "file"
                           ? `Uploading ${uploadProgress}%`
                           : isBatch ? "Adding songs…" : "Adding song…"
-                        : isBatch ? `Queue ${links.length} ${links.length === 1 ? "song" : "songs"}` : "Create song"}
+                        : isBatch ? "Queue songs from CSV" : "Create song"}
                       <ArrowRight size={17} />
                     </button>
                   </div>
@@ -1441,9 +1479,17 @@ function App() {
                     {songsFolder ||
                       "Choose once, then add each finished song with one click."}
                   </p>
+                  <p>Move all completed songs here and remove their local files after verification. Existing versions are kept.</p>
+                  {moveNotice && <p role="status">{moveNotice}</p>}
                 </div>
                 <button
-                  disabled={choosing || !health}
+                  disabled={movingAll || choosing || !songsFolder || !health || !!connection}
+                  onClick={() => void moveAllSongs()}
+                >
+                  {movingAll ? "Moving songs…" : "Move all to karaoke & remove local files"}
+                </button>
+                <button
+                  disabled={movingAll || choosing || !health}
                   onClick={() =>
                     void chooseFolder().catch((e) => setError(e.message))
                   }

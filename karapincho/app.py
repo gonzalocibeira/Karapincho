@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
+import csv
 import importlib.util
+import io
 import os
 import secrets
 import signal
@@ -33,11 +35,6 @@ class URLInput(BaseModel):
 
 class ProcessingMode(BaseModel):
     processing_mode: Literal["quality", "fast"]
-
-
-class URLsInput(BaseModel):
-    urls: list[str] = Field(min_length=1, max_length=50)
-    processing_mode: Literal["quality", "fast"] = "quality"
 
 
 class ExportInput(BaseModel):
@@ -218,6 +215,30 @@ def create_app(run_worker=True):
                         if line.startswith(("Separated ", "Transcribed through ", "Detected pitch "))), None)
         return result
 
+    @app.post("/api/jobs/move-all")
+    def move_all_songs():
+        with handoff.locked():
+            try:
+                value = store().settings().get("songs_folder")
+                if not value:
+                    raise ValueError("Choose your karaoke Songs folder first.")
+                handoff.destination_folder(value)
+            except (ValueError, OSError) as exc:
+                raise HTTPException(400, str(exc)) from exc
+            moved, failed = [], []
+            for job in store().all():
+                if job["status"] != "completed" or job["cleaned_at"] is not None:
+                    continue
+                try:
+                    exported = handoff.export_song(store(), job["id"], "keep_both")
+                    receipt = exported["export_receipt"]
+                    if not handoff.matches(Path(receipt["path"]), receipt["fingerprint"]):
+                        raise ValueError("The karaoke copy could not be verified. Local files were kept.")
+                    moved.append(handoff.cleanup(store(), job["id"]))
+                except (ValueError, OSError) as exc:
+                    failed.append({"id": job["id"], "title": job["title"], "error": str(exc)})
+            return {"jobs": moved, "failed": failed}
+
     @app.post("/api/jobs/{job_id}/export")
     def export_song(job_id: str, body: ExportInput):
         get_job(job_id)
@@ -266,19 +287,45 @@ def create_app(run_worker=True):
         return store().create("youtube", url, "YouTube song", lyric_settings=body.lyric_settings.model_dump(),
                               processing_mode=body.processing_mode)
 
-    @app.post("/api/jobs/urls", status_code=202)
-    def submit_urls(body: URLsInput):
-        urls = []
-        for index, value in enumerate(body.urls, start=1):
+    @app.post("/api/jobs/csv", status_code=202)
+    async def submit_csv(file: UploadFile = File(...),
+                         processing_mode: Literal["quality", "fast"] = Form("quality")):
+        try:
+            if not file.filename or Path(file.filename).suffix.lower() != ".csv":
+                raise HTTPException(422, "Choose a UTF-8 CSV file.")
+            content = await file.read(1024 * 1024 + 1)
+            if len(content) > 1024 * 1024:
+                raise HTTPException(413, "CSV files must be smaller than 1 MB.")
+            songs = []
+            row_number = 1
             try:
-                if len(value) > 2048:
-                    raise ValueError("Link is too long")
-                urls.append(youtube_url(value.strip()))
-            except ValueError as exc:
-                raise HTTPException(422, f"Link {index}: {exc}. No songs were added.") from exc
-        jobs = store()
-        return {"jobs": [jobs.create("youtube", url, "YouTube song", processing_mode=body.processing_mode)
-                         for url in urls]}
+                reader = csv.reader(io.StringIO(content.decode("utf-8-sig"), newline=""), strict=True)
+                header = next(reader, [])
+                if [cell.strip().lower() for cell in header] != ["url", "artist", "song_name"]:
+                    raise ValueError("Expected the three column headers: url,artist,song_name")
+                for row_number, row in enumerate(reader, start=2):
+                    if not row or all(not cell.strip() for cell in row):
+                        continue
+                    if len(row) != 3:
+                        raise ValueError("Expected exactly three columns: url, artist, song_name")
+                    if len(songs) >= 50:
+                        raise ValueError("Upload up to 50 songs per CSV")
+                    value, artist, title = (cell.strip() for cell in row)
+                    if len(value) > 2048:
+                        raise ValueError("Link is too long")
+                    url = youtube_url(value)
+                    settings = LyricSettings(artist=artist, title=title).model_dump()
+                    songs.append((url, settings))
+                if not songs:
+                    raise ValueError("The CSV must contain at least one song")
+            except (UnicodeDecodeError, csv.Error, ValueError) as exc:
+                raise HTTPException(422, f"CSV row {row_number}: {exc}. No songs were added.") from exc
+            jobs = store()
+            return {"jobs": [jobs.create("youtube", url, settings["title"] or "YouTube song",
+                                         lyric_settings=settings, processing_mode=processing_mode)
+                             for url, settings in songs]}
+        finally:
+            await file.close()
 
     @app.post("/api/jobs/upload", status_code=202)
     async def upload(file: UploadFile = File(...), lyric_settings: str = Form("{}"),

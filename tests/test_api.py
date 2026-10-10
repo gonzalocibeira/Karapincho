@@ -61,11 +61,15 @@ def test_job_lifecycle_and_recovery(client):
     assert client.get(f"/api/jobs/{job_id}/download").status_code == 409
 
 
-def test_batch_urls_queue_in_order_with_selected_mode(client):
-    response = client.post("/api/jobs/urls", json={
-        "urls": [" https://youtu.be/abcdefghijk ", "https://youtube.com/shorts/lmnopqrstuv"],
-        "processing_mode": "fast",
-    })
+def upload_csv(client, content, **kwargs):
+    return client.post("/api/jobs/csv", files={"file": ("songs.csv", content)}, **kwargs)
+
+
+def test_batch_csv_queue_in_order_with_metadata_and_selected_mode(client):
+    response = upload_csv(client, '\ufeffurl,artist,song_name\r\n'
+                          ' https://youtu.be/abcdefghijk ,"Artist, Jr.", First song \r\n'
+                          '\r\nhttps://youtube.com/shorts/lmnopqrstuv,Artista,Canción\r\n',
+                          data={"processing_mode": "fast"})
     assert response.status_code == 202
     jobs = response.json()["jobs"]
     assert [job["source"] for job in jobs] == [
@@ -73,19 +77,48 @@ def test_batch_urls_queue_in_order_with_selected_mode(client):
         "https://www.youtube.com/watch?v=lmnopqrstuv",
     ]
     assert all(job["status"] == "queued" and job["processing_mode"] == "fast" for job in jobs)
-    assert all(job["lyric_settings"] == {} for job in jobs)
+    assert [job["title"] for job in jobs] == ["First song", "Canción"]
+    assert [(job["lyric_settings"]["artist"], job["lyric_settings"]["title"]) for job in jobs] == [
+        ("Artist, Jr.", "First song"), ("Artista", "Canción")]
     assert [job["id"] for job in Store().feed()["active"]] == [job["id"] for job in jobs]
     assert Store().next()["id"] == jobs[0]["id"]
 
 
-@pytest.mark.parametrize("urls", [[], ["https://youtu.be/abcdefghijk"] * 51,
-                                  ["https://youtu.be/abcdefghijk", "https://example.com/song"],
-                                  ["x" * 2049]])
-def test_batch_rejects_invalid_input_without_adding_songs(client, urls):
-    response = client.post("/api/jobs/urls", json={"urls": urls})
+def test_batch_csv_optional_metadata_and_50_song_limit(client):
+    response = upload_csv(client, "url,artist,song_name\n" + "https://youtu.be/abcdefghijk,,\n" * 50)
+    assert response.status_code == 202
+    assert len(response.json()["jobs"]) == 50
+    assert all(job["lyric_settings"]["artist"] == job["lyric_settings"]["title"] == ""
+               for job in response.json()["jobs"])
+
+
+@pytest.mark.parametrize("content", [
+    "", "url,artist,song_name\n", "url,artist\nhttps://youtu.be/abcdefghijk,Artist\n",
+    "url,artist,song_name\n" + "https://youtu.be/abcdefghijk,,\n" * 51,
+    "url,artist,song_name\nhttps://youtu.be/abcdefghijk,Artist,Song\nhttps://example.com/song,,\n",
+    "url,artist,song_name\nhttps://youtu.be/abcdefghijk,Artist,Song,Extra\n",
+    "url,artist,song_name\n" + "x" * 2049 + ",,\n",
+    'url,artist,song_name\nhttps://youtu.be/abcdefghijk,"unterminated,Song',
+    "url,artist,song_name\nhttps://youtu.be/abcdefghijk," + "a" * 301 + ",Song\n",
+    "url,artist,song_name\nhttps://youtu.be/abcdefghijk,Artist," + "s" * 301 + "\n",
+    b"url,artist,song_name\nhttps://youtu.be/abcdefghijk,\xff,Song",
+])
+def test_batch_csv_rejects_invalid_input_without_adding_songs(client, content):
+    response = upload_csv(client, content)
     assert response.status_code == 422
-    if len(urls) == 2:
-        assert "Link 2" in response.json()["detail"]
+    assert "No songs were added" in response.json()["detail"]
+    assert Store().all() == []
+
+
+def test_batch_csv_reports_bad_row(client):
+    response = upload_csv(client, "url,artist,song_name\nhttps://youtu.be/abcdefghijk,,\ninvalid,,\n")
+    assert "CSV row 3" in response.json()["detail"]
+    assert Store().all() == []
+
+
+def test_batch_csv_rejects_wrong_file_and_oversize(client):
+    assert client.post("/api/jobs/csv", files={"file": ("songs.txt", b"x")}).status_code == 422
+    assert upload_csv(client, b"x" * (1024 * 1024 + 1)).status_code == 413
     assert Store().all() == []
 
 

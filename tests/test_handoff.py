@@ -281,3 +281,86 @@ def test_partial_copy_is_tracked_before_any_bytes_are_written(session, ready, mo
     assert handoff.recover_publication(journal) is None
     assert not journal.exists()
     assert not list(root.glob('.karapincho-*'))
+
+
+def test_bulk_move_includes_all_completed_and_removes_only_local_files(session, ready):
+    store, first_id, source, root = ready
+    ids = [first_id]
+    for index in range(21):
+        job = store.create('file', 'input.mp4', f'Song {index}')
+        target = config.DATA / 'library' / job['id']
+        shutil.copytree(source, target)
+        (target / 'audio.mp3').write_bytes(f'audio {index}'.encode())
+        working = config.DATA / 'jobs' / job['id']
+        working.mkdir()
+        (working / 'input.mp4').write_bytes(b'input')
+        store.update(job['id'], status='completed')
+        ids.append(job['id'])
+    queued = store.create('file', 'input.mp4', 'Queued')
+    failed = store.create('file', 'input.mp4', 'Failed')
+    store.update(failed['id'], status='failed')
+    existing = root / 'Artist - Song'
+    existing.mkdir()
+    (existing / 'previous.txt').write_text('keep')
+    response = session.post('/api/jobs/move-all')
+    assert response.status_code == 200, response.text
+    assert len(response.json()['jobs']) == 22
+    assert response.json()['failed'] == []
+    for job_id in ids:
+        job = store.get(job_id)
+        assert job['cleaned_at'] is not None
+        assert not (config.DATA / 'library' / job_id).exists()
+        assert not (config.DATA / 'jobs' / job_id).exists()
+        receipt = job['export_receipt']
+        assert handoff.matches(Path(receipt['path']), receipt['fingerprint'])
+    assert (existing / 'previous.txt').read_text() == 'keep'
+    assert store.get(queued['id'])['cleaned_at'] is None
+    assert store.get(failed['id'])['cleaned_at'] is None
+    assert session.post('/api/jobs/move-all').json() == {'jobs': [], 'failed': []}
+
+
+def test_bulk_move_keeps_local_files_when_export_fails_and_continues(session, ready, monkeypatch):
+    store, job_id, folder, _ = ready
+    other = store.create('file', 'input.mp4', 'Other')
+    other_folder = config.DATA / 'library' / other['id']
+    shutil.copytree(folder, other_folder)
+    store.update(other['id'], status='completed')
+    original = handoff.export_song
+
+    def export(store, identifier, collision):
+        if identifier == job_id:
+            raise OSError('Disk unavailable')
+        return original(store, identifier, collision)
+
+    monkeypatch.setattr(handoff, 'export_song', export)
+    result = session.post('/api/jobs/move-all').json()
+    assert [job['id'] for job in result['jobs']] == [other['id']]
+    assert result['failed'] == [{'id': job_id, 'title': 'Song', 'error': 'Disk unavailable'}]
+    assert folder.exists()
+    assert (config.DATA / 'jobs' / job_id / 'input.mp4').exists()
+    assert store.get(job_id)['cleaned_at'] is None
+
+
+def test_bulk_move_requires_destination(session, ready):
+    store, job_id, folder, _ = ready
+    store.set_setting('songs_folder', '')
+    assert session.post('/api/jobs/move-all').status_code == 400
+    assert folder.exists()
+    assert store.get(job_id)['cleaned_at'] is None
+
+
+def test_bulk_move_never_cleans_unverified_copy(session, ready, monkeypatch):
+    store, job_id, folder, _ = ready
+    original = handoff.export_song
+
+    def export(*args):
+        result = original(*args)
+        (Path(result['export_receipt']['path']) / 'audio.mp3').write_bytes(b'damaged')
+        return result
+
+    monkeypatch.setattr(handoff, 'export_song', export)
+    result = session.post('/api/jobs/move-all').json()
+    assert result['jobs'] == []
+    assert result['failed'][0]['id'] == job_id
+    assert folder.exists()
+    assert store.get(job_id)['cleaned_at'] is None
