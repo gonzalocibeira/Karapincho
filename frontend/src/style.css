@@ -1220,6 +1220,8 @@ h2 {
 .section-heading h2 { margin: 0; font-size: 19px; }
 .section-heading h2 span { font-size: 12px; border-radius: 4px; padding: 2px 7px; background: #e5e9dc; }
 .section-heading p { margin: 6px 0 0; color: #51594b; font-size: 13px; }
+.recent-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.recent-heading button { max-width: 100%; }
 .destination-card { display: flex; gap: 14px; align-items: center; padding: 20px; margin: 26px 0; background: #edf0e6; border: 1px solid #dce2d1; border-radius: 10px; }
 .destination-card > div { flex: 1; min-width: 0; }
 .destination-card h2 { margin: 0; font-size: 14px; }

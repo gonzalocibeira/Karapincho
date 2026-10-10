@@ -174,3 +174,68 @@ def test_unfinished_jobs_remain_visible_without_library_files(client, status):
     store.update(job['id'], status=status)
     assert [item['id'] for item in client.get('/api/jobs').json()] == [job['id']]
     assert client.get(f"/api/jobs/{job['id']}").json()['status'] == status
+
+
+def test_clear_recent_removes_all_pages_and_local_files_keeps_karaoke_and_active(client, tmp_path):
+    store = Store()
+    karaoke = tmp_path.parent / f'{tmp_path.name}-Songs'
+    karaoke.mkdir()
+    song = karaoke / 'song.txt'
+    song.write_text('Keep karaoke')
+    queued = store.create('file', 'input.mp4', 'Queued')
+    running = store.next()
+    queued = store.create('file', 'input.mp4', 'Still queued')
+    recent = []
+    for index in range(25):
+        job = store.create('file', 'input.mp4', f'Recent {index}')
+        store.update(job['id'], status=('completed', 'failed', 'cancelled')[index % 3],
+                     export_receipt={'path': str(karaoke)})
+        recent.append(job['id'])
+        # Include already removed files and jobs previously cleaned up.
+        if index % 2:
+            for category in ('jobs', 'library'):
+                folder = config.DATA / category / job['id']
+                folder.mkdir()
+                (folder / 'local.mp4').write_bytes(b'working files')
+        else:
+            store.update(job['id'], cleaned_at=123)
+    for job in (queued, running):
+        folder = config.DATA / 'jobs' / job['id']
+        folder.mkdir()
+        (folder / 'input.mp4').write_bytes(b'active')
+    response = client.post('/api/jobs/clear-recent')
+    assert response.status_code == 200
+    assert set(response.json()['deleted']) == set(recent)
+    assert response.json()['failed'] == []
+    assert {job['id'] for job in store.all()} == {queued['id'], running['id']}
+    assert client.get('/api/jobs/feed').json()['recent'] == []
+    assert song.read_text() == 'Keep karaoke'
+    for job_id in recent:
+        for category in ('jobs', 'library'):
+            assert not (config.DATA / category / job_id).exists()
+    for job in (queued, running):
+        assert (config.DATA / 'jobs' / job['id'] / 'input.mp4').exists()
+    assert client.post('/api/jobs/clear-recent').json() == {'deleted': [], 'failed': []}
+
+
+def test_clear_recent_keeps_failed_deletions_for_retry(client, monkeypatch):
+    store = Store()
+    blocked = store.create('file', 'input.mp4', 'Blocked')
+    missing = store.create('file', 'input.mp4', 'Already missing')
+    for job in (blocked, missing):
+        store.update(job['id'], status='completed')
+    (config.DATA / 'jobs' / blocked['id']).mkdir()
+    original = shutil.rmtree
+    def denied(*args, **kwargs):
+        raise PermissionError('denied')
+    monkeypatch.setattr('karapincho.store.shutil.rmtree', denied)
+    result = client.post('/api/jobs/clear-recent').json()
+    assert result['deleted'] == [missing['id']]
+    assert result['failed'] == [{'id': blocked['id'], 'title': 'Blocked', 'error': 'denied'}]
+    assert store.get(blocked['id']) is not None
+    monkeypatch.setattr('karapincho.store.shutil.rmtree', original)
+    assert client.post('/api/jobs/clear-recent').json()['deleted'] == [blocked['id']]
+
+
+def test_clear_recent_requires_session_token(client):
+    assert client.post('/api/jobs/clear-recent', headers={'X-Karapincho-Token': ''}).status_code == 403
