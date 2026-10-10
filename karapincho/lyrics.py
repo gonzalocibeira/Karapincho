@@ -93,16 +93,22 @@ def request(endpoint, params):
     req = Request(f"https://lrclib.net/api/{endpoint}?{query}", headers={
         "User-Agent": "Karapincho/0.1 (local karaoke studio)", "Accept": "application/json",
     })
-    try:
-        with urlopen(req, timeout=8) as response:
-            raw = response.read(2_000_001)
-            if len(raw) > 2_000_000:
-                raise ValueError("Lyrics response exceeded size limit")
-            value = json.loads(raw)
-    except HTTPError as exc:
-        if exc.code != 404:
-            raise
-        value = None
+    for attempt in range(3):
+        try:
+            with urlopen(req, timeout=8) as response:
+                raw = response.read(2_000_001)
+                if len(raw) > 2_000_000:
+                    raise ValueError("Lyrics response exceeded size limit")
+                value = json.loads(raw)
+            break
+        except HTTPError as exc:
+            exc.close()
+            if exc.code == 404:
+                value = None
+                break
+            if exc.code not in (502, 503, 504) or attempt == 2:
+                raise
+            time.sleep(0.5 * (attempt + 1))
     cache.parent.mkdir(parents=True, exist_ok=True)
     write_json(cache, {"time": time.time(), "value": value})
     return value
@@ -118,6 +124,10 @@ def matches(record, metadata):
                 and normalized(record.get("artistName", "")) == normalized(metadata["artist"]))
     except (KeyError, TypeError, ValueError):
         return False
+
+
+def failure_reason(exc):
+    return f"HTTP {exc.code}" if isinstance(exc, HTTPError) else type(exc).__name__
 
 
 def lookup(folder):
@@ -136,7 +146,12 @@ def lookup(folder):
                       "duration": metadata["duration"]}
             if metadata.get("album"):
                 params["album_name"] = metadata["album"]
-            exact = request("get", params)
+            exact_error = None
+            try:
+                exact = request("get", params)
+            except (OSError, ValueError, TypeError, KeyError) as exc:
+                # Exact lookup can be overloaded while search is still available.
+                exact, exact_error = None, exc
             candidates = [exact] if matches(exact, metadata) else []
             if not candidates or not exact.get("syncedLyrics"):
                 try:
@@ -161,9 +176,15 @@ def lookup(folder):
                 text, record = next(iter(usable.items()))
                 result.update(source="lrclib", lines=parse_lyrics(text), record_id=record.get("id"))
             else:
-                result["warnings"].append("No unambiguous LRCLIB match; using local transcription.")
+                if exact_error:
+                    result["warnings"].append(
+                        f"LRCLIB exact lookup failed ({failure_reason(exact_error)}) and search found no "
+                        "unambiguous match; using local transcription.")
+                else:
+                    result["warnings"].append("No unambiguous LRCLIB match; using local transcription.")
         except (OSError, ValueError, TypeError, KeyError) as exc:
-            result["warnings"].append(f"LRCLIB unavailable or invalid ({type(exc).__name__}); using local transcription.")
+            result["warnings"].append(
+                f"LRCLIB unavailable or invalid ({failure_reason(exc)}); using local transcription.")
     else:
         result["warnings"].append("Artist/title metadata is insufficient for lyric lookup; using local transcription.")
     write_json(folder / "lyrics-source.json", result)
