@@ -447,3 +447,42 @@ test("move all transfers completed songs and shows cleanup and failures", async 
 test("move all requires a configured karaoke folder", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Move all to karaoke & remove local files" })).toBeDisabled();
 });
+
+
+test("clear recent jobs confirms, removes loaded history, and keeps active jobs", async ({ page }) => {
+  let cleared = false;
+  const activeJob = { ...completed, id: "c".repeat(32), title: "Still working", status: "queued" };
+  await page.route("**/api/jobs/feed?*", (route) => {
+    const older = new URL(route.request().url()).searchParams.has("before");
+    return route.fulfill({ json: {
+      active: [activeJob],
+      recent: cleared ? [] : [{ ...completed, id: older ? "b".repeat(32) : completed.id,
+        title: older ? "Older song" : "Recent song" }],
+      next: cleared || older ? null : completed.id,
+    } });
+  });
+  await page.route("**/api/jobs/clear-recent", async (route) => {
+    expect(route.request().method()).toBe("POST");
+    expect(route.request().headers()["x-karapincho-token"]).toBe("test");
+    cleared = true;
+    await route.fulfill({ json: { deleted: [completed.id, "b".repeat(32)], failed: [] } });
+  });
+  await page.reload();
+  await page.getByRole("button", { name: "Load older jobs" }).click();
+  await expect(page.getByRole("heading", { name: "Older song", exact: true })).toBeVisible();
+  const button = page.getByRole("button", { name: "Clear recent jobs & remove local files" });
+  page.once("dialog", (dialog) => dialog.dismiss());
+  await button.click();
+  expect(cleared).toBe(false);
+  page.once("dialog", async (dialog) => {
+    expect(dialog.message()).toContain("karaoke folder will be kept");
+    await dialog.accept();
+  });
+  await button.click();
+  await expect(page.getByRole("heading", { name: "Recent song", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Older song", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Still working", exact: true })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "2 jobs cleared" })).toContainText("Karaoke song files kept");
+  await expect(button).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Load older jobs" })).toHaveCount(0);
+});

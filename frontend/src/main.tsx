@@ -676,6 +676,8 @@ function App() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [next, setNext] = useState<string | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [clearingRecent, setClearingRecent] = useState(false);
+  const [clearNotice, setClearNotice] = useState("");
   const [songsFolder, setSongsFolder] = useState<string | null>(null);
   const [choosing, setChoosing] = useState(false);
   const [movingAll, setMovingAll] = useState(false);
@@ -971,8 +973,31 @@ function App() {
       setMovingAll(false);
     }
   }
+  async function clearRecentJobs() {
+    if (!window.confirm(
+      "Clear all recent jobs and delete their local working files? Songs already added to your karaoke folder will be kept. Queued and running jobs will continue.",
+    )) return;
+    setClearingRecent(true);
+    setClearNotice("");
+    try {
+      const result = await post("/api/jobs/clear-recent");
+      const deleted = new Set<string>(result.deleted);
+      setJobs((current) => current.filter((job) => !deleted.has(job.id)));
+      hasOlder.current = false;
+      setNext(null);
+      setClearNotice(`${deleted.size} ${deleted.size === 1 ? "job cleared" : "jobs cleared"}. Karaoke song files kept.${result.failed.length
+        ? ` ${result.failed.length} could not be cleared; retry to continue. ${result.failed.map((job: { title: string; error: string }) => `${job.title}: ${job.error}`).join("; ")}`
+        : ""}`);
+    } catch (e) {
+      setClearNotice(e instanceof Error ? e.message : "Could not clear recent jobs. Retry to continue.");
+    } finally {
+      setClearingRecent(false);
+      refreshNow.current();
+    }
+  }
   async function loadMore() {
     if (!next) return;
+    const version = mutationVersion.current;
     setLoadingMore(true);
     try {
       const response = await fetch(
@@ -980,6 +1005,7 @@ function App() {
       );
       if (!response.ok) throw new Error("Could not load recent jobs.");
       const feed = await response.json();
+      if (version !== mutationVersion.current) return;
       hasOlder.current = true;
       setJobs((current) => {
         const ids = new Set(current.map((job) => job.id));
@@ -1505,13 +1531,24 @@ function App() {
                 className="recent-section"
                 aria-labelledby="recent-title"
               >
-                <div className="section-heading">
-                  <h2 id="recent-title">Recent jobs</h2>
-                  <p>
-                    Check results, add to karaoke, or recover a previous
-                    attempt.
-                  </p>
+                <div className="section-heading recent-heading">
+                  <div>
+                    <h2 id="recent-title">Recent jobs</h2>
+                    <p>
+                      Check results, add to karaoke, or recover a previous
+                      attempt.
+                    </p>
+                  </div>
+                  <button
+                    className="secondary"
+                    disabled={clearingRecent || movingAll || loadingMore || !recent.length}
+                    onClick={() => void clearRecentJobs()}
+                  >
+                    <Trash2 size={16} />
+                    {clearingRecent ? "Clearing…" : "Clear recent jobs & remove local files"}
+                  </button>
                 </div>
+                {clearNotice && <p className="inline-notice" role="status">{clearNotice}</p>}
                 {recent.length ? (
                   <div className="song-list">
                     {recent.map((job) => (
@@ -1539,7 +1576,7 @@ function App() {
                 {next && (
                   <button
                     className="load-more"
-                    disabled={loadingMore}
+                    disabled={loadingMore || clearingRecent}
                     onClick={() => void loadMore()}
                   >
                     {loadingMore ? "Loading…" : "Load older jobs"}

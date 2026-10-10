@@ -215,6 +215,20 @@ def create_app(run_worker=True):
                         if line.startswith(("Separated ", "Transcribed through ", "Detected pitch "))), None)
         return result
 
+    @app.post("/api/jobs/clear-recent")
+    @serialized
+    def clear_recent_jobs():
+        deleted, failed = [], []
+        for job in store().all():
+            if job["status"] not in ("completed", "failed", "cancelled"):
+                continue
+            try:
+                store().delete(job["id"])
+                deleted.append(job["id"])
+            except (ValueError, OSError) as exc:
+                failed.append({"id": job["id"], "title": job["title"], "error": str(exc)})
+        return {"deleted": deleted, "failed": failed}
+
     @app.post("/api/jobs/move-all")
     def move_all_songs():
         with handoff.locked():
