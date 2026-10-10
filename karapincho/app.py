@@ -315,20 +315,23 @@ def create_app(run_worker=True):
             try:
                 reader = csv.reader(io.StringIO(content.decode("utf-8-sig"), newline=""), strict=True)
                 header = next(reader, [])
-                if [cell.strip().lower() for cell in header] != ["url", "artist", "song_name"]:
-                    raise ValueError("Expected the three column headers: url,artist,song_name")
+                columns = [cell.strip().lower() for cell in header]
+                if columns not in (["url", "artist", "song_name"],
+                                   ["url", "artist", "song_name", "language_code"]):
+                    raise ValueError("Expected column headers: url,artist,song_name,language_code")
                 for row_number, row in enumerate(reader, start=2):
                     if not row or all(not cell.strip() for cell in row):
                         continue
-                    if len(row) != 3:
-                        raise ValueError("Expected exactly three columns: url, artist, song_name")
+                    if len(row) != len(columns):
+                        raise ValueError(f"Expected exactly {len(columns)} columns: {', '.join(columns)}")
                     if len(songs) >= 50:
                         raise ValueError("Upload up to 50 songs per CSV")
-                    value, artist, title = (cell.strip() for cell in row)
+                    value, artist, title = (cell.strip() for cell in row[:3])
+                    language = row[3].strip().lower() if len(row) == 4 else ""
                     if len(value) > 2048:
                         raise ValueError("Link is too long")
                     url = youtube_url(value)
-                    settings = LyricSettings(artist=artist, title=title).model_dump()
+                    settings = LyricSettings(artist=artist, title=title, language=language).model_dump()
                     songs.append((url, settings))
                 if not songs:
                     raise ValueError("The CSV must contain at least one song")

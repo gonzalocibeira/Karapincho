@@ -84,6 +84,35 @@ def test_batch_csv_queue_in_order_with_metadata_and_selected_mode(client):
     assert Store().next()["id"] == jobs[0]["id"]
 
 
+@pytest.mark.parametrize("language_codes,expected", [
+    ([" en ", "ES", "jpn", ""], ["en", "es", "jpn", ""]),
+])
+def test_batch_csv_language_codes(client, language_codes, expected):
+    content = "url,artist,song_name,language_code\n" + "".join(
+        f"https://youtu.be/abcdefghijk,Artist,Song,{code}\n" for code in language_codes)
+    response = upload_csv(client, content)
+    assert response.status_code == 202
+    jobs = response.json()["jobs"]
+    assert [job["lyric_settings"]["language"] for job in jobs] == expected
+    assert [Store().get(job["id"])["lyric_settings"]["language"] for job in jobs] == expected
+
+
+@pytest.mark.parametrize("row", [
+    "https://youtu.be/abcdefghijk,Artist,Song,english",
+    "https://youtu.be/abcdefghijk,Artist,Song,en-US",
+    "https://youtu.be/abcdefghijk,Artist,Song,e1",
+    "https://youtu.be/abcdefghijk,Artist,Song",
+    "https://youtu.be/abcdefghijk,Artist,Song,en,extra",
+])
+def test_batch_csv_invalid_language_or_column_count_is_atomic(client, row):
+    response = upload_csv(client, "url,artist,song_name,language_code\n"
+                          "https://youtu.be/abcdefghijk,Artist,Song,en\n" + row + "\n")
+    assert response.status_code == 422
+    assert "CSV row 3" in response.json()["detail"]
+    assert "No songs were added" in response.json()["detail"]
+    assert Store().all() == []
+
+
 def test_batch_csv_optional_metadata_and_50_song_limit(client):
     response = upload_csv(client, "url,artist,song_name\n" + "https://youtu.be/abcdefghijk,,\n" * 50)
     assert response.status_code == 202

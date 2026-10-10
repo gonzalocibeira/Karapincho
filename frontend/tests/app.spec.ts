@@ -262,14 +262,14 @@ test("multiple songs are uploaded from CSV with metadata and can be corrected", 
     expect(route.request().headers()["content-type"]).toContain("multipart/form-data");
     expect(body).toContain('name="processing_mode"\r\n\r\nfast');
     expect(body).toContain('filename="songs.csv"');
-    expect(body).toContain("url,artist,song_name");
+    expect(body).toContain("url,artist,song_name,language_code");
     attempts += 1;
     if (attempts === 1) {
       await route.fulfill({ status: 422, json: { detail: "CSV row 3: Invalid YouTube link. No songs were added." } });
       return;
     }
-    expect(body).toContain('https://youtu.be/abcdefghijk,"Artist, Jr.",First song');
-    expect(body).toContain("https://youtu.be/lmnopqrstuv,Artista,Canción");
+    expect(body).toContain('https://youtu.be/abcdefghijk,"Artist, Jr.",First song,en');
+    expect(body).toContain("https://youtu.be/lmnopqrstuv,Artista,Canción,es");
     active = ["First song", "Canción"].map((title, index) => ({
       ...completed,
       id: String(index + 1).repeat(32),
@@ -290,12 +290,14 @@ test("multiple songs are uploaded from CSV with metadata and can be corrected", 
   await expect(page.getByText("Song details and lyrics (optional)")).toHaveCount(0);
   await expect(page.getByRole("textbox")).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Download CSV template" })).toHaveAttribute("download", "songs-template.csv");
-  await input.setInputFiles({ name: "songs.csv", mimeType: "text/csv", buffer: Buffer.from("url,artist,song_name\nhttps://youtu.be/abcdefghijk,Artist,First song\ninvalid,,\n") });
+  await expect(page.getByRole("link", { name: "Download CSV template" })).toHaveAttribute("href", /song_name%2Clanguage_code/);
+  await expect(page.getByText(/Use a 2–3 letter language code/)).toBeVisible();
+  await input.setInputFiles({ name: "songs.csv", mimeType: "text/csv", buffer: Buffer.from("url,artist,song_name,language_code\nhttps://youtu.be/abcdefghijk,Artist,First song,en\ninvalid,,,\n") });
   await page.getByRole("radio", { name: /Fast/ }).check();
   await queue.click();
   await expect(page.getByText(/CSV row 3: Invalid YouTube link/)).toBeVisible();
   await expect(input).not.toHaveValue("");
-  await input.setInputFiles({ name: "songs.csv", mimeType: "text/csv", buffer: Buffer.from('url,artist,song_name\nhttps://youtu.be/abcdefghijk,"Artist, Jr.",First song\nhttps://youtu.be/lmnopqrstuv,Artista,Canción\n') });
+  await input.setInputFiles({ name: "songs.csv", mimeType: "text/csv", buffer: Buffer.from('url,artist,song_name,language_code\nhttps://youtu.be/abcdefghijk,"Artist, Jr.",First song,en\nhttps://youtu.be/lmnopqrstuv,Artista,Canción,es\n') });
   await queue.click();
   await expect(page.getByRole("heading", { name: "In progress 2" })).toBeVisible();
   await expect(page.getByText("First song", { exact: true })).toBeVisible();
