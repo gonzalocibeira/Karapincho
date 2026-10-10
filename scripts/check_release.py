@@ -15,11 +15,14 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     frontend_package = json.loads((ROOT / "frontend/package.json").read_text())
     assert frontend_package["version"] == __version__, "Frontend and package versions differ"
+    frontend_lock = json.loads((ROOT / "frontend/package-lock.json").read_text())
+    assert frontend_lock["version"] == frontend_lock["packages"][""]["version"] == __version__, \
+        "Frontend lockfile version differs"
     assert (ROOT / "LICENSE").read_text().lstrip().startswith("GNU GENERAL PUBLIC LICENSE")
     required = [
         "README.md", "LICENSE", "THIRD_PARTY_NOTICES.md", "SECURITY.md", "SUPPORT.md",
         "VALIDATION.md", "docs/ARCHITECTURE.md", "docs/BENCHMARKS.md", "docs/PRIVACY.md",
-        "docs/REFERENCES.md", "docs/RELEASE_NOTES_v0.1.0.md",
+        "docs/REFERENCES.md", f"docs/RELEASE_NOTES_v{__version__}.md",
         "docs/assets/karapincho-logo.svg", "docs/assets/social-preview.svg",
         "docs/assets/social-preview.png", "docs/assets/screenshot-studio.png",
         ".github/release-assets.sha256",

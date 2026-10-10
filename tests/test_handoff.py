@@ -141,7 +141,8 @@ def test_unrelated_external_edits_break_idempotence(session, ready):
 def test_picker_cancel_persistence_and_unsafe_destination(session, ready, monkeypatch):
     _, _, _, root = ready
     monkeypatch.setattr(handoff, 'choose_folder', lambda: None)
-    assert session.post('/api/settings/choose-folder').json() == {'songs_folder': str(root), 'cancelled': True}
+    assert session.post('/api/settings/choose-folder').json() == {
+        'songs_folder': str(root), 'cancelled': True, 'wait_for_lyrics': True}
     new = root.parent / 'Another folder'
     new.mkdir()
     monkeypatch.setattr(handoff, 'choose_folder', lambda: str(new))

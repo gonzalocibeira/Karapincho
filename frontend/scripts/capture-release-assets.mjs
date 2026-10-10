@@ -10,7 +10,7 @@ let songsFolder = null;
 
 await page.route("**/api/health", route => route.fulfill({ json: {
   app: "karapincho",
-  version: "0.1.0",
+  version: "0.2.0",
   ready: true,
   missing: [],
   token: "release-screenshot",

@@ -22,7 +22,7 @@ from . import __version__, config, handoff
 from .benchmark import Benchmarks, baseline
 from .export import download_name, update_archive_name
 from .media import youtube_url
-from .lyrics import LyricSettings
+from .lyrics import LyricSettings, synced_from_url
 from .store import Store
 from .worker import Worker
 
@@ -35,6 +35,15 @@ class URLInput(BaseModel):
 
 class ProcessingMode(BaseModel):
     processing_mode: Literal["quality", "fast"]
+
+
+class LyricResolution(BaseModel):
+    url: str = Field(default="", max_length=2048)
+    skip: bool = False
+
+
+class LyricWaitSetting(BaseModel):
+    wait_for_lyrics: bool
 
 
 class ExportInput(BaseModel):
@@ -187,7 +196,27 @@ def create_app(run_worker=True):
 
     @app.get("/api/settings")
     def settings():
-        return {"songs_folder": store().settings().get("songs_folder")}
+        saved = store().settings()
+        return {"songs_folder": saved.get("songs_folder"),
+                "wait_for_lyrics": saved.get("wait_for_lyrics", "true") == "true"}
+
+    @app.post("/api/settings/lyrics")
+    def lyric_wait_setting(body: LyricWaitSetting):
+        store().set_lyric_wait(body.wait_for_lyrics)
+        return settings()
+
+    @app.post("/api/jobs/{job_id}/resolve-lyrics", status_code=202)
+    def resolve_lyrics(job_id: str, body: LyricResolution):
+        if get_job(job_id)["status"] != "waiting_for_lyrics":
+            raise HTTPException(409, "This song is no longer waiting for lyrics.")
+        try:
+            text = None if body.skip else synced_from_url(body.url)
+        except (OSError, ValueError, TypeError, KeyError) as exc:
+            raise HTTPException(422, str(exc)) from exc
+        try:
+            return store().resolve_lyrics(job_id, text, body.url.strip())
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from exc
 
     @app.post("/api/settings/choose-folder")
     def choose_folder():
@@ -378,7 +407,7 @@ def create_app(run_worker=True):
     @app.post("/api/jobs/{job_id}/cancel")
     def cancel(job_id: str):
         job = get_job(job_id)
-        if job["status"] not in ("queued", "running"):
+        if job["status"] not in ("queued", "running", "waiting_for_lyrics"):
             raise HTTPException(409, "This job is no longer running")
         store().request_cancel(job_id)
         return store().get(job_id)

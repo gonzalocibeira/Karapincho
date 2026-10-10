@@ -12,6 +12,8 @@ Karapincho is a single-user local FastAPI service with a React interface. The se
 
 Completed stages carry dependency fingerprints and atomic checkpoints. Failed attempts never publish partial playable output.
 
+The lyric stage marks uncertain results when no unambiguous synced match is available. By default, the worker saves the checkpoint and sets the job to `waiting_for_lyrics` before vocal separation. It releases the worker and sleep prevention so other queued songs can run. Waiting jobs remain in the active feed, survive restart, and can be cancelled. A validated LRCLIB record URL supplies timestamped lyrics and requeues the song; a per-song skip permits automatic fallback. Disabling the saved wait preference requeues all waiting jobs. Wait transitions and preference changes are serialized in SQLite to avoid leaving jobs paused after waiting is disabled.
+
 ## HTTP API
 
 Read `GET /api/health` for readiness, version, limits, and the per-session token. Send that token as `X-Karapincho-Token` for every mutating request. Cross-origin requests are rejected.
@@ -21,11 +23,13 @@ Read `GET /api/health` for readiness, version, limits, and the per-session token
 | `GET /api/health` | Version, readiness, session token, stages, and limits |
 | `POST /api/shutdown` | Stop processing and shut down locally |
 | `POST /api/jobs/url` | Queue one public YouTube URL |
+| `POST /api/jobs/csv` | Validate and queue up to 50 CSV songs with artist, title, and optional language code |
 | `POST /api/jobs/upload` | Queue one multipart MP4 upload |
 | `GET /api/jobs`, `GET /api/jobs/{id}` | History, status, progress, and warnings |
 | `POST /api/jobs/{id}/cancel` | Cancel queued or active work |
 | `POST /api/jobs/{id}/retry` | Resume from valid checkpoints |
 | `POST /api/jobs/{id}/rebuild` | Replace lyric settings and rebuild |
+| `POST /api/jobs/{id}/resolve-lyrics` | Resume a waiting song with a synced LRCLIB `url`, or allow automatic fallback with `skip: true` |
 | `DELETE /api/jobs/{id}` | Delete the selected song and associated data |
 | `GET /api/jobs/{id}/download` | Download a completed ZIP |
 | `GET /api/jobs/{id}/report` | Download diagnostics |
@@ -42,12 +46,15 @@ The interface loads active work plus 20 recent jobs at a time. Refreshes cannot 
 | Endpoint | Behavior |
 |---|---|
 | `GET /api/jobs/feed?limit=20&before=<job-id>` | Active queue plus a bounded recent-history page and continuation ID |
-| `GET /api/settings` | Saved karaoke Songs folder |
+| `GET /api/settings` | Saved karaoke Songs folder and `wait_for_lyrics` preference (default `true`) |
+| `POST /api/settings/lyrics` | Save `wait_for_lyrics`; disabling it releases waiting songs |
 | `POST /api/settings/choose-folder` | Native macOS folder picker; cancellation retains the prior folder |
 | `POST /api/jobs/{id}/export` | Copy validated package; `collision` is `ask` (default), `keep_both`, or `replace` |
 | `GET /api/jobs/{id}/cleanup` | Reclaimable local bytes |
 | `POST /api/jobs/{id}/cleanup` | Remove local job/package files, retaining export receipt and history |
 | `POST /api/jobs/{id}/processing-mode` | Queue a stopped job in `quality` or `fast` mode |
+| `POST /api/jobs/move-all` | Export and verify completed songs, then remove their local files |
+| `POST /api/jobs/clear-recent` | Delete finished history and local files while preserving active jobs and karaoke copies |
 
 Creation accepts `processing_mode` in URL JSON or upload form data; omission means Quality. Existing ZIP, retry, and lyric-rebuild request formats remain supported. Cleaned jobs cannot retry or rebuild. They remain visible through the feed and individual job endpoint.
 

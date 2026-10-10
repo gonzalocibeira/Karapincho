@@ -9,7 +9,7 @@ import unicodedata
 from difflib import SequenceMatcher
 from itertools import groupby
 from urllib.error import HTTPError
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlsplit
 from urllib.request import Request, urlopen
 
 from pydantic import BaseModel, Field, field_validator
@@ -130,6 +130,22 @@ def failure_reason(exc):
     return f"HTTP {exc.code}" if isinstance(exc, HTTPError) else type(exc).__name__
 
 
+def synced_from_url(url):
+    """Accept LRCLIB record links and fetch only from the fixed provider host."""
+    parsed = urlsplit(url.strip())
+    match = re.fullmatch(r"/(?:tracks/|api/get/)?([1-9][0-9]*)/?", parsed.path)
+    if (parsed.scheme != "https" or parsed.netloc not in ("lrclib.net", "www.lrclib.net")
+            or not match):
+        raise ValueError("Paste a LRCLIB lyric URL, such as https://lrclib.net/tracks/12345.")
+    record = request(f"get/{match[1]}", {})
+    if not isinstance(record, dict) or record.get("instrumental") or not record.get("syncedLyrics"):
+        raise ValueError("This LRCLIB record has no synced lyrics. Choose a record with timestamps.")
+    lines = parse_lyrics(record["syncedLyrics"])
+    if any(line["start"] is None for line in lines):
+        raise ValueError("This LRCLIB record has no valid synced lyrics.")
+    return record["syncedLyrics"]
+
+
 def lookup(folder):
     job = read_json(folder / "job.json")
     settings = job.get("lyric_settings") or {}
@@ -187,6 +203,8 @@ def lookup(folder):
                 f"LRCLIB unavailable or invalid ({failure_reason(exc)}); using local transcription.")
     else:
         result["warnings"].append("Artist/title metadata is insufficient for lyric lookup; using local transcription.")
+    result["needs_input"] = result["source"] == "transcription" or (
+        result["source"] == "lrclib" and any(line["start"] is None for line in result["lines"]))
     write_json(folder / "lyrics-source.json", result)
     return result
 
