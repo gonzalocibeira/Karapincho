@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
     route.fulfill({
       json: {
         app: "karapincho",
-        version: "0.1.0",
+        version: "0.2.0",
         ready: true,
         missing: [],
         token: "test",
@@ -67,7 +67,7 @@ test("setup diagnostics name missing components", async ({ page }) => {
     route.fulfill({
       json: {
         app: "karapincho",
-        version: "0.1.0",
+        version: "0.2.0",
         ready: false,
         missing: ["demucs", "torchcrepe"],
         token: "test",
@@ -487,4 +487,40 @@ test("clear recent jobs confirms, removes loaded history, and keeps active jobs"
   await expect(page.getByRole("status").filter({ hasText: "2 jobs cleared" })).toContainText("Karaoke song files kept");
   await expect(button).toBeDisabled();
   await expect(page.getByRole("button", { name: "Load older jobs" })).toHaveCount(0);
+});
+
+test("uncertain lyrics alert accepts a URL and resumes the song", async ({ page }) => {
+  let job = { ...completed, status: "waiting_for_lyrics", stage: "lyrics", progress: 0.2, warnings: [] };
+  await page.route("**/api/jobs/feed?*", (route) =>
+    route.fulfill({ json: { active: [job], recent: [], next: null } }),
+  );
+  await page.route(`**/api/jobs/${job.id}/resolve-lyrics`, async (route) => {
+    expect(route.request().postDataJSON()).toEqual({ url: "https://lrclib.net/tracks/123" });
+    job = { ...job, status: "queued" };
+    await route.fulfill({ json: job });
+  });
+  await page.reload();
+  await expect(page.getByRole("alert")).toContainText("This song is paused");
+  await page.getByRole("textbox", { name: "URL to the correct synced lyric on LRCLIB" }).fill("https://lrclib.net/tracks/123");
+  await page.getByRole("button", { name: "Use synced lyrics and resume" }).click();
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await expect(page.getByText("Queued", { exact: true })).toBeVisible();
+});
+
+test("disable lyric waiting checkbox saves the preference", async ({ page }) => {
+  let enabled = true;
+  await page.route("**/api/settings", (route) =>
+    route.fulfill({ json: { songs_folder: null, wait_for_lyrics: enabled } }),
+  );
+  await page.route("**/api/settings/lyrics", async (route) => {
+    enabled = route.request().postDataJSON().wait_for_lyrics;
+    expect(enabled).toBe(false);
+    await route.fulfill({ json: { songs_folder: null, wait_for_lyrics: enabled } });
+  });
+  await page.reload();
+  const checkbox = page.getByRole("checkbox", { name: "Disable waiting when a synced lyric match is uncertain" });
+  await checkbox.check();
+  await expect(checkbox).toBeChecked();
+  await page.reload();
+  await expect(checkbox).toBeChecked();
 });

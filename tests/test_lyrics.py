@@ -74,7 +74,35 @@ def test_wrong_record_rejected(folder, monkeypatch, change):
 def test_search_ambiguity(folder, monkeypatch):
     monkeypatch.setattr(lyrics, "request", lambda endpoint, params: None if endpoint == "get" else [
         record(), record(id=2, syncedLyrics="[00:10]different words")])
-    assert lyrics.lookup(folder)["source"] == "transcription"
+    result = lyrics.lookup(folder)
+    assert result["source"] == "transcription" and result["needs_input"]
+
+
+@pytest.mark.parametrize("url", ["https://lrclib.net/tracks/123", "https://lrclib.net/api/get/123",
+                                 "https://lrclib.net/123"])
+def test_synced_url(url, monkeypatch):
+    def request(endpoint, params):
+        assert endpoint == "get/123" and params == {}
+        return record()
+    monkeypatch.setattr(lyrics, "request", request)
+    assert lyrics.synced_from_url(url) == record()["syncedLyrics"]
+
+
+@pytest.mark.parametrize("url", ["https://evil.test/123", "http://lrclib.net/123",
+                                 "https://lrclib.net.evil.test/123", "https://user@lrclib.net/123",
+                                 "https://lrclib.net/search?q=song", "https://lrclib.net/api/get/../123"])
+def test_synced_url_rejects_invalid_hosts_and_paths(url, monkeypatch):
+    monkeypatch.setattr(lyrics, "request", lambda *a: pytest.fail("Invalid URLs must not be fetched"))
+    with pytest.raises(ValueError):
+        lyrics.synced_from_url(url)
+
+
+@pytest.mark.parametrize("value", [None, record(syncedLyrics=None), record(syncedLyrics="plain text"),
+                                  record(syncedLyrics="[00:99]bad")])
+def test_synced_url_requires_timed_lyrics(value, monkeypatch):
+    monkeypatch.setattr(lyrics, "request", lambda *a: value)
+    with pytest.raises(ValueError):
+        lyrics.synced_from_url("https://lrclib.net/tracks/123")
 
 
 def test_search_prefers_synced_over_exact_plain(folder, monkeypatch):

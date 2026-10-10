@@ -1,4 +1,4 @@
-# Karapincho v0.1.0 validation
+# Karapincho v0.2.0 validation
 
 This document records the release baseline and its limits. It is evidence of tested behavior, not a guarantee that automatic lyrics, timings, or melody will be correct for every recording.
 
@@ -14,9 +14,11 @@ npm ci --prefix frontend
 npm run build --prefix frontend
 ```
 
-The current release tree passes 142 Python tests with two upstream Starlette deprecation warnings; Python lint, dependency consistency, and the production TypeScript/Vite build also pass. Twelve Playwright checks cover 360 px, 768 px, standard desktop, and large desktop layouts, including keyboard navigation, exact setup diagnostics, and automated serious/critical accessibility rules. Coverage also includes API/session protection, upload validation, cancellation, restart/checkpoints, deletion safety, worker isolation, acceleration recovery, lyric sources and correction, Japanese romanization, chart validation, benchmark scheduling, and media timelines.
+The v0.2.0 automated baseline comprises 239 Python tests and 56 Playwright checks. Python lint, dependency consistency, release integrity, and the production TypeScript/Vite build are also checked. The browser checks cover 360 px, 768 px, standard desktop, and large desktop layouts, including keyboard navigation, exact setup diagnostics, and automated serious/critical accessibility rules. Coverage also includes API/session protection, upload validation, cancellation, restart/checkpoints, deletion safety, worker isolation, acceleration recovery, lyric sources and correction, Japanese romanization, chart validation, benchmark scheduling, and media timelines. The latest checks also cover uncertain LRCLIB matches pausing before audio analysis, synced-lyric URL validation and resumption, persisted wait preferences, per-song fallback, waiting-job cancellation and recovery, CSV metadata and language codes, karaoke transfer, and history cleanup.
 
 ## Real pipeline evidence
+
+The evidence below was collected for v0.1.0. Model-backed pipeline and player checks have not been repeated for v0.2.0; the manual release gate remains outstanding.
 
 Three openly licensed recordings complete the full pipeline and are bundled in hash-verified form for repeatable benchmarks:
 
@@ -47,6 +49,6 @@ The bundled M2 benchmark reports controlled CPU and accelerated medians over thr
 
 ## Manual release gate
 
-Before tagging v0.1.0, test the GitHub source archive—not the development checkout—on clean Apple Silicon environments running macOS 14 and the current macOS release. Verify setup, launch, MP4 upload, a permitted public YouTube URL, LRCLIB lookup, song completion, download, folder opening, cancellation, retry, rebuild, deletion, restart recovery, and benchmark cancellation.
+Before tagging v0.2.0, test the GitHub source archive—not the development checkout—on clean Apple Silicon environments running macOS 14 and the current macOS release. Verify setup, launch, MP4 upload, a permitted public YouTube URL, LRCLIB lookup, song completion, CSV queueing with language codes, uncertain-lyric alerts and URL resumption, disabling lyric waits, direct and bulk karaoke export, cleanup, download, folder opening, cancellation, retry, rebuild, deletion, restart recovery, and benchmark cancellation.
 
-Also verify readable failures for unsupported architecture/OS, less than 10 GB free space, missing prerequisites, unavailable network, unavailable optional MLX runtime, blocked YouTube downloads, invalid media, and empty vocals. Record the tested hardware, operating systems, setup duration, installed footprint, and any deviations in the v0.1.0 release notes.
+Also verify readable failures for unsupported architecture/OS, less than 10 GB free space, missing prerequisites, unavailable network, unavailable optional MLX runtime, blocked YouTube downloads, invalid media, and empty vocals. Record the tested hardware, operating systems, setup duration, installed footprint, and any deviations in the v0.2.0 release notes.

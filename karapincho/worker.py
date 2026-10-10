@@ -35,7 +35,7 @@ DEPENDENCIES = {
 
 
 def signature(stage, folder, job):
-    payload = {"revision": 2 if stage in ("lyrics", "transcribe", "align", "chart", "package") else 1,
+    payload = {"revision": 3 if stage == "lyrics" else 2 if stage in ("transcribe", "align", "chart", "package") else 1,
                "dependencies": {name: hashlib.sha256((folder / f"{name}.json").read_bytes()).hexdigest()
                                 for name in DEPENDENCIES[stage]}}
     if stage in acceleration.AI_STAGES | {"prepare"}:
@@ -247,6 +247,10 @@ class Worker:
             if "metadata" in result:
                 self.store.update(job["id"], title=result["metadata"]["title"])
             self.store.update(job["id"], warnings=list(dict.fromkeys(warnings)))
+            if (stage == "lyrics" and result.get("needs_input")
+                    and not job.get("lyric_settings", {}).get("skip_lyric_wait")
+                    and self.store.pause_for_lyrics(job["id"])):
+                return
         report = {stage: read_json(folder / f"{stage}.json") for stage in config.STAGES}
         write_json(folder / "report.json", report)
         cancelled = self.store.get(job["id"])["cancel_requested"]

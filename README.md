@@ -7,14 +7,16 @@
 <p align="center"><strong>A local AI studio that turns a video into a ready-to-sing UltraStar song.</strong></p>
 
 <p align="center">
-  <img alt="Version 0.1.0" src="https://img.shields.io/badge/version-0.1.0-d87348">
+  <img alt="Version 0.2.0" src="https://img.shields.io/badge/version-0.2.0-d87348">
   <img alt="GPL v3 or later" src="https://img.shields.io/badge/license-GPL--3.0--or--later-3b4c35">
   <img alt="Apple Silicon" src="https://img.shields.io/badge/macOS-Apple%20Silicon-829365">
 </p>
 
 ![Karapincho song studio](docs/assets/screenshot-studio.png)
 
-Paste one public YouTube video URL or upload an MP4. Karapincho creates an UltraStar chart, original-vocal MP3, synchronized H.264 video, cover image, and ZIP. Processing and AI inference run locally on your Mac; no API key or subscription is required.
+Paste a public YouTube video URL, queue songs from a CSV, or upload an MP4. Karapincho creates an UltraStar chart, original-vocal MP3, synchronized H.264 video, cover image, and ZIP. Processing and AI inference run locally on your Mac; no API key or subscription is required.
+
+See the [v0.2.0 release notes](docs/RELEASE_NOTES_v0.2.0.md) for the latest features.
 
 > **Beta software:** automatic lyrics, alignment, Japanese readings, and pitch detection are best-effort. Review quality notices before relying on an export.
 
@@ -38,13 +40,15 @@ Paste one public YouTube URL or select/drop an MP4. Keep **Quality** for the est
 
 To queue several YouTube songs at once, check **Add multiple songs** and upload a UTF-8 CSV with four columns and the header `url,artist,song_name,language_code`. Download the CSV template in the UI to get started. Include one song per row (up to 50); artist, song name, and language code can be left blank for automatic detection. Use a 2–3 letter language code such as `en`, `es`, or `ja`. Existing three-column files with the header `url,artist,song_name` are also supported. Quote values containing commas, such as `"Artist, Jr."`. Select **Queue songs from CSV** to queue songs in file order using the selected processing mode. The entire CSV is checked before any songs are added; if a row is invalid, correct the file and upload it again. Each row’s artist, song name, and language code are used for lyric lookup and song processing.
 
+When LRCLIB cannot confidently supply synced lyrics, the song pauses and shows an alert asking for the correct LRCLIB record URL (for example, `https://lrclib.net/tracks/12345`). Paste the URL to resume, or continue automatically for that song. Other queued songs keep processing. Check **Disable waiting when a synced lyric match is uncertain** to save that preference and release any waiting songs.
+
 Karapincho keeps your Mac awake while processing songs, including queued songs and lyric rebuilds. The screen can turn off and you can use other apps. Normal idle sleep resumes when processing finishes. Keep a MacBook's lid open and leave Karapincho's Terminal window running; closing the lid or choosing **Sleep** can still pause processing.
 
 Choose your karaoke **Songs** folder once. When processing finishes, review quality notices and select **Add to karaoke**. Karapincho copies the complete song directly into that folder. Existing names offer **Keep both** or explicit replacement; an export failure keeps your completed local song available for retry. ZIP download and lyric correction remain under **More options**.
 
 Use **Move all to karaoke & remove local files** beside the configured Songs folder to transfer all completed songs, including older jobs. Each karaoke copy is verified before its local package, source, and rebuild files are removed. Existing versions are kept, and songs that cannot be exported retain their local files for retry. Processing history and export locations are kept.
 
-Recent jobs are a processing history, not a second karaoke library. **Clean up…** shows reclaimable disk space and removes local working and rebuild files after confirmation. Copies in your karaoke folder and export history are kept. Reprocessing after cleanup requires the original source again. Use **Quit Karapincho** before moving Karapincho’s folder or deleting local data.
+Recent jobs are a processing history, not a second karaoke library. **Clear recent jobs** removes finished history and local working files after confirmation; active jobs and copies in your karaoke Songs folder are kept. **Clean up…** shows reclaimable disk space and removes local working and rebuild files after confirmation. Copies in your karaoke folder and export history are kept. Reprocessing after cleanup requires the original source again. Use **Quit Karapincho** before moving Karapincho’s folder or deleting local data.
 
 ![Completed song with quality notices and direct karaoke export](docs/assets/screenshot-ready.png)
 
@@ -98,7 +102,7 @@ AI assistance does not replace review: release claims are backed by automated te
 - [References and acknowledgements](docs/REFERENCES.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
 - [Validation evidence and limitations](VALIDATION.md)
-- [v0.1.0 release notes](docs/RELEASE_NOTES_v0.1.0.md)
+- [v0.2.0 release notes](docs/RELEASE_NOTES_v0.2.0.md)
 - [Creation workflow validation and remaining release gates](docs/WORKFLOW_VALIDATION.md)
 
 ## Development

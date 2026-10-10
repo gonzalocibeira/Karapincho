@@ -6,7 +6,7 @@ from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
 
-from karapincho import config
+from karapincho import __version__, config
 from karapincho.app import create_app
 from karapincho.media import youtube_url
 from karapincho.store import Store
@@ -187,7 +187,7 @@ def test_cross_origin_and_csrf(client):
 
 def test_health_version_and_security_headers(client):
     response = client.get("/api/health")
-    assert response.json()["version"] == "0.1.0"
+    assert response.json()["version"] == __version__
     assert response.headers["content-security-policy"].startswith("default-src 'self'")
     assert response.headers["permissions-policy"] == "camera=(), microphone=(), geolocation=()"
     assert response.headers["x-content-type-options"] == "nosniff"
@@ -236,3 +236,44 @@ def test_upload_lyric_settings_and_validation(client):
     assert response.status_code == 422
     assert client.post("/api/jobs/url", json={"url": "https://youtu.be/abcdefghijk", "lyric_settings": {
         "lyrics": "[00:99]invalid"}}).status_code == 422
+
+
+def waiting_song(client):
+    job = client.post('/api/jobs/url', json={'url': 'https://youtu.be/abcdefghijk'}).json()
+    store = Store()
+    store.next()
+    store.pause_for_lyrics(job['id'])
+    return job['id']
+
+
+def test_lyric_wait_setting_releases_waiting_songs(client):
+    assert client.get('/api/settings').json()['wait_for_lyrics'] is True
+    job_id = waiting_song(client)
+    assert client.get('/api/jobs/feed').json()['active'][0]['status'] == 'waiting_for_lyrics'
+    response = client.post('/api/settings/lyrics', json={'wait_for_lyrics': False})
+    assert response.status_code == 200 and response.json()['wait_for_lyrics'] is False
+    assert Store().get(job_id)['status'] == 'queued'
+    assert client.get('/api/settings').json()['wait_for_lyrics'] is False
+
+
+def test_resolve_lyrics_validates_and_resumes(client, monkeypatch):
+    from karapincho import lyrics
+    job_id = waiting_song(client)
+    path = f'/api/jobs/{job_id}/resolve-lyrics'
+    assert client.post(path, json={'url': 'https://example.com/123'}).status_code == 422
+    assert Store().get(job_id)['status'] == 'waiting_for_lyrics'
+    monkeypatch.setattr(lyrics, 'request', lambda *a: {'syncedLyrics': '[00:10]correct words'})
+    response = client.post(path, json={'url': 'https://lrclib.net/tracks/123'})
+    assert response.status_code == 202
+    assert response.json()['status'] == 'queued'
+    assert response.json()['lyric_settings']['lyrics'] == '[00:10]correct words'
+    assert client.post(path, json={'skip': True}).status_code == 409
+
+
+def test_waiting_song_skip_and_cancel(client):
+    job_id = waiting_song(client)
+    response = client.post(f'/api/jobs/{job_id}/resolve-lyrics', json={'skip': True})
+    assert response.status_code == 202 and response.json()['lyric_settings']['skip_lyric_wait']
+    Store().pause_for_lyrics(job_id)
+    response = client.post(f'/api/jobs/{job_id}/cancel')
+    assert response.status_code == 200 and response.json()['status'] == 'cancelled'

@@ -53,7 +53,7 @@ type Job = {
   lyric_source?: string;
   id: string;
   title: string;
-  status: "queued" | "running" | "completed" | "failed" | "cancelled";
+  status: "queued" | "running" | "waiting_for_lyrics" | "completed" | "failed" | "cancelled";
   stage: string;
   progress: number;
   warnings: string[];
@@ -380,7 +380,8 @@ const JobCard = React.memo(function JobCard({
   const [conflict, setConflict] = useState(false);
   const [cleanupBytes, setCleanupBytes] = useState<number | null>(null);
   const [notice, setNotice] = useState("");
-  const active = ["running", "queued"].includes(job.status);
+  const [lyricsUrl, setLyricsUrl] = useState("");
+  const active = ["running", "queued", "waiting_for_lyrics"].includes(job.status);
   const cleaned = job.cleaned_at != null;
   const available = !cleaned && job.local_available !== false;
   async function action(name: string, body?: object) {
@@ -446,6 +447,8 @@ const JobCard = React.memo(function JobCard({
                   ? "Creating"
                   : job.status === "queued"
                     ? "Queued"
+                    : job.status === "waiting_for_lyrics"
+                      ? "Waiting for lyrics"
                     : job.status === "failed"
                       ? "Needs attention"
                       : "Cancelled"}
@@ -579,6 +582,28 @@ const JobCard = React.memo(function JobCard({
             </button>
           </div>
         )}
+        {job.status === "waiting_for_lyrics" && (
+          <div className="lyric-alert">
+            <p role="alert"><AlertTriangle size={16} /> Karapincho could not confidently find the correct synced lyrics. This song is paused.</p>
+            <form onSubmit={(event) => {
+              event.preventDefault();
+              void action("resolve-lyrics", { url: lyricsUrl });
+            }}>
+              <label>
+                URL to the correct synced lyric on LRCLIB
+                <input type="url" required value={lyricsUrl} maxLength={2048}
+                  placeholder="https://lrclib.net/tracks/12345"
+                  onChange={(event) => setLyricsUrl(event.target.value)} disabled={!!pending} />
+              </label>
+              <a href="https://lrclib.net" target="_blank" rel="noreferrer">Search LRCLIB</a>
+              <div className="job-buttons">
+                <button className="create-button" disabled={!!pending}>Use synced lyrics and resume</button>
+                <button type="button" disabled={!!pending}
+                  onClick={() => void action("resolve-lyrics", { skip: true })}>Continue automatically for this song</button>
+              </div>
+            </form>
+          </div>
+        )}
         <div className="job-buttons">
           {job.status === "completed" && available && (
             <button
@@ -699,6 +724,9 @@ function App() {
   const [lyricSettings, setLyricSettings] = useState<LyricSettings>({
     ...emptyLyrics,
   });
+  const [waitForLyrics, setWaitForLyrics] = useState(true);
+  const [savingLyricWait, setSavingLyricWait] = useState(false);
+  const lyricWaitSaving = useRef(false);
   const [connection, setConnection] = useState("");
   const [help, setHelp] = useState(false);
   const input = useRef<HTMLInputElement>(null);
@@ -742,6 +770,8 @@ function App() {
         if (disposed) return;
         setHealth(h);
         setSongsFolder(settings.songs_folder);
+        if (version === mutationVersion.current && !lyricWaitSaving.current)
+          setWaitForLyrics(settings.wait_for_lyrics ?? true);
         if (h.shutting_down) setShutdown("stopping");
         active = feed.active.length > 0;
         if (
@@ -763,7 +793,7 @@ function App() {
               ? current.filter(
                   (job) =>
                     !ids.has(job.id) &&
-                    !["running", "queued"].includes(job.status),
+                    !["running", "queued", "waiting_for_lyrics"].includes(job.status),
                 )
               : [];
             const result = [...stable, ...older];
@@ -1037,7 +1067,7 @@ function App() {
     }
   }
   const active = jobs
-    .filter((job) => ["running", "queued"].includes(job.status))
+    .filter((job) => ["running", "queued", "waiting_for_lyrics"].includes(job.status))
     .sort((a, b) =>
       a.status === "running"
         ? -1
@@ -1046,7 +1076,7 @@ function App() {
           : a.created - b.created,
     );
   const recent = jobs
-    .filter((job) => !["running", "queued"].includes(job.status))
+    .filter((job) => !["running", "queued", "waiting_for_lyrics"].includes(job.status))
     .sort((a, b) => b.created - a.created);
   if (shutdown !== "running")
     return (
@@ -1426,6 +1456,30 @@ function App() {
                       </span>
                     </label>
                   </fieldset>
+                  <label className="lyric-wait-toggle">
+                    <input type="checkbox" checked={!waitForLyrics} disabled={savingLyricWait || !health}
+                      onChange={async (event) => {
+                        const enabled = !event.target.checked;
+                        const previous = waitForLyrics;
+                        lyricWaitSaving.current = true;
+                        setWaitForLyrics(enabled);
+                        setSavingLyricWait(true);
+                        mutationVersion.current++;
+                        try {
+                          const saved = await post("/api/settings/lyrics", { wait_for_lyrics: enabled });
+                          setWaitForLyrics(saved.wait_for_lyrics);
+                          mutationVersion.current++;
+                          refreshNow.current();
+                        } catch (err) {
+                          setWaitForLyrics(previous);
+                          setError(err instanceof Error ? err.message : "Could not save lyric preference.");
+                        } finally {
+                          lyricWaitSaving.current = false;
+                          setSavingLyricWait(false);
+                        }
+                      }} />
+                    Disable waiting when a synced lyric match is uncertain
+                  </label>
                   {isBatch ? (
                     <p className="input-hint">Artist, song name, and language code from each CSV row are used for that song. Lyrics are detected separately.</p>
                   ) : (

@@ -42,7 +42,7 @@ def environment(tmp_path, monkeypatch, awake_processes):
     return store, job, folder
 
 
-def fake_stages(monkeypatch, fail_stage=None, memory_stage=None, slow_stage=None):
+def fake_stages(monkeypatch, fail_stage=None, memory_stage=None, slow_stage=None, needs_lyrics=False):
     real_popen = subprocess.Popen
     script = """
 import json, sys, time
@@ -55,6 +55,7 @@ if stage == FAIL or (stage == MEMORY and low == 'False'):
     sys.exit(1)
 for name in OUTPUTS[stage]: (folder/name).write_text('test')
 result = {'pipeline_version': 1, 'warnings': []}
+if stage == 'lyrics': result['needs_input'] = NEEDS_LYRICS
 if stage == 'acquire': result['metadata'] = {'input': str(folder/'input.mp4'), 'title': 'Worker test'}
 if stage == 'package':
     p=folder.parent.parent/'library'/folder.name
@@ -63,7 +64,7 @@ if stage == 'package':
 """
     from karapincho.worker import OUTPUTS
 
-    prefix = f"OUTPUTS={OUTPUTS!r}\nFAIL={fail_stage!r}\nMEMORY={memory_stage!r}\nSLOW={slow_stage!r}\n"
+    prefix = f"NEEDS_LYRICS={needs_lyrics!r}\nOUTPUTS={OUTPUTS!r}\nFAIL={fail_stage!r}\nMEMORY={memory_stage!r}\nSLOW={slow_stage!r}\n"
 
     def launch(args, **kwargs):
         return real_popen(
@@ -80,6 +81,36 @@ def wait_until(predicate, timeout=8):
             return
         time.sleep(0.02)
     raise AssertionError("Worker did not reach the expected state")
+
+
+@pytest.mark.parametrize("skip", [False, True])
+def test_uncertain_lyrics_pause_and_resume(environment, monkeypatch, skip):
+    store, job, folder = environment
+    fake_stages(monkeypatch, needs_lyrics=True)
+    worker = Worker(store)
+    worker.execute(store.next())
+    paused = store.get(job["id"])
+    assert paused["status"] == "waiting_for_lyrics"
+    assert paused["started_at"] is None
+    assert not (folder / "separate.json").exists()
+    assert store.feed()["active"][0]["id"] == job["id"]
+    assert store.next() is None
+    store.recover()
+    assert store.get(job["id"])["status"] == "waiting_for_lyrics"
+    if skip:
+        store.resolve_lyrics(job["id"])
+    else:
+        store.set_lyric_wait(False)
+    worker.execute(store.next())
+    assert store.get(job["id"])["status"] == "completed"
+
+
+def test_disabled_lyric_wait_does_not_pause(environment, monkeypatch):
+    store, job, _ = environment
+    fake_stages(monkeypatch, needs_lyrics=True)
+    store.set_lyric_wait(False)
+    Worker(store).execute(store.next())
+    assert store.get(job["id"])["status"] == "completed"
 
 
 def test_idle_worker_does_not_prevent_sleep(environment, monkeypatch, awake_processes):

@@ -82,7 +82,7 @@ class Store:
     def feed(self, limit=20, before=None):
         with self.connect() as db:
             active = [self.decode(r) for r in db.execute(
-                "SELECT * FROM jobs WHERE status IN ('queued','running') ORDER BY created,id")]
+                "SELECT * FROM jobs WHERE status IN ('queued','running','waiting_for_lyrics') ORDER BY created,id")]
             where, params = "", []
             if before:
                 cursor = db.execute("SELECT created,id FROM jobs WHERE id=?", (before,)).fetchone()
@@ -90,7 +90,7 @@ class Store:
                     where = " AND (created < ? OR (created = ? AND id < ?))"
                     params = [cursor["created"], cursor["created"], cursor["id"]]
             rows = [self.decode(r) for r in db.execute(
-                "SELECT * FROM jobs WHERE status NOT IN ('queued','running')" + where
+                "SELECT * FROM jobs WHERE status NOT IN ('queued','running','waiting_for_lyrics')" + where
                 + " ORDER BY created DESC,id DESC LIMIT ?", (*params, limit + 1))]
             return {"active": active, "recent": rows[:limit],
                     "next": rows[limit - 1]["id"] if len(rows) > limit else None}
@@ -143,6 +143,44 @@ class Store:
                         time.time(), job_id))
         return self.get(job_id)
 
+    def pause_for_lyrics(self, job_id):
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            setting = db.execute("SELECT value FROM settings WHERE key='wait_for_lyrics'").fetchone()
+            if setting and setting["value"] == "false":
+                return False
+            row = db.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
+            now = time.time()
+            elapsed = (row["elapsed_seconds"] or 0) + max(0, now - (row["started_at"] or now))
+            db.execute("UPDATE jobs SET status=?, elapsed_seconds=?, started_at=NULL, updated=? WHERE id=?",
+                       ("cancelled" if row["cancel_requested"] else "waiting_for_lyrics", elapsed, now, job_id))
+            return True
+
+    def set_lyric_wait(self, enabled):
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            db.execute("INSERT OR REPLACE INTO settings(key,value) VALUES ('wait_for_lyrics',?)",
+                       ("true" if enabled else "false",))
+            if not enabled:
+                db.execute("UPDATE jobs SET status='queued', updated=? WHERE status='waiting_for_lyrics'",
+                           (time.time(),))
+
+    def resolve_lyrics(self, job_id, text=None, url=""):
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
+            if row is None or row["status"] != "waiting_for_lyrics":
+                raise ValueError("This song is no longer waiting for lyrics.")
+            settings = json.loads(row["lyric_settings"])
+            if text is None:
+                settings["skip_lyric_wait"] = True
+            else:
+                settings.update(lyrics=text, lyrics_url=url)
+                settings.pop("skip_lyric_wait", None)
+            db.execute("UPDATE jobs SET lyric_settings=?, status='queued', updated=? WHERE id=?",
+                       (json.dumps(settings, ensure_ascii=False), time.time(), job_id))
+        return self.get(job_id)
+
     def recover(self):
         with self.connect() as db:
             # After an abrupt exit, only count through the last saved progress.
@@ -174,8 +212,8 @@ class Store:
             # A queued song may be claimed between the API read and this write.
             db.execute(
                 "UPDATE jobs SET cancel_requested=1, "
-                "status=CASE WHEN status='queued' THEN 'cancelled' ELSE status END, updated=? "
-                "WHERE id=? AND status IN ('queued','running')", (time.time(), job_id)
+                "status=CASE WHEN status IN ('queued','waiting_for_lyrics') THEN 'cancelled' ELSE status END, updated=? "
+                "WHERE id=? AND status IN ('queued','running','waiting_for_lyrics')", (time.time(), job_id)
             )
 
     def delete(self, job_id):
