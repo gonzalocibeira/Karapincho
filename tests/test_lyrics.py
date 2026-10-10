@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import json
 from types import SimpleNamespace
+from urllib.error import HTTPError
 
 import pytest
 
@@ -110,6 +111,76 @@ def test_http_cache_and_timeout(folder, monkeypatch):
     assert lyrics.request("get", {"track_name": "日本語"})["id"] == 1
     assert lyrics.request("get", {"track_name": "日本語"})["id"] == 1
     assert calls == [8]
+
+
+@pytest.mark.parametrize("status", [502, 503, 504])
+def test_http_transient_failure_retries_then_caches_success(folder, monkeypatch, status):
+    calls, delays = [], []
+
+    class Response:
+        def __enter__(self): return self
+        def __exit__(self, *args): pass
+        def read(self, size): return json.dumps(record()).encode()
+
+    def open_url(req, timeout):
+        calls.append(req.full_url)
+        if len(calls) < 3:
+            raise HTTPError(req.full_url, status, "busy", {}, None)
+        return Response()
+
+    monkeypatch.setattr(lyrics, "urlopen", open_url)
+    monkeypatch.setattr(lyrics.time, "sleep", delays.append)
+    assert lyrics.request("get", {"track_name": "Song"})["id"] == 1
+    assert lyrics.request("get", {"track_name": "Song"})["id"] == 1
+    assert len(calls) == 3 and delays == [0.5, 1]
+
+
+@pytest.mark.parametrize("status,attempts", [(503, 3), (400, 1), (429, 1)])
+def test_http_failures_are_bounded_and_not_cached(folder, monkeypatch, status, attempts):
+    calls = []
+
+    def open_url(req, timeout):
+        calls.append(req.full_url)
+        raise HTTPError(req.full_url, status, "unavailable", {}, None)
+
+    monkeypatch.setattr(lyrics, "urlopen", open_url)
+    monkeypatch.setattr(lyrics.time, "sleep", lambda _: None)
+    for _ in range(2):
+        with pytest.raises(HTTPError):
+            lyrics.request("get", {"track_name": "Song"})
+    assert len(calls) == attempts * 2
+    assert not (folder / "lyrics-cache").exists()
+
+
+@pytest.mark.parametrize("found", [[record()], [record(duration=110)], [], [
+    record(), record(id=2, syncedLyrics="[00:10]different words")]])
+def test_exact_http_failure_falls_back_to_conservative_search(folder, monkeypatch, found):
+    calls = []
+
+    def request(endpoint, params):
+        calls.append(endpoint)
+        if endpoint == "get":
+            raise HTTPError("https://lrclib.net/api/get", 503, "busy", {}, None)
+        return found
+
+    monkeypatch.setattr(lyrics, "request", request)
+    result = lyrics.lookup(folder)
+    assert calls == ["get", "search"]
+    if len(found) == 1 and found[0]["duration"] == 100:
+        assert result["source"] == "lrclib" and result["warnings"] == []
+    else:
+        assert result["source"] == "transcription"
+        assert "HTTP 503" in result["warnings"][0]
+
+
+def test_http_outage_notice_includes_status(folder, monkeypatch):
+    def unavailable(*args):
+        raise HTTPError("https://lrclib.net/api/search", 503, "busy", {}, None)
+
+    monkeypatch.setattr(lyrics, "request", unavailable)
+    result = lyrics.lookup(folder)
+    assert result["source"] == "transcription"
+    assert "HTTP 503" in result["warnings"][0]
 
 
 @pytest.mark.parametrize("language,texts", [
