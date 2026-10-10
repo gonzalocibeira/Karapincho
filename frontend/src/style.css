@@ -465,11 +465,10 @@ h2 {
   font: inherit;
   margin-bottom: 16px;
 }
-.batch-urls {
+.batch-csv {
   display: block;
   width: 100%;
   min-width: 0;
-  resize: vertical;
   border: 1px solid #dedfd4;
   border-radius: 6px;
   padding: 12px;

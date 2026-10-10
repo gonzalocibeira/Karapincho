@@ -36,11 +36,13 @@ MLX transcription is optional and requires a compatible macOS build. If unavaila
 
 Paste one public YouTube URL or select/drop an MP4. Keep **Quality** for the established transcription settings, or choose **Fast** for a smaller model that can be less accurate, then select **Create song**.
 
-To queue several YouTube songs at once, check **Add multiple songs**, paste one public video link per line (up to 50), and select **Queue**. Songs queue in the order entered using the selected processing mode. All links are checked before any songs are added; if a link is invalid, correct it and submit the list again. Song details and lyrics are detected separately for each song.
+To queue several YouTube songs at once, check **Add multiple songs** and upload a UTF-8 CSV with exactly three columns and the header `url,artist,song_name`. Download the CSV template in the UI to get started. Include one song per row (up to 50); artist and song name can be left blank for automatic detection. Quote values containing commas, such as `"Artist, Jr."`. Select **Queue songs from CSV** to queue songs in file order using the selected processing mode. The entire CSV is checked before any songs are added; if a row is invalid, correct the file and upload it again. Each row’s artist and song name are used for lyric lookup and song metadata.
 
 Karapincho keeps your Mac awake while processing songs, including queued songs and lyric rebuilds. The screen can turn off and you can use other apps. Normal idle sleep resumes when processing finishes. Keep a MacBook's lid open and leave Karapincho's Terminal window running; closing the lid or choosing **Sleep** can still pause processing.
 
 Choose your karaoke **Songs** folder once. When processing finishes, review quality notices and select **Add to karaoke**. Karapincho copies the complete song directly into that folder. Existing names offer **Keep both** or explicit replacement; an export failure keeps your completed local song available for retry. ZIP download and lyric correction remain under **More options**.
+
+Use **Move all to karaoke & remove local files** beside the configured Songs folder to transfer all completed songs, including older jobs. Each karaoke copy is verified before its local package, source, and rebuild files are removed. Existing versions are kept, and songs that cannot be exported retain their local files for retry. Processing history and export locations are kept.
 
 Recent jobs are a processing history, not a second karaoke library. **Clean up…** shows reclaimable disk space and removes local working and rebuild files after confirmation. Copies in your karaoke folder and export history are kept. Reprocessing after cleanup requires the original source again. Use **Quit Karapincho** before moving Karapincho’s folder or deleting local data.
 
