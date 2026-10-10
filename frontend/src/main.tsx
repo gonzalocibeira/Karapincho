@@ -1318,11 +1318,12 @@ function App() {
                               aria-describedby="batch-hint"
                             />
                             <p id="batch-hint" className="input-hint">
-                              Upload a UTF-8 CSV with three columns: url, artist, song_name.
+                              Upload a UTF-8 CSV with four columns: url, artist, song_name, language_code.
                               Include this header row. Up to 50 songs, queued in file order.
-                              Leave artist or song_name blank for automatic detection.
+                              Leave artist, song_name, or language_code blank for automatic detection.
+                              Use a 2–3 letter language code, such as en, es, or ja.
                             </p>
-                            <a className="input-hint" href="data:text/csv;charset=utf-8,url%2Cartist%2Csong_name%0Ahttps%3A%2F%2Fyoutu.be%2FVIDEO_ID%2CArtist%20name%2CSong%20name%0A" download="songs-template.csv">
+                            <a className="input-hint" href="data:text/csv;charset=utf-8,url%2Cartist%2Csong_name%2Clanguage_code%0Ahttps%3A%2F%2Fyoutu.be%2FVIDEO_ID%2CArtist%20name%2CSong%20name%2Cen%0A" download="songs-template.csv">
                               Download CSV template
                             </a>
                           </>
@@ -1426,7 +1427,7 @@ function App() {
                     </label>
                   </fieldset>
                   {isBatch ? (
-                    <p className="input-hint">Artist and song name from each CSV row are used for that song. Lyrics are detected separately.</p>
+                    <p className="input-hint">Artist, song name, and language code from each CSV row are used for that song. Lyrics are detected separately.</p>
                   ) : (
                     <details className="lyric-options">
                       <summary>Song details and lyrics (optional)</summary>
