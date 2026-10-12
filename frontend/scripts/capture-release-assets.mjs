@@ -46,6 +46,7 @@ recent = [{
 await page.reload({ waitUntil: "networkidle" });
 await page.getByRole("button", { name: "Add to karaoke" }).waitFor();
 await page.getByText("1 quality notice", { exact: true }).click();
+await page.evaluate(() => window.scrollTo(0, 0));
 const readyOutput = path.resolve(here, "../../docs/assets/screenshot-ready.png");
 await page.screenshot({ path: readyOutput, fullPage: true });
 console.log(readyOutput);
