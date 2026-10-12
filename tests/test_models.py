@@ -3,6 +3,21 @@ from karapincho import config
 from karapincho.models import japanese_alignment_path, manifest, whisper_path
 
 
+def test_incomplete_qwen_shards_are_not_reported_ready(tmp_path, monkeypatch):
+    import json
+    import pytest
+    from karapincho import models
+    monkeypatch.setattr(models, "_snapshot", lambda *args: tmp_path)
+    for name in ["config.json", "vocab.json", "merges.txt", "tokenizer_config.json", "first.safetensors"]:
+        (tmp_path / name).write_text("cached")
+    (tmp_path / "model.safetensors.index.json").write_text(json.dumps(
+        {"weight_map": {"one": "first.safetensors", "two": "missing.safetensors"}}))
+    with pytest.raises(FileNotFoundError, match="Incomplete quality model cache"):
+        models.qwen_path()
+    (tmp_path / "missing.safetensors").write_text("cached")
+    assert models.qwen_path() == tmp_path
+
+
 def test_model_manifest_has_pinned_release_sources():
     models = manifest()
     assert len(models) >= 8

@@ -67,6 +67,48 @@
       "revision": "torchcrepe-0.0.24:full.pth",
       "sha256": "133225604dedd2e4005f8bbd1bd0a2ec073ba8b7a6cd31ff6d5edbbfa3539986",
       "license": "MIT"
+    },
+    {
+      "purpose": "quality MLX transcription",
+      "source": "huggingface",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "provenance": "https://huggingface.co/Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "license": "Apache-2.0",
+      "allow_patterns": [
+        "*.json",
+        "*.safetensors",
+        "*.txt",
+        "*.bin"
+      ]
+    },
+    {
+      "purpose": "quality MLX transcription 8bit",
+      "source": "huggingface",
+      "repository": "moona3k/mlx-qwen3-asr-1.7b-8bit",
+      "provenance": "https://huggingface.co/moona3k/mlx-qwen3-asr-1.7b-8bit",
+      "revision": "22c8abe6a6772122dda5905967d7496d1d3e8dd2",
+      "license": "Apache-2.0",
+      "allow_patterns": [
+        "*.json",
+        "*.safetensors",
+        "*.txt",
+        "*.bin"
+      ]
+    },
+    {
+      "purpose": "quality transcription recovery",
+      "source": "huggingface",
+      "repository": "Systran/faster-whisper-large-v3",
+      "provenance": "https://huggingface.co/Systran/faster-whisper-large-v3",
+      "revision": "edaa852ec7e145841d8ffdb056a99866b5f0a478",
+      "license": "MIT",
+      "allow_patterns": [
+        "*.json",
+        "*.safetensors",
+        "*.txt",
+        "*.bin"
+      ]
     }
   ]
 }

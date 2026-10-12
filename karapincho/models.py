@@ -34,8 +34,42 @@ def _snapshot(model, cache, download=False):
 
 
 def whisper_path(size="medium", download=False):
-    purpose = "low-memory CPU transcription recovery" if size == "small" else "primary CPU transcription"
-    return _snapshot(_model(purpose), config.DATA / "models" / "whisper", download)
+    purpose = {"small": "low-memory CPU transcription recovery", "medium": "primary CPU transcription",
+               "large-v3": "quality transcription recovery"}[size]
+    path = _snapshot(_model(purpose), config.DATA / "models" / "whisper", download)
+    if size == "large-v3":
+        _require_files(path, ["config.json", "model.bin", "tokenizer.json", "vocabulary.json"])
+    return path
+
+
+def _require_files(path, names):
+    if not names or any(Path(name).name != name or not (path / name).is_file()
+                        or not (path / name).stat().st_size for name in names):
+        raise FileNotFoundError("Incomplete quality model cache; run karapincho.setup_models --quality")
+
+
+def qwen_model(quantized=False):
+    return _model("quality MLX transcription 8bit" if quantized else "quality MLX transcription")
+
+
+def qwen_path(quantized=False, download=False):
+    path = _snapshot(qwen_model(quantized), config.DATA / "models" / "qwen", download)
+    files = ["config.json", "vocab.json", "merges.txt", "tokenizer_config.json"]
+    if quantized:
+        files.append("weights.safetensors")
+    else:
+        _require_files(path, ["model.safetensors.index.json"])
+        try:
+            weight_map = json.loads((path / "model.safetensors.index.json").read_text())["weight_map"]
+            if not isinstance(weight_map, dict):
+                raise ValueError("Invalid weight index")
+            shards = list(set(weight_map.values()))
+            _require_files(path, shards)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise FileNotFoundError("Invalid quality model cache; run karapincho.setup_models --quality") from exc
+        files.extend(shards)
+    _require_files(path, files)
+    return path
 
 
 def japanese_alignment_path(download=False):

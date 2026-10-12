@@ -77,6 +77,10 @@ def separate(folder, low_memory=False):
 def transcribe_audio(folder, low_memory=False):
     job = read_json(folder / "job.json") if (folder / "job.json").exists() else {}
     fast = job.get("processing_mode") == "fast"
+    from .recognition import engine
+    if not fast and engine() == "quality-v2":
+        from .quality_transcription import transcribe_quality
+        return transcribe_quality(folder, low_memory)
     if acceleration.CURRENT.backend == "mlx" and not fast:
         from .transcription import transcribe_mlx
         return transcribe_mlx(folder)
@@ -84,7 +88,7 @@ def transcribe_audio(folder, low_memory=False):
     from faster_whisper import WhisperModel
 
     model_name = "small" if low_memory or fast else os.environ.get("KARAPINCHO_WHISPER_MODEL", "medium")
-    model_source = str(whisper_path(model_name)) if model_name in ("medium", "small") else model_name
+    model_source = str(whisper_path(model_name)) if model_name in ("medium", "small", "large-v3") else model_name
     with model_loading("whisper"):
         model = WhisperModel(
             model_source,
@@ -225,6 +229,7 @@ def transcribe(folder, low_memory=False):
 def align(folder, low_memory=False):
     import torch
     from whisperx.alignment import align as forced_align, load_align_model
+    from .quality_transcription import alignment_items, reusable_alignment
 
     torch.set_num_threads(2 if low_memory else 4)
     transcript = read_json(folder / "transcript.json")
@@ -234,17 +239,19 @@ def align(folder, low_memory=False):
     for language in languages:
         model = None
         try:
-            with model_loading(f"alignment/{language}"):
-                model, metadata = load_align_model(
-                    language,
-                    acceleration.CURRENT.backend,
-                    model_name=(
-                        str(japanese_alignment_path()) if language == "ja"
-                        else str(spanish_alignment_path()) if language == "es"
-                        else None
-                    ),
-                    model_dir=str(config.DATA / "models" / "alignment"),
-                )
+            needs_model = any(not reusable_alignment(s) for s in transcript["segments"] if s["language"] == language)
+            if needs_model:
+                with model_loading(f"alignment/{language}"):
+                    model, metadata = load_align_model(
+                        language,
+                        acceleration.CURRENT.backend,
+                        model_name=(
+                            str(japanese_alignment_path()) if language == "ja"
+                            else str(spanish_alignment_path()) if language == "es"
+                            else None
+                        ),
+                        model_dir=str(config.DATA / "models" / "alignment"),
+                    )
         except Exception as exc:
             if (acceleration.failure_kind(f"{type(exc).__name__}: {exc}", acceleration.CURRENT.backend) != "application"
                     or (acceleration.CURRENT.backend != "cpu" and isinstance(exc, RuntimeError))):
@@ -253,8 +260,9 @@ def align(folder, low_memory=False):
                 f"Precise {language} alignment unavailable; using estimated word timings ({type(exc).__name__})."
             )
         for seg in (s for s in transcript["segments"] if s["language"] == language):
-            words = None
-            if model is not None:
+            words = ([{**w, "language": language, "estimated": False} for w in seg["words"]]
+                     if reusable_alignment(seg) else None)
+            if model is not None and words is None:
                 padding = 2.0 if seg.get("external") else 0.3
                 start = seg.get("window_start", max(0, seg["start"] - padding))
                 end = seg.get("window_end", seg["end"] + padding)
@@ -272,8 +280,7 @@ def align(folder, low_memory=False):
                             return_char_alignments=True,
                             print_progress=False,
                         )
-                        candidate = result["segments"][0]
-                        timed = candidate.get("words", [])
+                        timed, chars = alignment_items(result)
                         valid = [w for w in timed if "start" in w and "end" in w]
                         if (
                             not timed
@@ -302,7 +309,7 @@ def align(folder, low_memory=False):
                         for word in words:
                             word["chars"] = [
                                 {**c, "start": c["start"] + start, "end": c["end"] + start}
-                                for c in candidate.get("chars", [])
+                                for c in chars
                                 if "start" in c
                                 and "end" in c
                                 and word["start"] - 0.02 <= c["start"] + start < word["end"]

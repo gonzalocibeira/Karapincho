@@ -1,0 +1,2162 @@
+{
+  "schema": 1,
+  "date": "2026-10-12",
+  "default_promoted": false,
+  "hardware": {
+    "chip": "Apple M5",
+    "architecture": "arm64",
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "memory_gb": 24.0
+  },
+  "actual_8gb_hardware_tested": false,
+  "recognition_revision": 7,
+  "corpus_sha256": "fee5979f4f8ccb5572fb9dcd76e3bb774a69865adfa95c50252134d0cf5942b9",
+  "spec_sha256": "7642dc875f4939a690b098f9a435c68fb30728dd9b5c6e379b1f51be4a9c7139",
+  "reference_lyrics_used_by_inference": false,
+  "frozen_spec": "docs/accuracy/corpus.json",
+  "report_paths": {
+    "legacy": ".cache/accuracy-legacy-evaluation/accuracy.json",
+    "fp16": ".cache/accuracy-quality-v2-evaluation/accuracy.json",
+    "8bit": ".cache/accuracy-quality-v2-8bit-evaluation/accuracy.json"
+  },
+  "models": [
+    {
+      "purpose": "primary CPU transcription",
+      "source": "huggingface",
+      "repository": "Systran/faster-whisper-medium",
+      "provenance": "https://huggingface.co/Systran/faster-whisper-medium",
+      "revision": "08e178d48790749d25932bbc082711ddcfdfbc4f",
+      "license": "MIT"
+    },
+    {
+      "purpose": "low-memory CPU transcription recovery",
+      "source": "huggingface",
+      "repository": "Systran/faster-whisper-small",
+      "provenance": "https://huggingface.co/Systran/faster-whisper-small",
+      "revision": "536b0662742c02347bc0e980a01041f333bce120",
+      "license": "MIT"
+    },
+    {
+      "purpose": "optional MLX transcription",
+      "source": "huggingface",
+      "repository": "mlx-community/whisper-medium-mlx",
+      "provenance": "https://huggingface.co/mlx-community/whisper-medium-mlx",
+      "revision": "7fc08c4eac4c316526498f147dfdee6f6303f975",
+      "license": "MIT"
+    },
+    {
+      "purpose": "Japanese forced alignment",
+      "source": "huggingface",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "provenance": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "revision": "cf031e020336460d15a417eba710bbc5bb43be9a",
+      "license": "Apache-2.0",
+      "allow_patterns": [
+        "config.json",
+        "preprocessor_config.json",
+        "pytorch_model.bin",
+        "special_tokens_map.json",
+        "vocab.json"
+      ]
+    },
+    {
+      "purpose": "English forced alignment",
+      "source": "torchaudio",
+      "repository": "torchaudio/WAV2VEC2_ASR_BASE_960H",
+      "provenance": "https://docs.pytorch.org/audio/2.8.0/generated/torchaudio.pipelines.WAV2VEC2_ASR_BASE_960H.html",
+      "revision": "torch-2.8.0:wav2vec2_fairseq_base_ls960_asr_ls960.pth",
+      "license": "MIT"
+    },
+    {
+      "purpose": "Spanish forced alignment",
+      "source": "huggingface",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-spanish",
+      "provenance": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-spanish",
+      "revision": "96d7e9b4e4a78af515a3c6d3cee7c0826045d276",
+      "license": "Apache-2.0",
+      "allow_patterns": [
+        "config.json",
+        "preprocessor_config.json",
+        "pytorch_model.bin",
+        "special_tokens_map.json",
+        "vocab.json"
+      ]
+    },
+    {
+      "purpose": "vocal separation",
+      "source": "package-managed",
+      "repository": "facebookresearch/demucs htdemucs",
+      "provenance": "https://github.com/facebookresearch/demucs",
+      "revision": "demucs-4.0.1:955717e8-8726e21a.th",
+      "license": "Research-only; not covered by the Demucs code's MIT license"
+    },
+    {
+      "purpose": "pitch detection",
+      "source": "package-managed",
+      "repository": "maxrmorrison/torchcrepe full",
+      "provenance": "https://github.com/maxrmorrison/torchcrepe",
+      "revision": "torchcrepe-0.0.24:full.pth",
+      "sha256": "133225604dedd2e4005f8bbd1bd0a2ec073ba8b7a6cd31ff6d5edbbfa3539986",
+      "license": "MIT"
+    },
+    {
+      "purpose": "quality MLX transcription",
+      "source": "huggingface",
+      "repository": "Qwen/Qwen3-ASR-1.7B",
+      "provenance": "https://huggingface.co/Qwen/Qwen3-ASR-1.7B",
+      "revision": "7278e1e70fe206f11671096ffdd38061171dd6e5",
+      "license": "Apache-2.0",
+      "allow_patterns": [
+        "*.json",
+        "*.safetensors",
+        "*.txt",
+        "*.bin"
+      ]
+    },
+    {
+      "purpose": "quality MLX transcription 8bit",
+      "source": "huggingface",
+      "repository": "moona3k/mlx-qwen3-asr-1.7b-8bit",
+      "provenance": "https://huggingface.co/moona3k/mlx-qwen3-asr-1.7b-8bit",
+      "revision": "22c8abe6a6772122dda5905967d7496d1d3e8dd2",
+      "license": "Apache-2.0",
+      "allow_patterns": [
+        "*.json",
+        "*.safetensors",
+        "*.txt",
+        "*.bin"
+      ]
+    },
+    {
+      "purpose": "quality transcription recovery",
+      "source": "huggingface",
+      "repository": "Systran/faster-whisper-large-v3",
+      "provenance": "https://huggingface.co/Systran/faster-whisper-large-v3",
+      "revision": "edaa852ec7e145841d8ffdb056a99866b5f0a478",
+      "license": "MIT",
+      "allow_patterns": [
+        "*.json",
+        "*.safetensors",
+        "*.txt",
+        "*.bin"
+      ]
+    }
+  ],
+  "dependency_versions": {
+    "whisperx": "3.8.6",
+    "faster-whisper": "1.2.1",
+    "torch": "2.8.0",
+    "demucs": "4.0.1",
+    "torchcrepe": "0.0.24",
+    "yt-dlp": "2026.8.19",
+    "mlx": "0.32.2",
+    "mlx-whisper": "0.4.3",
+    "mlx-qwen3-asr": "0.4.4"
+  },
+  "automated_checks": {
+    "python_tests_passed": 290,
+    "ruff": true,
+    "dependency_consistency": true,
+    "release_integrity": true,
+    "frontend_production_build": true
+  },
+  "release_gates": {
+    "fp16": {
+      "passed": false,
+      "relative_error_reduction": 0.6209952889944772,
+      "reasons": [
+        "ja error rate regressed."
+      ],
+      "before": {
+        "languages": {
+          "en": {
+            "errors": 389,
+            "substitutions": 60,
+            "deletions": 320,
+            "insertions": 9,
+            "reference_units": 782,
+            "songs": 2,
+            "error_rate": 0.49744245524296676
+          },
+          "es": {
+            "errors": 315,
+            "substitutions": 88,
+            "deletions": 160,
+            "insertions": 67,
+            "reference_units": 434,
+            "songs": 2,
+            "error_rate": 0.7258064516129032
+          },
+          "ja": {
+            "errors": 26,
+            "substitutions": 21,
+            "deletions": 2,
+            "insertions": 3,
+            "reference_units": 214,
+            "songs": 6,
+            "error_rate": 0.12149532710280374
+          }
+        },
+        "balanced_error_rate": 0.44824807798622457
+      },
+      "after": {
+        "languages": {
+          "en": {
+            "errors": 208,
+            "substitutions": 34,
+            "deletions": 157,
+            "insertions": 17,
+            "reference_units": 782,
+            "songs": 2,
+            "error_rate": 0.2659846547314578
+          },
+          "es": {
+            "errors": 51,
+            "substitutions": 21,
+            "deletions": 19,
+            "insertions": 11,
+            "reference_units": 434,
+            "songs": 2,
+            "error_rate": 0.1175115207373272
+          },
+          "ja": {
+            "errors": 27,
+            "substitutions": 15,
+            "deletions": 5,
+            "insertions": 7,
+            "reference_units": 214,
+            "songs": 6,
+            "error_rate": 0.1261682242990654
+          }
+        },
+        "balanced_error_rate": 0.16988813325595012
+      }
+    },
+    "8bit": {
+      "passed": false,
+      "relative_error_reduction": 0.5960736241847234,
+      "reasons": [
+        "ja error rate regressed."
+      ],
+      "before": {
+        "languages": {
+          "en": {
+            "errors": 389,
+            "substitutions": 60,
+            "deletions": 320,
+            "insertions": 9,
+            "reference_units": 782,
+            "songs": 2,
+            "error_rate": 0.49744245524296676
+          },
+          "es": {
+            "errors": 315,
+            "substitutions": 88,
+            "deletions": 160,
+            "insertions": 67,
+            "reference_units": 434,
+            "songs": 2,
+            "error_rate": 0.7258064516129032
+          },
+          "ja": {
+            "errors": 26,
+            "substitutions": 21,
+            "deletions": 2,
+            "insertions": 3,
+            "reference_units": 214,
+            "songs": 6,
+            "error_rate": 0.12149532710280374
+          }
+        },
+        "balanced_error_rate": 0.44824807798622457
+      },
+      "after": {
+        "languages": {
+          "en": {
+            "errors": 227,
+            "substitutions": 35,
+            "deletions": 160,
+            "insertions": 32,
+            "reference_units": 782,
+            "songs": 2,
+            "error_rate": 0.29028132992327366
+          },
+          "es": {
+            "errors": 55,
+            "substitutions": 18,
+            "deletions": 20,
+            "insertions": 17,
+            "reference_units": 434,
+            "songs": 2,
+            "error_rate": 0.12672811059907835
+          },
+          "ja": {
+            "errors": 27,
+            "substitutions": 15,
+            "deletions": 5,
+            "insertions": 7,
+            "reference_units": 214,
+            "songs": 6,
+            "error_rate": 0.1261682242990654
+          }
+        },
+        "balanced_error_rate": 0.18105922160713914
+      }
+    }
+  },
+  "summary": {
+    "legacy": {
+      "languages": {
+        "en": {
+          "errors": 389,
+          "substitutions": 60,
+          "deletions": 320,
+          "insertions": 9,
+          "reference_units": 782,
+          "songs": 2,
+          "error_rate": 0.49744245524296676
+        },
+        "es": {
+          "errors": 315,
+          "substitutions": 88,
+          "deletions": 160,
+          "insertions": 67,
+          "reference_units": 434,
+          "songs": 2,
+          "error_rate": 0.7258064516129032
+        },
+        "ja": {
+          "errors": 26,
+          "substitutions": 21,
+          "deletions": 2,
+          "insertions": 3,
+          "reference_units": 214,
+          "songs": 6,
+          "error_rate": 0.12149532710280374
+        }
+      },
+      "balanced_error_rate": 0.44824807798622457
+    },
+    "fp16": {
+      "languages": {
+        "en": {
+          "errors": 208,
+          "substitutions": 34,
+          "deletions": 157,
+          "insertions": 17,
+          "reference_units": 782,
+          "songs": 2,
+          "error_rate": 0.2659846547314578
+        },
+        "es": {
+          "errors": 51,
+          "substitutions": 21,
+          "deletions": 19,
+          "insertions": 11,
+          "reference_units": 434,
+          "songs": 2,
+          "error_rate": 0.1175115207373272
+        },
+        "ja": {
+          "errors": 27,
+          "substitutions": 15,
+          "deletions": 5,
+          "insertions": 7,
+          "reference_units": 214,
+          "songs": 6,
+          "error_rate": 0.1261682242990654
+        }
+      },
+      "balanced_error_rate": 0.16988813325595012
+    },
+    "8bit": {
+      "languages": {
+        "en": {
+          "errors": 227,
+          "substitutions": 35,
+          "deletions": 160,
+          "insertions": 32,
+          "reference_units": 782,
+          "songs": 2,
+          "error_rate": 0.29028132992327366
+        },
+        "es": {
+          "errors": 55,
+          "substitutions": 18,
+          "deletions": 20,
+          "insertions": 17,
+          "reference_units": 434,
+          "songs": 2,
+          "error_rate": 0.12672811059907835
+        },
+        "ja": {
+          "errors": 27,
+          "substitutions": 15,
+          "deletions": 5,
+          "insertions": 7,
+          "reference_units": 214,
+          "songs": 6,
+          "error_rate": 0.1261682242990654
+        }
+      },
+      "balanced_error_rate": 0.18105922160713914
+    }
+  },
+  "records": [
+    {
+      "id": "jam-en-Cortez_-_Feel__Stripped_",
+      "language": "en",
+      "audio_sha256": "beefa48e4520bb290e739faa7c0a91e4e7296fb239577966b2129934ccf86b31",
+      "profiles": {
+        "legacy": {
+          "metrics": {
+            "errors": 98,
+            "substitutions": 11,
+            "deletions": 84,
+            "insertions": 3,
+            "reference_units": 356,
+            "error_rate": 0.2752808988764045
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 42,
+            "matched_lines": 21,
+            "coverage": 0.5,
+            "median_boundary_error_seconds": 0.13000000000002387,
+            "p95_boundary_error_seconds": 0.7679999999999936
+          },
+          "recognition_and_alignment_seconds": 114.7,
+          "peak_rss_mb": 2281.3,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "cpu",
+            "selected_backend": "cpu",
+            "physical_bytes": 25769803776,
+            "available_bytes": 11777359872,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": false,
+            "reduced": false,
+            "reason": ""
+          },
+          "alignment_quality": {
+            "precise": 33,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 1,
+          "uncertain_passages": 0,
+          "recovery_passages": 0,
+          "observed_recognizers": [],
+          "recognition_revision": null,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "failed"
+            },
+            {
+              "backend": "cpu",
+              "status": "completed"
+            }
+          ]
+        },
+        "fp16": {
+          "metrics": {
+            "errors": 34,
+            "substitutions": 16,
+            "deletions": 7,
+            "insertions": 11,
+            "reference_units": 356,
+            "error_rate": 0.09550561797752809
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 42,
+            "matched_lines": 31,
+            "coverage": 0.7380952380952381,
+            "median_boundary_error_seconds": 0.08700000000041541,
+            "p95_boundary_error_seconds": 2.313000000000528
+          },
+          "recognition_and_alignment_seconds": 270.09,
+          "peak_rss_mb": 3946.1,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 12876840960,
+            "batch_size": 32,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": false,
+            "reason": "",
+            "accelerator_peak_bytes": 8158413560
+          },
+          "alignment_quality": {
+            "precise": 10,
+            "estimated": 1,
+            "transcription_fallback": 0
+          },
+          "warning_count": 9,
+          "uncertain_passages": 8,
+          "recovery_passages": 7,
+          "observed_recognizers": [
+            "Qwen/Qwen3-ASR-1.7B",
+            "Systran/faster-whisper-large-v3"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        },
+        "8bit": {
+          "metrics": {
+            "errors": 49,
+            "substitutions": 16,
+            "deletions": 7,
+            "insertions": 26,
+            "reference_units": 356,
+            "error_rate": 0.13764044943820225
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 42,
+            "matched_lines": 31,
+            "coverage": 0.7380952380952381,
+            "median_boundary_error_seconds": 0.08700000000041541,
+            "p95_boundary_error_seconds": 2.313000000000528
+          },
+          "recognition_and_alignment_seconds": 253.91,
+          "peak_rss_mb": 3943.2,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 14038532096,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": true,
+            "reason": "",
+            "accelerator_peak_bytes": 2635268852
+          },
+          "alignment_quality": {
+            "precise": 10,
+            "estimated": 1,
+            "transcription_fallback": 0
+          },
+          "warning_count": 9,
+          "uncertain_passages": 8,
+          "recovery_passages": 7,
+          "observed_recognizers": [
+            "Systran/faster-whisper-large-v3",
+            "moona3k/mlx-qwen3-asr-1.7b-8bit"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-en-Explosive_Ear_Candy_-_Like_The_Sun",
+      "language": "en",
+      "audio_sha256": "2172a564b8a695d566435344da37c18e37bae5da3a7ac6f5c9347288dfaa22f6",
+      "profiles": {
+        "legacy": {
+          "metrics": {
+            "errors": 291,
+            "substitutions": 49,
+            "deletions": 236,
+            "insertions": 6,
+            "reference_units": 426,
+            "error_rate": 0.6830985915492958
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 72,
+            "matched_lines": 24,
+            "coverage": 0.3333333333333333,
+            "median_boundary_error_seconds": 0.060000000000002274,
+            "p95_boundary_error_seconds": 0.9449999999999932
+          },
+          "recognition_and_alignment_seconds": 132.72,
+          "peak_rss_mb": 3321.6,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "cpu",
+            "selected_backend": "cpu",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13495894016,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": false,
+            "reduced": false,
+            "reason": ""
+          },
+          "alignment_quality": {
+            "precise": 23,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 3,
+          "uncertain_passages": 0,
+          "recovery_passages": 0,
+          "observed_recognizers": [],
+          "recognition_revision": null,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "failed"
+            },
+            {
+              "backend": "cpu",
+              "status": "completed"
+            }
+          ]
+        },
+        "fp16": {
+          "metrics": {
+            "errors": 174,
+            "substitutions": 18,
+            "deletions": 150,
+            "insertions": 6,
+            "reference_units": 426,
+            "error_rate": 0.4084507042253521
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 72,
+            "matched_lines": 47,
+            "coverage": 0.6527777777777778,
+            "median_boundary_error_seconds": 0.05999999999993122,
+            "p95_boundary_error_seconds": 13.434000000000001
+          },
+          "recognition_and_alignment_seconds": 223.52,
+          "peak_rss_mb": 4150.5,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13783384064,
+            "batch_size": 32,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": false,
+            "reason": "",
+            "accelerator_peak_bytes": 8158413560
+          },
+          "alignment_quality": {
+            "precise": 8,
+            "estimated": 1,
+            "transcription_fallback": 0
+          },
+          "warning_count": 7,
+          "uncertain_passages": 6,
+          "recovery_passages": 6,
+          "observed_recognizers": [
+            "Qwen/Qwen3-ASR-1.7B",
+            "Systran/faster-whisper-large-v3"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        },
+        "8bit": {
+          "metrics": {
+            "errors": 178,
+            "substitutions": 19,
+            "deletions": 153,
+            "insertions": 6,
+            "reference_units": 426,
+            "error_rate": 0.41784037558685444
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 72,
+            "matched_lines": 45,
+            "coverage": 0.625,
+            "median_boundary_error_seconds": 0.05999999999993122,
+            "p95_boundary_error_seconds": 13.434000000000001
+          },
+          "recognition_and_alignment_seconds": 242.36,
+          "peak_rss_mb": 3939.1,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 14011727872,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": true,
+            "reason": "",
+            "accelerator_peak_bytes": 2632647392
+          },
+          "alignment_quality": {
+            "precise": 8,
+            "estimated": 1,
+            "transcription_fallback": 0
+          },
+          "warning_count": 7,
+          "uncertain_passages": 6,
+          "recovery_passages": 7,
+          "observed_recognizers": [
+            "Systran/faster-whisper-large-v3",
+            "moona3k/mlx-qwen3-asr-1.7b-8bit"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-es-Besando_Sapos_-_Dream_Tabu",
+      "language": "es",
+      "audio_sha256": "73f6159e08b8de4f74f82dcc5d94f9ad9752ca63607c05a537a7250aae15a47f",
+      "profiles": {
+        "legacy": {
+          "metrics": {
+            "errors": 168,
+            "substitutions": 9,
+            "deletions": 159,
+            "insertions": 0,
+            "reference_units": 228,
+            "error_rate": 0.7368421052631579
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 64,
+            "matched_lines": 16,
+            "coverage": 0.25,
+            "median_boundary_error_seconds": 75.75699999999998,
+            "p95_boundary_error_seconds": 108.74100000000003
+          },
+          "recognition_and_alignment_seconds": 127.79,
+          "peak_rss_mb": 3288.7,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "cpu",
+            "selected_backend": "cpu",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13459816448,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": false,
+            "reduced": false,
+            "reason": ""
+          },
+          "alignment_quality": {
+            "precise": 6,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 3,
+          "uncertain_passages": 0,
+          "recovery_passages": 0,
+          "observed_recognizers": [],
+          "recognition_revision": null,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "failed"
+            },
+            {
+              "backend": "cpu",
+              "status": "completed"
+            }
+          ]
+        },
+        "fp16": {
+          "metrics": {
+            "errors": 36,
+            "substitutions": 13,
+            "deletions": 18,
+            "insertions": 5,
+            "reference_units": 228,
+            "error_rate": 0.15789473684210525
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 64,
+            "matched_lines": 43,
+            "coverage": 0.671875,
+            "median_boundary_error_seconds": 0.09299999999996089,
+            "p95_boundary_error_seconds": 75.84199999999916
+          },
+          "recognition_and_alignment_seconds": 372.94,
+          "peak_rss_mb": 5107.7,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13769768960,
+            "batch_size": 32,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": false,
+            "reason": "",
+            "accelerator_peak_bytes": 8158413560
+          },
+          "alignment_quality": {
+            "precise": 10,
+            "estimated": 1,
+            "transcription_fallback": 0
+          },
+          "warning_count": 14,
+          "uncertain_passages": 13,
+          "recovery_passages": 11,
+          "observed_recognizers": [
+            "Qwen/Qwen3-ASR-1.7B",
+            "Systran/faster-whisper-large-v3"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        },
+        "8bit": {
+          "metrics": {
+            "errors": 37,
+            "substitutions": 13,
+            "deletions": 19,
+            "insertions": 5,
+            "reference_units": 228,
+            "error_rate": 0.16228070175438597
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 64,
+            "matched_lines": 42,
+            "coverage": 0.65625,
+            "median_boundary_error_seconds": 0.09299999999996089,
+            "p95_boundary_error_seconds": 75.87299999999917
+          },
+          "recognition_and_alignment_seconds": 359.29,
+          "peak_rss_mb": 4966.7,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13976502272,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": true,
+            "reason": "",
+            "accelerator_peak_bytes": 2635023092
+          },
+          "alignment_quality": {
+            "precise": 10,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 11,
+          "uncertain_passages": 13,
+          "recovery_passages": 11,
+          "observed_recognizers": [
+            "Systran/faster-whisper-large-v3",
+            "moona3k/mlx-qwen3-asr-1.7b-8bit"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-es-CLUB_DESTINO__-_Pensando_en_ti_-_CLUB_DESTINO",
+      "language": "es",
+      "audio_sha256": "7be40080e5655d63eaa8ab987f1e1be358575ff33678452ceafbebfa49159cb0",
+      "profiles": {
+        "legacy": {
+          "metrics": {
+            "errors": 147,
+            "substitutions": 79,
+            "deletions": 1,
+            "insertions": 67,
+            "reference_units": 206,
+            "error_rate": 0.7135922330097088
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 36,
+            "matched_lines": 21,
+            "coverage": 0.5833333333333334,
+            "median_boundary_error_seconds": 0.14000000000001478,
+            "p95_boundary_error_seconds": 6.893000000000001
+          },
+          "recognition_and_alignment_seconds": 172.22,
+          "peak_rss_mb": 3334.1,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "cpu",
+            "selected_backend": "cpu",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13435650048,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": false,
+            "reduced": false,
+            "reason": ""
+          },
+          "alignment_quality": {
+            "precise": 27,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 10,
+          "uncertain_passages": 0,
+          "recovery_passages": 0,
+          "observed_recognizers": [],
+          "recognition_revision": null,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "failed"
+            },
+            {
+              "backend": "cpu",
+              "status": "completed"
+            }
+          ]
+        },
+        "fp16": {
+          "metrics": {
+            "errors": 15,
+            "substitutions": 8,
+            "deletions": 1,
+            "insertions": 6,
+            "reference_units": 206,
+            "error_rate": 0.07281553398058252
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 36,
+            "matched_lines": 29,
+            "coverage": 0.8055555555555556,
+            "median_boundary_error_seconds": 0.07400000000005491,
+            "p95_boundary_error_seconds": 2.2869999999995514
+          },
+          "recognition_and_alignment_seconds": 300.6,
+          "peak_rss_mb": 5196.2,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13648314368,
+            "batch_size": 32,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": false,
+            "reason": "",
+            "accelerator_peak_bytes": 8158413560
+          },
+          "alignment_quality": {
+            "precise": 9,
+            "estimated": 1,
+            "transcription_fallback": 0
+          },
+          "warning_count": 12,
+          "uncertain_passages": 11,
+          "recovery_passages": 8,
+          "observed_recognizers": [
+            "Qwen/Qwen3-ASR-1.7B",
+            "Systran/faster-whisper-large-v3"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        },
+        "8bit": {
+          "metrics": {
+            "errors": 18,
+            "substitutions": 5,
+            "deletions": 1,
+            "insertions": 12,
+            "reference_units": 206,
+            "error_rate": 0.08737864077669903
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 36,
+            "matched_lines": 31,
+            "coverage": 0.8611111111111112,
+            "median_boundary_error_seconds": 0.07500000000027285,
+            "p95_boundary_error_seconds": 2.254000000000474
+          },
+          "recognition_and_alignment_seconds": 292.7,
+          "peak_rss_mb": 5343.1,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13754679296,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": true,
+            "reason": "",
+            "accelerator_peak_bytes": 2634662644
+          },
+          "alignment_quality": {
+            "precise": 9,
+            "estimated": 1,
+            "transcription_fallback": 0
+          },
+          "warning_count": 11,
+          "uncertain_passages": 10,
+          "recovery_passages": 8,
+          "observed_recognizers": [
+            "Systran/faster-whisper-large-v3",
+            "moona3k/mlx-qwen3-asr-1.7b-8bit"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "pjs005",
+      "language": "ja",
+      "audio_sha256": "7e8cc232bd8f10f852463ffd2868390b2317428f5dbb8beda680e2c513cfe4a2",
+      "profiles": {
+        "legacy": {
+          "metrics": {
+            "errors": 9,
+            "substitutions": 6,
+            "deletions": 1,
+            "insertions": 2,
+            "reference_units": 57,
+            "error_rate": 0.15789473684210525
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 38.44,
+          "peak_rss_mb": 2050.9,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "cpu",
+            "selected_backend": "cpu",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13376929792,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": false,
+            "reduced": false,
+            "reason": ""
+          },
+          "alignment_quality": {
+            "precise": 2,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 1,
+          "uncertain_passages": 0,
+          "recovery_passages": 0,
+          "observed_recognizers": [],
+          "recognition_revision": null,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "failed"
+            },
+            {
+              "backend": "cpu",
+              "status": "completed"
+            }
+          ]
+        },
+        "fp16": {
+          "metrics": {
+            "errors": 11,
+            "substitutions": 4,
+            "deletions": 3,
+            "insertions": 4,
+            "reference_units": 57,
+            "error_rate": 0.19298245614035087
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 27.38,
+          "peak_rss_mb": 4700.8,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 14031536128,
+            "batch_size": 32,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": false,
+            "reason": "",
+            "accelerator_peak_bytes": 8158413560
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 2,
+          "uncertain_passages": 3,
+          "recovery_passages": 1,
+          "observed_recognizers": [
+            "Qwen/Qwen3-ASR-1.7B",
+            "Systran/faster-whisper-large-v3"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        },
+        "8bit": {
+          "metrics": {
+            "errors": 11,
+            "substitutions": 4,
+            "deletions": 3,
+            "insertions": 4,
+            "reference_units": 57,
+            "error_rate": 0.19298245614035087
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 26.19,
+          "peak_rss_mb": 4699.0,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13645316096,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": true,
+            "reason": "",
+            "accelerator_peak_bytes": 2618786288
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 2,
+          "uncertain_passages": 3,
+          "recovery_passages": 1,
+          "observed_recognizers": [
+            "Systran/faster-whisper-large-v3",
+            "moona3k/mlx-qwen3-asr-1.7b-8bit"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "pjs006",
+      "language": "ja",
+      "audio_sha256": "a9f515921821a57c510c1e7d8648fa95069b30c2c729a623394f182c4669ed58",
+      "profiles": {
+        "legacy": {
+          "metrics": {
+            "errors": 3,
+            "substitutions": 3,
+            "deletions": 0,
+            "insertions": 0,
+            "reference_units": 24,
+            "error_rate": 0.125
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 40.43,
+          "peak_rss_mb": 2276.5,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "cpu",
+            "selected_backend": "cpu",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13362593792,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": false,
+            "reduced": false,
+            "reason": ""
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 1,
+          "uncertain_passages": 0,
+          "recovery_passages": 0,
+          "observed_recognizers": [],
+          "recognition_revision": null,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "failed"
+            },
+            {
+              "backend": "cpu",
+              "status": "completed"
+            }
+          ]
+        },
+        "fp16": {
+          "metrics": {
+            "errors": 2,
+            "substitutions": 2,
+            "deletions": 0,
+            "insertions": 0,
+            "reference_units": 24,
+            "error_rate": 0.08333333333333333
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 10.64,
+          "peak_rss_mb": 4081.6,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 14002307072,
+            "batch_size": 32,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": false,
+            "reason": "",
+            "accelerator_peak_bytes": 8158413560
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 0,
+          "uncertain_passages": 3,
+          "recovery_passages": 0,
+          "observed_recognizers": [
+            "Qwen/Qwen3-ASR-1.7B"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        },
+        "8bit": {
+          "metrics": {
+            "errors": 2,
+            "substitutions": 2,
+            "deletions": 0,
+            "insertions": 0,
+            "reference_units": 24,
+            "error_rate": 0.08333333333333333
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 9.39,
+          "peak_rss_mb": 2853.0,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13692502016,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": true,
+            "reason": "",
+            "accelerator_peak_bytes": 2564210144
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 0,
+          "uncertain_passages": 3,
+          "recovery_passages": 0,
+          "observed_recognizers": [
+            "moona3k/mlx-qwen3-asr-1.7b-8bit"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "pjs007",
+      "language": "ja",
+      "audio_sha256": "c3c5ee4e09a0e439f51c09c6cd82c576fe95c5b5d696e263c729d5533b260d41",
+      "profiles": {
+        "legacy": {
+          "metrics": {
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference_units": 39,
+            "error_rate": 0.0
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 37.59,
+          "peak_rss_mb": 2104.7,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "cpu",
+            "selected_backend": "cpu",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13282836480,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": false,
+            "reduced": false,
+            "reason": ""
+          },
+          "alignment_quality": {
+            "precise": 2,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 1,
+          "uncertain_passages": 0,
+          "recovery_passages": 0,
+          "observed_recognizers": [],
+          "recognition_revision": null,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "failed"
+            },
+            {
+              "backend": "cpu",
+              "status": "completed"
+            }
+          ]
+        },
+        "fp16": {
+          "metrics": {
+            "errors": 2,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 2,
+            "reference_units": 39,
+            "error_rate": 0.05128205128205128
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 39.23,
+          "peak_rss_mb": 4701.3,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 14075838464,
+            "batch_size": 32,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": false,
+            "reason": "",
+            "accelerator_peak_bytes": 8158413560
+          },
+          "alignment_quality": {
+            "precise": 2,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 3,
+          "uncertain_passages": 3,
+          "recovery_passages": 1,
+          "observed_recognizers": [
+            "Qwen/Qwen3-ASR-1.7B",
+            "Systran/faster-whisper-large-v3"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        },
+        "8bit": {
+          "metrics": {
+            "errors": 2,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 2,
+            "reference_units": 39,
+            "error_rate": 0.05128205128205128
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 38.78,
+          "peak_rss_mb": 4698.3,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13670989824,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": true,
+            "reason": "",
+            "accelerator_peak_bytes": 2618786288
+          },
+          "alignment_quality": {
+            "precise": 2,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 3,
+          "uncertain_passages": 3,
+          "recovery_passages": 1,
+          "observed_recognizers": [
+            "Systran/faster-whisper-large-v3",
+            "moona3k/mlx-qwen3-asr-1.7b-8bit"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "pjs008",
+      "language": "ja",
+      "audio_sha256": "668a110e74eeab73006ea0a82546841af6e4e0c3dd94fd9b26be1c60cff198d2",
+      "profiles": {
+        "legacy": {
+          "metrics": {
+            "errors": 7,
+            "substitutions": 6,
+            "deletions": 1,
+            "insertions": 0,
+            "reference_units": 37,
+            "error_rate": 0.1891891891891892
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 37.19,
+          "peak_rss_mb": 2074.9,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "cpu",
+            "selected_backend": "cpu",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13300875264,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": false,
+            "reduced": false,
+            "reason": ""
+          },
+          "alignment_quality": {
+            "precise": 2,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 1,
+          "uncertain_passages": 0,
+          "recovery_passages": 0,
+          "observed_recognizers": [],
+          "recognition_revision": null,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "failed"
+            },
+            {
+              "backend": "cpu",
+              "status": "completed"
+            }
+          ]
+        },
+        "fp16": {
+          "metrics": {
+            "errors": 3,
+            "substitutions": 2,
+            "deletions": 1,
+            "insertions": 0,
+            "reference_units": 37,
+            "error_rate": 0.08108108108108109
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 28.21,
+          "peak_rss_mb": 4700.5,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13865926656,
+            "batch_size": 32,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": false,
+            "reason": "",
+            "accelerator_peak_bytes": 8158413560
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 1,
+          "uncertain_passages": 3,
+          "recovery_passages": 1,
+          "observed_recognizers": [
+            "Qwen/Qwen3-ASR-1.7B",
+            "Systran/faster-whisper-large-v3"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        },
+        "8bit": {
+          "metrics": {
+            "errors": 3,
+            "substitutions": 2,
+            "deletions": 1,
+            "insertions": 0,
+            "reference_units": 37,
+            "error_rate": 0.08108108108108109
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 26.94,
+          "peak_rss_mb": 4699.2,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13323452416,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": true,
+            "reason": "",
+            "accelerator_peak_bytes": 2618786288
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 1,
+          "uncertain_passages": 3,
+          "recovery_passages": 1,
+          "observed_recognizers": [
+            "Systran/faster-whisper-large-v3",
+            "moona3k/mlx-qwen3-asr-1.7b-8bit"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "pjs009",
+      "language": "ja",
+      "audio_sha256": "6a6be4d56a65424444a8b55440f8bf2c0e52306da43fad870d5f60d94b6c2969",
+      "profiles": {
+        "legacy": {
+          "metrics": {
+            "errors": 7,
+            "substitutions": 6,
+            "deletions": 0,
+            "insertions": 1,
+            "reference_units": 27,
+            "error_rate": 0.25925925925925924
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 35.59,
+          "peak_rss_mb": 2113.6,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "cpu",
+            "selected_backend": "cpu",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13306855424,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": false,
+            "reduced": false,
+            "reason": ""
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 1,
+          "uncertain_passages": 0,
+          "recovery_passages": 0,
+          "observed_recognizers": [],
+          "recognition_revision": null,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "failed"
+            },
+            {
+              "backend": "cpu",
+              "status": "completed"
+            }
+          ]
+        },
+        "fp16": {
+          "metrics": {
+            "errors": 9,
+            "substitutions": 7,
+            "deletions": 1,
+            "insertions": 1,
+            "reference_units": 27,
+            "error_rate": 0.3333333333333333
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 11.48,
+          "peak_rss_mb": 4082.0,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13970948096,
+            "batch_size": 32,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": false,
+            "reason": "",
+            "accelerator_peak_bytes": 8158413560
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 0,
+          "uncertain_passages": 3,
+          "recovery_passages": 0,
+          "observed_recognizers": [
+            "Qwen/Qwen3-ASR-1.7B"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        },
+        "8bit": {
+          "metrics": {
+            "errors": 9,
+            "substitutions": 7,
+            "deletions": 1,
+            "insertions": 1,
+            "reference_units": 27,
+            "error_rate": 0.3333333333333333
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 9.79,
+          "peak_rss_mb": 2853.0,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13490159616,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": true,
+            "reason": "",
+            "accelerator_peak_bytes": 2564210144
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 0,
+          "uncertain_passages": 3,
+          "recovery_passages": 0,
+          "observed_recognizers": [
+            "moona3k/mlx-qwen3-asr-1.7b-8bit"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "pjs010",
+      "language": "ja",
+      "audio_sha256": "02d65da7f6f41cde7b964d03ac47603d5bfc8dea24ac8359cebf60faa0701ad7",
+      "profiles": {
+        "legacy": {
+          "metrics": {
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference_units": 30,
+            "error_rate": 0.0
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 35.12,
+          "peak_rss_mb": 2085.2,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "cpu",
+            "selected_backend": "cpu",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13280526336,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": false,
+            "reduced": false,
+            "reason": ""
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 1,
+          "uncertain_passages": 0,
+          "recovery_passages": 0,
+          "observed_recognizers": [],
+          "recognition_revision": null,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "failed"
+            },
+            {
+              "backend": "cpu",
+              "status": "completed"
+            }
+          ]
+        },
+        "fp16": {
+          "metrics": {
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference_units": 30,
+            "error_rate": 0.0
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 11.02,
+          "peak_rss_mb": 4081.8,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 14016675840,
+            "batch_size": 32,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": false,
+            "reason": "",
+            "accelerator_peak_bytes": 8158413560
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 0,
+          "uncertain_passages": 3,
+          "recovery_passages": 0,
+          "observed_recognizers": [
+            "Qwen/Qwen3-ASR-1.7B"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        },
+        "8bit": {
+          "metrics": {
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference_units": 30,
+            "error_rate": 0.0
+          },
+          "timing": {
+            "annotation_level": "line",
+            "reference_lines": 0,
+            "matched_lines": 0,
+            "coverage": null,
+            "median_boundary_error_seconds": null,
+            "p95_boundary_error_seconds": null
+          },
+          "recognition_and_alignment_seconds": 10.2,
+          "peak_rss_mb": 2853.9,
+          "runtime": {
+            "architecture": "arm64",
+            "os_version": "27.0.1",
+            "backend": "mlx",
+            "selected_backend": "mlx",
+            "physical_bytes": 25769803776,
+            "available_bytes": 13490208768,
+            "batch_size": 16,
+            "memory_limit_bytes": 12884901888,
+            "memory_limit_enforced": true,
+            "reduced": true,
+            "reason": "",
+            "accelerator_peak_bytes": 2564210144
+          },
+          "alignment_quality": {
+            "precise": 1,
+            "estimated": 0,
+            "transcription_fallback": 0
+          },
+          "warning_count": 0,
+          "uncertain_passages": 3,
+          "recovery_passages": 0,
+          "observed_recognizers": [
+            "moona3k/mlx-qwen3-asr-1.7b-8bit"
+          ],
+          "recognition_revision": 7,
+          "attempts": [
+            {
+              "backend": "mlx",
+              "status": "completed"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "exports": [
+    {
+      "fixture": "es",
+      "passed": true,
+      "recognition_revision": 7,
+      "peak_rss_mb": 4724.3,
+      "alignment_quality": {
+        "precise": 2,
+        "estimated": 0,
+        "transcription_fallback": 0
+      }
+    },
+    {
+      "fixture": "ja",
+      "passed": true,
+      "recognition_revision": 7,
+      "peak_rss_mb": 4644.4,
+      "alignment_quality": {
+        "precise": 2,
+        "estimated": 0,
+        "transcription_fallback": 0
+      }
+    },
+    {
+      "fixture": "en",
+      "passed": true,
+      "recognition_revision": 7,
+      "peak_rss_mb": 4667.3,
+      "alignment_quality": {
+        "precise": 6,
+        "estimated": 0,
+        "transcription_fallback": 0
+      }
+    }
+  ],
+  "runtime_profiles": [
+    {
+      "profile": "8bit",
+      "fixture": "es",
+      "passed": true,
+      "recognition_revision": 7,
+      "selected_recognizers": [
+        "moona3k/mlx-qwen3-asr-1.7b-8bit"
+      ],
+      "transcribe_seconds": 46.85,
+      "peak_rss_mb": 4848.0,
+      "backend": "mlx",
+      "reduced": true,
+      "accelerator_peak_bytes": 2618786288
+    },
+    {
+      "profile": "8bit",
+      "fixture": "ja",
+      "passed": true,
+      "recognition_revision": 7,
+      "selected_recognizers": [
+        "moona3k/mlx-qwen3-asr-1.7b-8bit"
+      ],
+      "transcribe_seconds": 17.09,
+      "peak_rss_mb": 3107.8,
+      "backend": "mlx",
+      "reduced": true,
+      "accelerator_peak_bytes": 2581970760
+    },
+    {
+      "profile": "8bit",
+      "fixture": "en",
+      "passed": true,
+      "recognition_revision": 7,
+      "selected_recognizers": [
+        "Systran/faster-whisper-large-v3",
+        "moona3k/mlx-qwen3-asr-1.7b-8bit"
+      ],
+      "transcribe_seconds": 94.08,
+      "peak_rss_mb": 4052.0,
+      "backend": "mlx",
+      "reduced": true,
+      "accelerator_peak_bytes": 2633974516
+    },
+    {
+      "profile": "cpu-low-memory",
+      "fixture": "es",
+      "passed": true,
+      "recognition_revision": 7,
+      "selected_recognizers": [
+        "Systran/faster-whisper-medium"
+      ],
+      "transcribe_seconds": 40.67,
+      "peak_rss_mb": 3428.2,
+      "backend": "cpu",
+      "reduced": true,
+      "accelerator_peak_bytes": null
+    }
+  ],
+  "limits": [
+    "Two English songs, two Spanish songs, six Japanese utterances; not catalogue-wide evidence.",
+    "PJS is one human singer, clean a cappella; Japanese original-script variants count as CER errors.",
+    "Jam-ALT line timing only; no Japanese lexical word timing reference.",
+    "Elapsed times are observed accuracy-run costs, not controlled speed comparisons.",
+    "Quantized inference and CPU recovery were tested on 24 GB hardware, not on an 8 GB Mac."
+  ]
+}

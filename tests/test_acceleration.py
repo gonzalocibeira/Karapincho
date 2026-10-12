@@ -111,6 +111,27 @@ def test_missing_mlx_uses_cpu(monkeypatch):
         a.CURRENT = a.Runtime()
 
 
+def test_quality_v2_selects_pinned_quantized_model_on_8gb_mac(monkeypatch):
+    from karapincho import models
+    calls = []
+    mx = SimpleNamespace(metal=SimpleNamespace(is_available=lambda: True),
+                         device_info=lambda: {'max_recommended_working_set_size': 6*a.GIB},
+                         set_memory_limit=lambda size: None, set_cache_limit=lambda size: None)
+    monkeypatch.setenv('KARAPINCHO_TRANSCRIPTION', 'quality-v2')
+    monkeypatch.setattr(a.platform, 'system', lambda: 'Darwin')
+    monkeypatch.setattr(a.platform, 'machine', lambda: 'arm64')
+    monkeypatch.setattr(a.importlib.util, 'find_spec', lambda name: name == 'mlx_qwen3_asr')
+    monkeypatch.setitem(sys.modules, 'mlx', SimpleNamespace(core=mx))
+    monkeypatch.setitem(sys.modules, 'mlx.core', mx)
+    monkeypatch.setattr(models, 'qwen_path', lambda compact: calls.append(compact) or 'cached-model')
+    try:
+        result = a.configure('transcribe')
+        assert result.backend == 'mlx' and result.memory_limit_bytes == 4*a.GIB
+        assert calls == [True]
+    finally:
+        a.CURRENT = a.Runtime()
+
+
 def test_low_confidence_word_requests_cpu_even_when_segment_score_is_good():
     from karapincho.transcription import needs_cpu_retry
     raw = {'no_speech_prob': .01, 'avg_logprob': -.3, 'compression_ratio': 1.1,

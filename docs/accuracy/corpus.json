@@ -1,0 +1,155 @@
+{
+  "schema": 1,
+  "frozen_on": "2026-10-12",
+  "jam_revision": "28302224954ef050fe752d1628dd9bac4fc8c02b",
+  "pjs_url": "https://drive.usercontent.google.com/download?id=1hPHwOkSe2Vnq6hXrhVtzNskJjVMQmvN_&export=download&confirm=t",
+  "pjs_sha256": "683c00253ee35a62d50de0375bb9d8e003a74338d4ce3495ac3f7ad096abc1ca",
+  "pjs_text_url": "https://raw.githubusercontent.com/voice-statistics/voice-statistics.github.com/22923912010c358a4a044702e78b343f3ba8123f/assets/doc/balance_sentences.txt",
+  "pjs_text_sha256": "1ed75aba2a0d3548f548ee4a8afd00cfd4cff37de5620424112f745d9e4e31a6",
+  "records": [
+    {
+      "id": "jam-en-Avercage_-_Embers",
+      "corpus": "jam-alt",
+      "name": "Avercage_-_Embers",
+      "language": "en",
+      "split": "tuning",
+      "license": "CC BY-NC-SA"
+    },
+    {
+      "id": "jam-en-Color_Out_-_Falling_Star",
+      "corpus": "jam-alt",
+      "name": "Color_Out_-_Falling_Star",
+      "language": "en",
+      "split": "tuning",
+      "license": "CC BY-NC-ND"
+    },
+    {
+      "id": "jam-en-Cortez_-_Feel__Stripped_",
+      "corpus": "jam-alt",
+      "name": "Cortez_-_Feel__Stripped_",
+      "language": "en",
+      "split": "evaluation",
+      "license": "CC BY"
+    },
+    {
+      "id": "jam-en-Explosive_Ear_Candy_-_Like_The_Sun",
+      "corpus": "jam-alt",
+      "name": "Explosive_Ear_Candy_-_Like_The_Sun",
+      "language": "en",
+      "split": "evaluation",
+      "license": "CC BY-NC-ND"
+    },
+    {
+      "id": "jam-es-10._Disparan_-_criatura",
+      "corpus": "jam-alt",
+      "name": "10._Disparan_-_criatura",
+      "language": "es",
+      "split": "tuning",
+      "license": "CC BY-NC-SA"
+    },
+    {
+      "id": "jam-es-Baila_-_Alfonso_Lugo",
+      "corpus": "jam-alt",
+      "name": "Baila_-_Alfonso_Lugo",
+      "language": "es",
+      "split": "tuning",
+      "license": "CC BY-NC-SA"
+    },
+    {
+      "id": "jam-es-Besando_Sapos_-_Dream_Tabu",
+      "corpus": "jam-alt",
+      "name": "Besando_Sapos_-_Dream_Tabu",
+      "language": "es",
+      "split": "evaluation",
+      "license": "CC BY-NC-SA"
+    },
+    {
+      "id": "jam-es-CLUB_DESTINO__-_Pensando_en_ti_-_CLUB_DESTINO",
+      "corpus": "jam-alt",
+      "name": "CLUB_DESTINO__-_Pensando_en_ti_-_CLUB_DESTINO",
+      "language": "es",
+      "split": "evaluation",
+      "license": "CC BY-NC-SA"
+    },
+    {
+      "id": "pjs001",
+      "name": "pjs001",
+      "corpus": "pjs",
+      "language": "ja",
+      "split": "tuning",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "id": "pjs002",
+      "name": "pjs002",
+      "corpus": "pjs",
+      "language": "ja",
+      "split": "tuning",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "id": "pjs003",
+      "name": "pjs003",
+      "corpus": "pjs",
+      "language": "ja",
+      "split": "tuning",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "id": "pjs004",
+      "name": "pjs004",
+      "corpus": "pjs",
+      "language": "ja",
+      "split": "tuning",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "id": "pjs005",
+      "name": "pjs005",
+      "corpus": "pjs",
+      "language": "ja",
+      "split": "evaluation",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "id": "pjs006",
+      "name": "pjs006",
+      "corpus": "pjs",
+      "language": "ja",
+      "split": "evaluation",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "id": "pjs007",
+      "name": "pjs007",
+      "corpus": "pjs",
+      "language": "ja",
+      "split": "evaluation",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "id": "pjs008",
+      "name": "pjs008",
+      "corpus": "pjs",
+      "language": "ja",
+      "split": "evaluation",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "id": "pjs009",
+      "name": "pjs009",
+      "corpus": "pjs",
+      "language": "ja",
+      "split": "evaluation",
+      "license": "CC BY-SA 4.0"
+    },
+    {
+      "id": "pjs010",
+      "name": "pjs010",
+      "corpus": "pjs",
+      "language": "ja",
+      "split": "evaluation",
+      "license": "CC BY-SA 4.0"
+    }
+  ]
+}
