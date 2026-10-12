@@ -10,13 +10,14 @@ let songsFolder = null;
 
 await page.route("**/api/health", route => route.fulfill({ json: {
   app: "karapincho",
-  version: "0.2.0",
+  version: "0.3.0",
   ready: true,
   missing: [],
   token: "release-screenshot",
   shutting_down: false,
   max_bytes: 2 * 1024 ** 3,
   max_minutes: 20,
+  recognition: { ready: true, missing: [] },
 } }));
 await page.route("**/api/jobs/feed?*", route => route.fulfill({ json: { active: [], recent, next: null } }));
 await page.route("**/api/settings", route => route.fulfill({ json: { songs_folder: songsFolder } }));

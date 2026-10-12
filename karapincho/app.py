@@ -29,12 +29,12 @@ from .worker import Worker
 
 class URLInput(BaseModel):
     url: str = Field(max_length=2048)
-    processing_mode: Literal["quality", "fast"] = "quality"
+    processing_mode: Literal["quality", "fast", "quality-v2"] = "quality"
     lyric_settings: LyricSettings = Field(default_factory=LyricSettings)
 
 
 class ProcessingMode(BaseModel):
-    processing_mode: Literal["quality", "fast"]
+    processing_mode: Literal["quality", "fast", "quality-v2"]
 
 
 class LyricResolution(BaseModel):
@@ -334,7 +334,7 @@ def create_app(run_worker=True):
 
     @app.post("/api/jobs/csv", status_code=202)
     async def submit_csv(file: UploadFile = File(...),
-                         processing_mode: Literal["quality", "fast"] = Form("quality")):
+                         processing_mode: Literal["quality", "fast", "quality-v2"] = Form("quality")):
         try:
             if not file.filename or Path(file.filename).suffix.lower() != ".csv":
                 raise HTTPException(422, "Choose a UTF-8 CSV file.")
@@ -377,7 +377,7 @@ def create_app(run_worker=True):
 
     @app.post("/api/jobs/upload", status_code=202)
     async def upload(file: UploadFile = File(...), lyric_settings: str = Form("{}"),
-                     processing_mode: Literal["quality", "fast"] = Form("quality")):
+                     processing_mode: Literal["quality", "fast", "quality-v2"] = Form("quality")):
         try:
             settings = LyricSettings.model_validate_json(lyric_settings).model_dump()
         except ValidationError as exc:

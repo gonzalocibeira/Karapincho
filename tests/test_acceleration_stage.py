@@ -5,7 +5,7 @@ import sys
 import pytest
 
 from karapincho import acceleration, ai, config, stage
-from karapincho.media import read_json
+from karapincho.media import read_json, write_json
 
 
 def test_failed_attempt_does_not_replace_completed_artifact(tmp_path, monkeypatch):
@@ -61,6 +61,31 @@ def test_alignment_attempt_can_read_asr_reference(tmp_path, monkeypatch):
     stage.main()
     assert (tmp_path / 'asr-reference.json').read_text() == '{"segments": []}'
     acceleration.CURRENT = acceleration.Runtime()
+
+
+def test_experimental_selection_reaches_isolated_runtime_and_report(tmp_path, monkeypatch):
+    job = {'processing_mode': 'quality-v2'}
+    write_json(tmp_path / 'job.json', job)
+    monkeypatch.setenv('KARAPINCHO_TRANSCRIPTION', 'legacy')
+    monkeypatch.setattr(config, 'DATA', tmp_path / 'data')
+    monkeypatch.setattr(sys, 'argv', ['stage', 'transcribe', str(tmp_path), '--backend', 'cpu'])
+    configure = acceleration.configure
+    def selected(*args, **kwargs):
+        assert kwargs['job'] == job
+        return configure(*args, **kwargs)
+    monkeypatch.setattr(acceleration, 'configure', selected)
+    def success(folder, low):
+        assert read_json(folder / 'job.json') == job
+        write_json(folder / 'transcript.json', {'segments': []})
+        return {'warnings': []}
+    monkeypatch.setattr(ai, 'transcribe', success)
+    try:
+        stage.main()
+        report = read_json(tmp_path / 'transcribe.json')
+        assert report['processing_mode'] == 'quality-v2'
+        assert report['provenance']['recognition']['engine'] == 'quality-v2'
+    finally:
+        acceleration.CURRENT = acceleration.Runtime()
 
 
 def test_pre_upgrade_worker_keeps_using_cpu(tmp_path, monkeypatch):

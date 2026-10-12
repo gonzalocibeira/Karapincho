@@ -9,8 +9,12 @@ From the project directory, with Python 3.12 and the existing AI setup:
 ```bash
 .venv/bin/python -m pip install -r requirements-gpu.lock
 .venv/bin/python -m karapincho.setup_models --quality
-KARAPINCHO_TRANSCRIPTION=quality-v2 ./Start.command
+./Start.command
 ```
+
+Select **Experimental Quality** under **Processing mode** when creating a song, uploading a video, or importing a CSV. The choice is saved per song and survives retries and lyric corrections. Existing songs can opt in through **More options → Rebuild in Experimental Quality mode**. The UI shows missing optional models and setup instructions; ordinary Quality and Fast remain available without them. Quality remains the default.
+
+The launch override `KARAPINCHO_TRANSCRIPTION=quality-v2 ./Start.command` remains available for evaluation and existing scripts. It also affects ordinary Quality jobs, so use a normal launch when selecting models per song in the UI.
 
 Allow approximately 8 GB of additional model downloads on Macs with at least 16 GB RAM, or 5 GB on an 8 GB Mac, beyond the existing approximately 7 GB model set. Reserve at least 20 GB free for this optional setup and 30 GB including working files. Setup downloads the profile appropriate for the Mac; it does not download both Qwen variants. The explicit `--quality` option also load-checks models. `KARAPINCHO_TRANSCRIPTION=legacy` selects the old recognizer for comparisons; `auto` remains the old default until promotion. Restart the app after changing this setting.
 

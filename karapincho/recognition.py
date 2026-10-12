@@ -13,7 +13,12 @@ REVISION = 7
 LANGUAGES = {"en": "English", "es": "Spanish", "ja": "Japanese"}
 
 
-def engine():
+def engine(job=None):
+    mode = (job or {}).get("processing_mode")
+    if mode == "quality-v2":
+        return "quality-v2"
+    if mode == "fast":
+        return "legacy"
     requested = os.environ.get("KARAPINCHO_TRANSCRIPTION", "auto")
     if requested not in ("auto", "legacy", "quality-v2"):
         raise ValueError("KARAPINCHO_TRANSCRIPTION must be auto, legacy, or quality-v2")
@@ -24,8 +29,8 @@ def quantized(total, reduced=False):
     return reduced or total < 16 * 1024**3
 
 
-def provenance():
-    return {"engine": engine(), "revision": REVISION, "validated": QUALITY_V2_VALIDATED,
+def provenance(job=None):
+    return {"engine": engine(job), "revision": REVISION, "validated": QUALITY_V2_VALIDATED,
             "models": [{key: model[key] for key in ("repository", "revision")}
                        for model in manifest() if model["purpose"].startswith("quality")
                        or model["purpose"] == "primary CPU transcription"],

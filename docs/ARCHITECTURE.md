@@ -52,11 +52,11 @@ The interface loads active work plus 20 recent jobs at a time. Refreshes cannot 
 | `POST /api/jobs/{id}/export` | Copy validated package; `collision` is `ask` (default), `keep_both`, or `replace` |
 | `GET /api/jobs/{id}/cleanup` | Reclaimable local bytes |
 | `POST /api/jobs/{id}/cleanup` | Remove local job/package files, retaining export receipt and history |
-| `POST /api/jobs/{id}/processing-mode` | Queue a stopped job in `quality` or `fast` mode |
+| `POST /api/jobs/{id}/processing-mode` | Queue a stopped job in `quality`, `fast`, or `quality-v2` mode |
 | `POST /api/jobs/move-all` | Export and verify completed songs, then remove their local files |
 | `POST /api/jobs/clear-recent` | Delete finished history and local files while preserving active jobs and karaoke copies |
 
-Creation accepts `processing_mode` in URL JSON or upload form data; omission means Quality. Existing ZIP, retry, and lyric-rebuild request formats remain supported. Cleaned jobs cannot retry or rebuild. They remain visible through the feed and individual job endpoint.
+Creation accepts `processing_mode` in URL JSON or upload/CSV form data; omission means Quality. `quality-v2` is the UI's Experimental Quality option and is saved per job, passed to isolated runtime selection, and included in recognition provenance and checkpoint signatures. It selects Qwen dual-view recognition with independent Whisper recovery without requiring a global environment change. Optional model readiness is exposed through health diagnostics. Existing ZIP, retry, and lyric-rebuild request formats remain supported. Cleaned jobs cannot retry or rebuild. They remain visible through the feed and individual job endpoint.
 
 Export state is independent of processing status. Copies stage on the destination volume, validate and hash all four files, then publish atomically. macOS publication uses an exclusive rename so another app cannot have its newly created directory overwritten. Explicit replacement retains a rollback copy. A local publication journal recovers interrupted renames on the next export or cleanup. If an external edit prevents safe recovery, the backup remains available and the API reports its location. Hash-matching exports are idempotent; external edits cause a fresh collision decision. Cleanup never follows links into external song copies.
 

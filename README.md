@@ -7,7 +7,7 @@
 <p align="center"><strong>A local AI studio that turns a video into a ready-to-sing UltraStar song.</strong></p>
 
 <p align="center">
-  <img alt="Version 0.2.0" src="https://img.shields.io/badge/version-0.2.0-d87348">
+  <img alt="Version 0.3.0" src="https://img.shields.io/badge/version-0.3.0-d87348">
   <img alt="GPL v3 or later" src="https://img.shields.io/badge/license-GPL--3.0--or--later-3b4c35">
   <img alt="Apple Silicon" src="https://img.shields.io/badge/macOS-Apple%20Silicon-829365">
 </p>
@@ -16,7 +16,7 @@
 
 Paste a public YouTube video URL, queue songs from a CSV, or upload an MP4. Karapincho creates an UltraStar chart, original-vocal MP3, synchronized H.264 video, cover image, and ZIP. Processing and AI inference run locally on your Mac; no API key or subscription is required.
 
-See the [v0.2.0 release notes](docs/RELEASE_NOTES_v0.2.0.md) for the latest features.
+See the [v0.3.0 release notes](docs/RELEASE_NOTES_v0.3.0.md) for the latest features.
 
 > **Beta software:** automatic lyrics, alignment, Japanese readings, and pitch detection are best-effort. Review quality notices before relying on an export.
 
@@ -39,6 +39,8 @@ An accuracy-first local pipeline using Qwen3-ASR-1.7B, both audio views, and ind
 3. Open **Start.command**. Karapincho opens at `http://127.0.0.1:8765`; keep its Terminal window open while processing.
 
 Paste one public YouTube URL or select/drop an MP4. Keep **Quality** for the established transcription settings, or choose **Fast** for a smaller model that can be less accurate, then select **Create song**.
+
+Choose **Experimental Quality** to try the new lyric recognizer per song. It improves English and Spanish in the published evaluation, but Japanese may regress and processing is substantially slower. The UI shows any extra model setup needed. Existing songs can opt in through **More options → Rebuild in Experimental Quality mode**. [Setup and accuracy results](docs/LYRIC_ACCURACY.md).
 
 To queue several YouTube songs at once, check **Add multiple songs** and upload a UTF-8 CSV with four columns and the header `url,artist,song_name,language_code`. Download the CSV template in the UI to get started. Include one song per row (up to 50); artist, song name, and language code can be left blank for automatic detection. Use a 2–3 letter language code such as `en`, `es`, or `ja`. Existing three-column files with the header `url,artist,song_name` are also supported. Quote values containing commas, such as `"Artist, Jr."`. Select **Queue songs from CSV** to queue songs in file order using the selected processing mode. The entire CSV is checked before any songs are added; if a row is invalid, correct the file and upload it again. Each row’s artist, song name, and language code are used for lyric lookup and song processing.
 
@@ -104,7 +106,7 @@ AI assistance does not replace review: release claims are backed by automated te
 - [References and acknowledgements](docs/REFERENCES.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
 - [Validation evidence and limitations](VALIDATION.md)
-- [v0.2.0 release notes](docs/RELEASE_NOTES_v0.2.0.md)
+- [v0.3.0 release notes](docs/RELEASE_NOTES_v0.3.0.md)
 - [Creation workflow validation and remaining release gates](docs/WORKFLOW_VALIDATION.md)
 
 ## Development

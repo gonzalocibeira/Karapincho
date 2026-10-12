@@ -78,7 +78,7 @@ def main():
         job = read_json(original_folder / "job.json") if (original_folder / "job.json").exists() else {}
         if args.stage == "transcribe" and job.get("processing_mode") == "fast":
             backend = "cpu"
-        runtime = acceleration.configure(args.stage, args.reduced or args.low_memory, backend)
+        runtime = acceleration.configure(args.stage, args.reduced or args.low_memory, backend, job=job)
         if legacy_worker and os.environ.get("KARAPINCHO_ACCELERATION", "auto") == "auto":
             runtime.reason = "Restart the app to enable automatic acceleration with the upgraded worker"
         write_json(original_folder / "stage-runtime.json", asdict(runtime))
@@ -116,7 +116,7 @@ def main():
         result["model_load_seconds"] = dict(MODEL_LOADS)
         result["processing_mode"] = job.get("processing_mode", "quality")
         result["runtime"] = runtime.report()
-        result["provenance"] = acceleration.provenance(args.stage)
+        result["provenance"] = acceleration.provenance(args.stage, job)
         if scratch:
             for output in args.folder.iterdir():
                 if output.is_file() and not output.is_symlink():
