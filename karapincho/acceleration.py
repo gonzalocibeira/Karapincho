@@ -69,6 +69,8 @@ def configure(stage, reduced=False, backend=None):
     if mode not in ("auto", "cpu"):
         raise ValueError("KARAPINCHO_ACCELERATION must be auto or cpu")
     import psutil
+    from .recognition import engine, quantized
+    quality_v2 = stage == "transcribe" and engine() == "quality-v2"
     memory = psutil.virtual_memory()
     batch, limit = profile(memory.total, memory.available, reduced)
     runtime = Runtime(physical_bytes=memory.total, available_bytes=memory.available,
@@ -88,7 +90,7 @@ def configure(stage, reduced=False, backend=None):
     if platform.system() != "Darwin" or platform.machine() != "arm64":
         runtime.reason = "Apple Silicon unavailable"
         return cpu_runtime(runtime)
-    if stage == "transcribe" and backend is None and memory.total <= 8 * GIB:
+    if stage == "transcribe" and not quality_v2 and backend is None and memory.total <= 8 * GIB:
         # On the validated 8 GB profile, speculative MLX recognition repeatedly required
         # a complete CPU retry. Start with the established medium/int8 beam-search path.
         runtime.selected_backend = "cpu"
@@ -112,15 +114,19 @@ def configure(stage, reduced=False, backend=None):
         torch.mps.set_per_process_memory_fraction(runtime.memory_limit_bytes / recommended)
         runtime.memory_limit_enforced = True
     elif desired == "mlx":
-        if importlib.util.find_spec("mlx_whisper") is None:
+        if importlib.util.find_spec("mlx_qwen3_asr" if quality_v2 else "mlx_whisper") is None:
             runtime.reason = "Optional MLX dependency unavailable"
             return cpu_runtime(runtime)
-        if os.environ.get("KARAPINCHO_WHISPER_MODEL", "medium") != "medium":
+        if not quality_v2 and os.environ.get("KARAPINCHO_WHISPER_MODEL", "medium") != "medium":
             runtime.reason = "Custom Whisper model uses the CPU backend"
             return cpu_runtime(runtime)
-        from .transcription import model_path
         try:
-            model_path()
+            if quality_v2:
+                from .models import qwen_path
+                qwen_path(quantized(memory.total, reduced))
+            else:
+                from .transcription import model_path
+                model_path()
         except (OSError, ValueError):
             runtime.reason = "Pinned MLX model not cached; run Setup to download it"
             return cpu_runtime(runtime)
@@ -162,7 +168,7 @@ def failure_kind(message, backend="cpu", returncode=1):
 
 
 def provenance(stage):
-    names = {"transcribe": ("faster-whisper", "mlx-whisper", "mlx"),
+    names = {"transcribe": ("faster-whisper", "mlx-whisper", "mlx", "mlx-qwen3-asr"),
              "separate": ("torch", "demucs"), "align": ("torch", "whisperx"),
              "pitch": ("torch", "torchcrepe")}.get(stage, ())
     versions = {}
@@ -171,7 +177,12 @@ def provenance(stage):
             versions[name] = importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError:
             versions[name] = None
-    return {"revision": 4 if stage in ("transcribe", "pitch") else 3, "mode": os.environ.get("KARAPINCHO_ACCELERATION", "auto"),
+    result = {"revision": 5 if stage == "transcribe" else 4 if stage in ("pitch", "align") else 3,
+            "mode": os.environ.get("KARAPINCHO_ACCELERATION", "auto"),
             "validated": stage in VALIDATED, "versions": versions,
             "model_revision": MLX_REVISION if stage == "transcribe" else "packaged-model",
             "whisper_model": os.environ.get("KARAPINCHO_WHISPER_MODEL", "medium") if stage == "transcribe" else None}
+    if stage == "transcribe":
+        from .recognition import provenance as recognition_provenance
+        result["recognition"] = recognition_provenance()
+    return result

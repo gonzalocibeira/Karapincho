@@ -144,6 +144,7 @@ def create_app(run_worker=True):
 
     @app.get("/api/health")
     def health():
+        from .recognition import readiness
         missing = [
             name
             for name in ("demucs", "whisperx", "torchcrepe", "av")
@@ -155,6 +156,7 @@ def create_app(run_worker=True):
             "shutting_down": app.state.shutting_down,
             "ready": not missing,
             "missing": missing,
+            "recognition": readiness(),
             "token": token,
             "stages": config.STAGES,
             "max_bytes": config.MAX_BYTES,

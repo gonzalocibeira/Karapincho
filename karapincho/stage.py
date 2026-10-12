@@ -126,7 +126,8 @@ def main():
         result["peak_rss_mb"] = round(memory / (1024**2 if sys.platform == "darwin" else 1024), 1)
         result["pipeline_version"] = 1
         result["versions"] = {}
-        for name in ("whisperx", "faster-whisper", "torch", "demucs", "torchcrepe", "yt-dlp", "mlx", "mlx-whisper"):
+        for name in ("whisperx", "faster-whisper", "torch", "demucs", "torchcrepe", "yt-dlp", "mlx", "mlx-whisper",
+                     "mlx-qwen3-asr"):
             try:
                 result["versions"][name] = importlib.metadata.version(name)
             except importlib.metadata.PackageNotFoundError:

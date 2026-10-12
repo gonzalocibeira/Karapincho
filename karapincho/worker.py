@@ -34,7 +34,7 @@ DEPENDENCIES = {
 }
 
 
-def signature(stage, folder, job):
+def signature(stage, folder, job, reduced=False):
     payload = {"revision": 3 if stage == "lyrics" else 2 if stage in ("transcribe", "align", "chart", "package") else 1,
                "dependencies": {name: hashlib.sha256((folder / f"{name}.json").read_bytes()).hexdigest()
                                 for name in DEPENDENCIES[stage]}}
@@ -42,6 +42,8 @@ def signature(stage, folder, job):
         payload["acceleration"] = acceleration.provenance(stage)
     if stage == "transcribe" and job.get("processing_mode", "quality") == "fast":
         payload["processing"] = {"mode": "fast", "model": "small", "beam_size": 1}
+    if stage == "transcribe" and reduced:
+        payload["recognition_profile"] = "reduced"
     if stage == "lyrics":
         payload["settings"] = job.get("lyric_settings", {})
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
@@ -54,9 +56,10 @@ def cleanup_attempts(folder):
 
 
 class Worker:
-    def __init__(self, store, backend_overrides=None):
+    def __init__(self, store, backend_overrides=None, reduced_stages=()):
         self.store = store
         self.backend_overrides = backend_overrides or {}
+        self.reduced_stages = set(reduced_stages)
         self.stopping = threading.Event()
         self.thread = threading.Thread(target=self.loop, daemon=True, name="song-worker")
         self.process = None
@@ -119,7 +122,7 @@ class Worker:
             if self.stopping.is_set() or current["cancel_requested"]:
                 self.store.update(job["id"], status="cancelled" if current["cancel_requested"] else "queued")
                 return
-            expected_signature = signature(stage, folder, job)
+            expected_signature = signature(stage, folder, job, reduced=stage in self.reduced_stages)
             checkpoint = folder / f"{stage}.json"
             valid = checkpoint.is_file() and all(
                 (folder / p).is_file() and (folder / p).stat().st_size for p in OUTPUTS[stage]
@@ -145,7 +148,7 @@ class Worker:
                 regenerated.add(stage)
                 checkpoint.unlink(missing_ok=True)
                 error_file = folder / "stage-error.json"
-                backend, reduced, low_memory = self.backend_overrides.get(stage), False, False
+                backend, reduced, low_memory = self.backend_overrides.get(stage), stage in self.reduced_stages, False
                 attempts = []
                 for attempt in range(4):
                     current = self.store.get(job["id"])

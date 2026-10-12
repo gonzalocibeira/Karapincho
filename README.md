@@ -30,6 +30,8 @@ See the [v0.2.0 release notes](docs/RELEASE_NOTES_v0.2.0.md) for the latest feat
 
 MLX transcription is optional and requires a compatible macOS build. If unavailable, Karapincho automatically retains CPU transcription and can still use other supported acceleration.
 
+An accuracy-first local pipeline using Qwen3-ASR-1.7B, both audio views, and independent Whisper large-v3 recovery is available for evaluation. It remains opt-in until the independent accuracy gate passes. See [Lyric accuracy](docs/LYRIC_ACCURACY.md) for setup, activation, reproducible tests, and measured limitations.
+
 ## Quick start
 
 1. Download the source archive and move the folder somewhere permanent.

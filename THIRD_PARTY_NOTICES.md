@@ -8,6 +8,7 @@ Karapincho is GPL-3.0-or-later software. It uses and downloads third-party softw
 - **FFmpeg** — GPL-2.0-or-later in the build currently installed through `imageio-ffmpeg`; invoked as a separate executable for media processing. Run `ffmpeg -L` on the installed binary for its complete notice.
 - **FastAPI, Uvicorn, React, Vite, Lucide, yt-dlp, WhisperX, Faster Whisper, Demucs, torchcrepe, PyTorch, MLX, Fugashi, UniDic Lite, Pyphen, NumPy, SciPy, SoundFile, PyAV, and their transitive dependencies** retain their upstream licenses. The exact tested package versions are recorded in `requirements-macos.lock`, `requirements-gpu.lock`, and `frontend/package-lock.json`.
 - **Downloaded model weights** — the Faster Whisper and optional MLX Whisper snapshots are MIT; the Japanese and Spanish XLSR-53 alignment snapshots are Apache-2.0; the English wav2vec 2.0 alignment weight is MIT. The torchcrepe weight is bundled with its MIT-licensed package. Exact repositories, immutable Hugging Face revisions, package-pinned filenames, provenance, and the available torchcrepe checksum are in `karapincho/model_manifest.json`.
+- **Accuracy-first recognition** — `mlx-qwen3-asr` 0.4.4, Qwen3-ASR-1.7B, and its moona3k 8-bit conversion are Apache-2.0. The pinned Faster Whisper large-v3 recovery snapshot is MIT. The adapter uses local weights and does not call Qwen's hosted services.
 
 Karapincho deliberately uses the Apache-2.0 Spanish XLSR-53 model instead of Torchaudio's otherwise convenient VoxPopuli Spanish bundle, whose upstream model license is CC BY-NC 4.0. This keeps the default model path suitable for commercial as well as personal use. Model licenses are independent of Karapincho's GPL license.
 
@@ -24,6 +25,8 @@ The benchmark MP4s under `karapincho/benchmark_assets/` are a collection alongsi
 - **Auld Lang Syne** — Frank C. Stanley, public-domain recording as identified by Wikimedia Commons.
 
 The two CC BY-SA recordings were transcoded to AAC and combined with a solid-color video. Those derivatives remain CC BY-SA 3.0. Full source links, modifications, and hashes are recorded in `karapincho/benchmark_assets/ATTRIBUTION.md`.
+
+The optional accuracy suite downloads Jam-ALT audio and annotations under their individual track terms; source metadata and license codes are retained in the local cache. It also uses PJS v1.1 singing by Junya Koguchi and Shinnosuke Takamichi under CC BY-SA 4.0. PJS's original-script reference sentences come from the Voice Statistics corpus, with the upstream Wikipedia attribution table linked in `docs/LYRIC_ACCURACY.md`. These recordings and lyric references are kept in the ignored local cache and are not bundled with the application or supplied to inference.
 
 ## Services and formats
 

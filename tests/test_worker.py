@@ -165,6 +165,20 @@ def test_memory_failure_retries_once(environment, monkeypatch):
     assert any("reduced memory" in w for w in store.get(job["id"])["warnings"])
 
 
+def test_explicit_reduced_profile_reaches_only_requested_stage(environment, monkeypatch):
+    store, job, _ = environment
+    fake_stages(monkeypatch)
+    normal = subprocess.Popen
+    requested = []
+    def launch(args, **kwargs):
+        requested.append((args[3], '--reduced' in args))
+        return normal(args, **kwargs)
+    monkeypatch.setattr(subprocess, 'Popen', launch)
+    Worker(store, reduced_stages={'transcribe'}).execute(job)
+    assert [stage for stage, reduced in requested if reduced] == ['transcribe']
+    assert store.get(job['id'])['status'] == 'completed'
+
+
 def test_cancellation_terminates_child_and_advances_queue(environment, monkeypatch, awake_processes):
     store, job, folder = environment
     fake_stages(monkeypatch, slow_stage="acquire")
@@ -221,6 +235,8 @@ def test_lyric_rebuild_reuses_audio_and_pitch(environment, monkeypatch, awake_pr
     ('memory', 'pitch', [(None, False, False), ('mps', True, False), ('cpu', False, False), ('cpu', False, True)]),
     ('backend', 'pitch', [(None, False, False), ('cpu', False, False)]),
     ('memory', 'align', [(None, False, False), ('cpu', False, False), ('cpu', False, True)]),
+    ('memory', 'transcribe', [(None, False, False), ('mlx', True, False), ('cpu', False, False), ('cpu', False, True)]),
+    ('backend', 'transcribe', [(None, False, False), ('cpu', False, False)]),
 ])
 def test_gpu_recovery_uses_fresh_processes(environment, monkeypatch, failure, stage, expected):
     store, job, folder = environment
@@ -236,7 +252,7 @@ def test_gpu_recovery_uses_fresh_processes(environment, monkeypatch, failure, st
         calls.append((backend, reduced, low))
         if len(calls) == len(expected):
             return normal(args, **kwargs)
-        actual = backend or 'mps'
+        actual = backend or ('mlx' if stage == 'transcribe' else 'mps')
         kind = failure if actual != 'cpu' else 'memory'
         (folder / 'stage-error.json').write_text(json.dumps(
             {'backend': actual, 'kind': kind, 'message': 'out of memory' if kind == 'memory' else 'unsupported op'}))
