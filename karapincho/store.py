@@ -57,8 +57,8 @@ class Store:
         return result
 
     def create(self, source_type, source, title, job_id=None, lyric_settings=None, processing_mode="quality"):
-        if processing_mode not in ("quality", "fast"):
-            raise ValueError("Choose Quality or Fast processing")
+        if processing_mode not in ("quality", "fast", "quality-v2"):
+            raise ValueError("Choose Quality, Fast, or Experimental Quality processing")
         job_id = job_id or uuid.uuid4().hex
         now = time.time()
         with self.connect() as db:
@@ -126,8 +126,8 @@ class Store:
             )
 
     def rebuild(self, job_id, settings, processing_mode=None):
-        if processing_mode is not None and processing_mode not in ("quality", "fast"):
-            raise ValueError("Choose Quality or Fast processing")
+        if processing_mode is not None and processing_mode not in ("quality", "fast", "quality-v2"):
+            raise ValueError("Choose Quality, Fast, or Experimental Quality processing")
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute("SELECT status,cleaned_at,processing_mode FROM jobs WHERE id=?", (job_id,)).fetchone()

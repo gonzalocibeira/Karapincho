@@ -42,8 +42,17 @@ const emptyLyrics: LyricSettings = {
   lyrics: "",
 };
 
+const processingModes = [
+  { value: "quality", label: "Quality", description: "Recommended · established accuracy" },
+  { value: "quality-v2", label: "Experimental Quality", description: "New lyric recognition · substantially slower" },
+  { value: "fast", label: "Fast", description: "Smaller model · may miss lines or mishear lyrics" },
+] as const;
+type ProcessingMode = (typeof processingModes)[number]["value"];
+const processingLabel = (mode?: ProcessingMode) =>
+  processingModes.find((option) => option.value === mode)?.label || "Quality";
+
 type Job = {
-  processing_mode?: "quality" | "fast";
+  processing_mode?: ProcessingMode;
   export_receipt?: { path?: string; exported_at?: number };
   cleaned_at?: number | null;
   local_available?: boolean;
@@ -71,6 +80,7 @@ type Health = {
   missing: string[];
   token: string;
   max_bytes: number;
+  recognition?: { ready: boolean; missing: string[] };
 };
 const stages = [
   "acquire",
@@ -366,6 +376,7 @@ const JobCard = React.memo(function JobCard({
   chooseFolder,
   hasFolder,
   folderBusy,
+  experimentalReady,
 }: {
   job: Job;
   position?: number;
@@ -374,6 +385,7 @@ const JobCard = React.memo(function JobCard({
   chooseFolder: () => Promise<boolean>;
   hasFolder: boolean;
   folderBusy: boolean;
+  experimentalReady: boolean;
 }) {
   const [pending, setPending] = useState("");
   const [error, setError] = useState("");
@@ -455,7 +467,7 @@ const JobCard = React.memo(function JobCard({
           </span>
         </div>
         <p className="song-meta">
-          {job.processing_mode === "fast" ? "Fast" : "Quality"} ·{" "}
+          {processingLabel(job.processing_mode)} ·{" "}
           {job.source_type === "youtube" ? "YouTube" : "MP4"}
           {job.elapsed_seconds != null && job.status !== "queued" && (
             <>
@@ -670,21 +682,18 @@ const JobCard = React.memo(function JobCard({
                 update(updated);
               }}
             />
-            <p className="mode-rebuild">
-              <button
-                disabled={!!pending}
-                onClick={() =>
-                  void action("processing-mode", {
-                    processing_mode:
-                      job.processing_mode === "fast" ? "quality" : "fast",
-                  })
-                }
-              >
-                Rebuild in {job.processing_mode === "fast" ? "Quality" : "Fast"}{" "}
-                mode
-              </button>{" "}
-              Prepared audio and pitch are reused.
-            </p>
+            <div className="mode-rebuild">
+              {processingModes.filter((option) => option.value !== (job.processing_mode || "quality")).map((option) => (
+                <button key={option.value}
+                  disabled={!!pending || (option.value === "quality-v2" && !experimentalReady)}
+                  onClick={() => void action("processing-mode", { processing_mode: option.value })}
+                >
+                  Rebuild in {option.label} mode
+                </button>
+              ))}
+              <p>Prepared audio and pitch are reused. Experimental Quality improves English and Spanish in our tests; Japanese may be less accurate.</p>
+              {!experimentalReady && <p>Experimental Quality needs the extra models. Select it under Processing mode above for setup instructions.</p>}
+            </div>
           </details>
         )}
       </div>
@@ -708,9 +717,10 @@ function App() {
   const [movingAll, setMovingAll] = useState(false);
   const [moveNotice, setMoveNotice] = useState("");
   const [mode, setMode] = useState<"youtube" | "file">("youtube");
-  const [processingMode, setProcessingMode] = useState<"quality" | "fast">(
+  const [processingMode, setProcessingMode] = useState<ProcessingMode>(
     "quality",
   );
+  const experimentalReady = health?.recognition?.ready === true;
   const [url, setUrl] = useState("");
   const [multiple, setMultiple] = useState(false);
   const [csvFile, setCsvFile] = useState<File | null>(null);
@@ -1241,9 +1251,11 @@ function App() {
                     downloads remain available under More options.
                   </p>
                   <p>
-                    Quality uses the established transcription model. Fast uses
-                    a smaller model and may miss lines or mishear lyrics. Processing may
-                    take longer than the song itself.
+                    Quality uses the established transcription model. Experimental
+                    Quality uses new lyric recognition with better English and Spanish
+                    results in our tests, but Japanese may be less accurate and processing
+                    takes substantially longer. Fast uses a smaller model and may miss
+                    lines or mishear lyrics.
                   </p>
                 </div>
               )}
@@ -1423,39 +1435,25 @@ function App() {
                   </div>
                   <fieldset className="processing-options" disabled={busy}>
                     <legend>Processing mode</legend>
-                    <label
-                      className={processingMode === "quality" ? "selected" : ""}
-                    >
-                      <input
-                        type="radio"
-                        name="processing-mode"
-                        value="quality"
-                        checked={processingMode === "quality"}
-                        onChange={() => setProcessingMode("quality")}
-                      />
-                      <span>
-                        <strong>Quality</strong>
-                        <small>Recommended · established accuracy</small>
-                      </span>
-                    </label>
-                    <label
-                      className={processingMode === "fast" ? "selected" : ""}
-                    >
-                      <input
-                        type="radio"
-                        name="processing-mode"
-                        value="fast"
-                        checked={processingMode === "fast"}
-                        onChange={() => setProcessingMode("fast")}
-                      />
-                      <span>
-                        <strong>Fast</strong>
-                        <small>
-                          Smaller model · may miss lines or mishear lyrics
-                        </small>
-                      </span>
-                    </label>
+                    {processingModes.map((option) => (
+                      <label key={option.value} className={processingMode === option.value ? "selected" : ""}>
+                        <input type="radio" name="processing-mode" value={option.value}
+                          checked={processingMode === option.value}
+                          onChange={() => setProcessingMode(option.value)} />
+                        <span><strong>{option.label}</strong><small>{option.description}</small></span>
+                      </label>
+                    ))}
                   </fieldset>
+                  {processingMode === "quality-v2" && (
+                    <div className="experimental-notice" role="status">
+                      <p>Improved English and Spanish results in our tests. Japanese may be less accurate. Supplied lyrics and online lyrics still take priority.</p>
+                      {!experimentalReady && <>
+                        <p>Extra setup required{health?.recognition?.missing.length ? `: ${health.recognition.missing.join(", ")}` : ""}. Run these commands in the Karapincho folder, then restart the app:</p>
+                        <pre tabIndex={0} role="region" aria-label="Experimental Quality setup commands"><code>{".venv/bin/python -m pip install -r requirements-gpu.lock\n.venv/bin/python -m karapincho.setup_models --quality"}</code></pre>
+                        <p>Additional downloads: about 8 GB, or 5 GB on an 8 GB Mac.</p>
+                      </>}
+                    </div>
+                  )}
                   <label className="lyric-wait-toggle">
                     <input type="checkbox" checked={!waitForLyrics} disabled={savingLyricWait || !health}
                       onChange={async (event) => {
@@ -1499,6 +1497,7 @@ function App() {
                       disabled={
                         busy ||
                         !health?.ready ||
+                        (processingMode === "quality-v2" && !experimentalReady) ||
                         !!connection ||
                         (isBatch ? !csvFile : mode === "youtube" ? !url.trim() : !file)
                       }
@@ -1544,6 +1543,7 @@ function App() {
                         chooseFolder={chooseFolder}
                         hasFolder={!!songsFolder}
                         folderBusy={choosing}
+                        experimentalReady={experimentalReady}
                       />
                     ))}
                   </div>
@@ -1615,6 +1615,7 @@ function App() {
                         chooseFolder={chooseFolder}
                         hasFolder={!!songsFolder}
                         folderBusy={choosing}
+                        experimentalReady={experimentalReady}
                       />
                     ))}
                   </div>

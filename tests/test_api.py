@@ -61,6 +61,31 @@ def test_job_lifecycle_and_recovery(client):
     assert client.get(f"/api/jobs/{job_id}/download").status_code == 409
 
 
+@pytest.mark.parametrize("source", ["url", "upload", "csv"])
+def test_experimental_mode_survives_queue_retry_and_lyric_rebuild(client, source):
+    mode = {"processing_mode": "quality-v2"}
+    if source == "url":
+        response = client.post("/api/jobs/url", json={"url": "https://youtu.be/abcdefghijk", **mode})
+    elif source == "upload":
+        response = client.post("/api/jobs/upload", files={"file": ("song.mp4", b"test")}, data=mode)
+    else:
+        response = upload_csv(client, "url,artist,song_name\nhttps://youtu.be/abcdefghijk,Artist,Song\n", data=mode)
+    assert response.status_code == 202
+    job = response.json()["jobs"][0] if source == "csv" else response.json()
+    job_id = job["id"]
+    assert job["processing_mode"] == "quality-v2"
+    assert client.post(f"/api/jobs/{job_id}/cancel").status_code == 200
+    assert client.post(f"/api/jobs/{job_id}/retry").json()["processing_mode"] == "quality-v2"
+    client.post(f"/api/jobs/{job_id}/cancel")
+    assert client.post(f"/api/jobs/{job_id}/rebuild", json={"lyrics": "correct lyrics"}).json()["processing_mode"] == "quality-v2"
+    client.post(f"/api/jobs/{job_id}/cancel")
+    changed = client.post(f"/api/jobs/{job_id}/processing-mode", json={"processing_mode": "quality"})
+    assert changed.status_code == 202 and changed.json()["processing_mode"] == "quality"
+    client.post(f"/api/jobs/{job_id}/cancel")
+    changed = client.post(f"/api/jobs/{job_id}/processing-mode", json=mode)
+    assert changed.status_code == 202 and changed.json()["processing_mode"] == "quality-v2"
+
+
 def upload_csv(client, content, **kwargs):
     return client.post("/api/jobs/csv", files={"file": ("songs.csv", content)}, **kwargs)
 

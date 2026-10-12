@@ -1,4 +1,4 @@
-# Karapincho v0.2.0 validation
+# Karapincho v0.3.0 validation
 
 This document records the release baseline and its limits. It is evidence of tested behavior, not a guarantee that automatic lyrics, timings, or melody will be correct for every recording.
 
@@ -12,13 +12,23 @@ The release gate runs:
 .venv/bin/python -m pip check
 npm ci --prefix frontend
 npm run build --prefix frontend
+npm run test:e2e --prefix frontend
+.venv/bin/python scripts/check_release.py
 ```
 
-The v0.2.0 automated baseline comprises 239 Python tests and 56 Playwright checks. Python lint, dependency consistency, release integrity, and the production TypeScript/Vite build are also checked. The browser checks cover 360 px, 768 px, standard desktop, and large desktop layouts, including keyboard navigation, exact setup diagnostics, and automated serious/critical accessibility rules. Coverage also includes API/session protection, upload validation, cancellation, restart/checkpoints, deletion safety, worker isolation, acceleration recovery, lyric sources and correction, Japanese romanization, chart validation, benchmark scheduling, and media timelines. The latest checks also cover uncertain LRCLIB matches pausing before audio analysis, synced-lyric URL validation and resumption, persisted wait preferences, per-song fallback, waiting-job cancellation and recovery, CSV metadata and language codes, karaoke transfer, and history cleanup.
+The v0.3.0 automated baseline comprises 297 Python tests and 72 Playwright checks. Python lint, dependency consistency, release integrity, and the production TypeScript/Vite build are also checked. The browser checks cover 360 px, 768 px, standard desktop, and large desktop layouts, including keyboard navigation, exact setup diagnostics, and automated serious/critical accessibility rules. Coverage includes API/session protection, upload validation, cancellation, restart/checkpoints, deletion safety, worker isolation, acceleration recovery, lyric sources and correction, Japanese romanization, chart validation, benchmark scheduling, and media timelines. It also covers uncertain LRCLIB matches pausing before analysis, synced-lyric URL validation and resumption, persisted wait preferences, CSV metadata and language codes, karaoke transfer, and history cleanup.
+
+New recognition regressions cover overlapping boundaries, repeated choruses, silence and quiet singing, language stability, truncated decoding, invalid timestamps, memory/backend recovery, and alignment reuse. Experimental Quality UI checks cover URL/MP4/CSV submission, per-song mode labels and rebuilds, unchanged default selection, missing-model setup, and keyboard access to scrollable setup commands. Per-song settings are exercised through isolated runtime selection, provenance, retries, lyric rebuilds, and checkpoint reuse.
+
+## Lyric accuracy evidence for v0.3.0
+
+The complete frozen evaluation split was run with legacy Quality, Experimental FP16, and Experimental 8-bit on a 24 GB Apple Silicon Mac. FP16 reduced language-balanced error from 44.82% to 16.99%, a 62.1% relative reduction, with fewer total omissions and insertions. Japanese CER increased from 12.15% to 12.62%, so both experimental profiles fail the agreed no-language-regression gate. The automatic default remains legacy Quality.
+
+All three bundled recordings completed final structural/ZIP exports with the new pipeline. The pinned 8-bit model completed bundled checks in all three languages, and a CPU medium/int8 recovery export completed on the same 24 GB host. Actual 8 GB memory recovery, player visual checks for this pipeline, and clean source-archive installation remain unverified. The independent suite is small; PJS represents one singer's short, clean a cappella passages. See [LYRIC_ACCURACY.md](docs/LYRIC_ACCURACY.md) for source pins, reproduction commands, timing-reference limits, per-language failures, and [the sanitized evidence](docs/accuracy/validation-2026-10-12.json).
 
 ## Real pipeline evidence
 
-The evidence below was collected for v0.1.0. Model-backed pipeline and player checks have not been repeated for v0.2.0; the manual release gate remains outstanding.
+The evidence below was collected for v0.1.0 and remains historical. It does not establish player compatibility or timing accuracy for the experimental pipeline above; the manual release gate remains outstanding.
 
 Three openly licensed recordings complete the full pipeline and are bundled in hash-verified form for repeatable benchmarks:
 
@@ -49,6 +59,6 @@ The bundled M2 benchmark reports controlled CPU and accelerated medians over thr
 
 ## Manual release gate
 
-Before tagging v0.2.0, test the GitHub source archive—not the development checkout—on clean Apple Silicon environments running macOS 14 and the current macOS release. Verify setup, launch, MP4 upload, a permitted public YouTube URL, LRCLIB lookup, song completion, CSV queueing with language codes, uncertain-lyric alerts and URL resumption, disabling lyric waits, direct and bulk karaoke export, cleanup, download, folder opening, cancellation, retry, rebuild, deletion, restart recovery, and benchmark cancellation.
+Before tagging v0.3.0, test the GitHub source archive—not the development checkout—on clean Apple Silicon environments running macOS 14 and the current macOS release. Verify setup, launch, MP4 upload, a permitted public YouTube URL, LRCLIB lookup, song completion, CSV queueing with language codes, uncertain-lyric alerts and URL resumption, disabling lyric waits, direct and bulk karaoke export, cleanup, download, folder opening, cancellation, retry, rebuild, deletion, restart recovery, and benchmark cancellation. Include optional model setup, Experimental Quality selection and mode rebuilds, readable missing-model diagnostics, and playback of the new pipeline's exports. Validate memory recovery on an actual 8 GB Mac before claiming that profile supported by the new evidence.
 
-Also verify readable failures for unsupported architecture/OS, less than 10 GB free space, missing prerequisites, unavailable network, unavailable optional MLX runtime, blocked YouTube downloads, invalid media, and empty vocals. Record the tested hardware, operating systems, setup duration, installed footprint, and any deviations in the v0.2.0 release notes.
+Also verify readable failures for unsupported architecture/OS, less than 10 GB free space, missing prerequisites, unavailable network, unavailable optional MLX runtime, blocked YouTube downloads, invalid media, and empty vocals. Record the tested hardware, operating systems, setup duration, installed footprint, and any deviations in the v0.3.0 release notes. Promotion of Experimental Quality additionally requires the independent lyric accuracy gate to pass.

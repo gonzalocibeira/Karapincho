@@ -1247,6 +1247,11 @@ h2 {
 .job-options .lyric-options { margin-top: 16px; }
 .job-options .lyric-options form { padding: 10px 0 0; }
 .job-options .mode-rebuild { font-size: 12px; line-height: 1.8; color: #51594b; }
+.mode-rebuild button { margin: 8px 8px 0 0; }
+.experimental-notice { padding: 12px 14px; margin: 0 0 14px; border: 1px solid #ddd5bd; border-radius: 8px; background: #f5f1e5; color: #51594b; font-size: 13px; line-height: 1.6; }
+.experimental-notice p { margin: 0 0 8px; }
+.experimental-notice p:last-child { margin-bottom: 0; }
+.experimental-notice pre { overflow-x: auto; max-width: 100%; font-size: 12px; }
 .export-path { font-size: 12px; color: #51594b; line-height: 1.6; overflow-wrap: anywhere; }
 .export-path span { color: #3b4c35; }
 .success-note { color: #36532b; font-size: 13px; }

@@ -10,13 +10,14 @@ let songsFolder = null;
 
 await page.route("**/api/health", route => route.fulfill({ json: {
   app: "karapincho",
-  version: "0.2.0",
+  version: "0.3.0",
   ready: true,
   missing: [],
   token: "release-screenshot",
   shutting_down: false,
   max_bytes: 2 * 1024 ** 3,
   max_minutes: 20,
+  recognition: { ready: true, missing: [] },
 } }));
 await page.route("**/api/jobs/feed?*", route => route.fulfill({ json: { active: [], recent, next: null } }));
 await page.route("**/api/settings", route => route.fulfill({ json: { songs_folder: songsFolder } }));
@@ -45,6 +46,7 @@ recent = [{
 await page.reload({ waitUntil: "networkidle" });
 await page.getByRole("button", { name: "Add to karaoke" }).waitFor();
 await page.getByText("1 quality notice", { exact: true }).click();
+await page.evaluate(() => window.scrollTo(0, 0));
 const readyOutput = path.resolve(here, "../../docs/assets/screenshot-ready.png");
 await page.screenshot({ path: readyOutput, fullPage: true });
 console.log(readyOutput);

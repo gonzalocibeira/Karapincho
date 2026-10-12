@@ -358,7 +358,8 @@ def test_killed_gpu_child_uses_runtime_record_for_recovery(environment, monkeypa
     assert not (folder/'.attempt-killed').exists()
 
 
-def test_processing_mode_change_reuses_separation_and_pitch(environment, monkeypatch):
+@pytest.mark.parametrize("target", ["quality", "quality-v2"])
+def test_processing_mode_change_reuses_separation_and_pitch(environment, monkeypatch, target):
     store, job, folder = environment
     fake_stages(monkeypatch)
     worker = Worker(store)
@@ -371,6 +372,9 @@ def test_processing_mode_change_reuses_separation_and_pitch(environment, monkeyp
     count = len((folder / 'calls').read_text().splitlines())
     worker.execute(store.get(job['id']))
     assert len((folder / 'calls').read_text().splitlines()) == count
-    quality = store.rebuild(job['id'], job['lyric_settings'], 'quality')
+    quality = store.rebuild(job['id'], job['lyric_settings'], target)
     worker.execute(quality)
     assert (folder / 'calls').read_text().splitlines()[count:] == calls
+    count = len((folder / 'calls').read_text().splitlines())
+    worker.execute(store.get(job['id']))
+    assert len((folder / 'calls').read_text().splitlines()) == count

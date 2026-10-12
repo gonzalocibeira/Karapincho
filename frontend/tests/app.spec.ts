@@ -7,13 +7,14 @@ test.beforeEach(async ({ page }) => {
     route.fulfill({
       json: {
         app: "karapincho",
-        version: "0.2.0",
+        version: "0.3.0",
         ready: true,
         missing: [],
         token: "test",
         shutting_down: false,
         max_bytes: 2 * 1024 ** 3,
         max_minutes: 20,
+        recognition: { ready: true, missing: [] },
       },
     }),
   );
@@ -67,7 +68,7 @@ test("setup diagnostics name missing components", async ({ page }) => {
     route.fulfill({
       json: {
         app: "karapincho",
-        version: "0.2.0",
+        version: "0.3.0",
         ready: false,
         missing: ["demucs", "torchcrepe"],
         token: "test",
@@ -250,6 +251,76 @@ test("Fast creation shows active progress and queue with usable source tabs", as
     ),
   ).toEqual([]);
 });
+
+test("Experimental Quality is opt-in and is retained for URL creation and rebuilds", async ({ page }, testInfo) => {
+  let job = { ...completed, processing_mode: "quality-v2" };
+  await expect(page.getByRole("radio", { name: /^Quality Recommended/ })).toBeChecked();
+  await page.getByRole("radio", { name: /^Experimental Quality/ }).check();
+  await expect(page.getByText(/Improved English and Spanish results/)).toBeVisible();
+  await expect(page.getByText(/Extra setup required/)).toHaveCount(0);
+  await page.getByLabel("YOUTUBE VIDEO URL").fill("https://youtu.be/abcdefghijk");
+  await page.screenshot({ path: `/private/tmp/karapincho-experimental-${testInfo.project.name}.png`, fullPage: true });
+  await page.route("**/api/jobs/url", (route) => {
+    expect(route.request().postDataJSON().processing_mode).toBe("quality-v2");
+    return route.fulfill({ status: 202, json: job });
+  });
+  await page.route("**/api/jobs/feed?*", (route) =>
+    route.fulfill({ json: { active: [], recent: [job], next: null } }),
+  );
+  await page.getByRole("button", { name: "Create song", exact: true }).click();
+  await expect(page.locator(".song-card").getByText(/Experimental Quality ·/)).toBeVisible();
+  await page.getByText("More options", { exact: true }).click();
+  await page.route("**/api/jobs/*/processing-mode", (route) => {
+    job = { ...job, processing_mode: route.request().postDataJSON().processing_mode };
+    return route.fulfill({ status: 202, json: job });
+  });
+  await page.getByRole("button", { name: "Rebuild in Quality mode", exact: true }).click();
+  await expect(page.locator(".song-card").getByText(/^Quality ·/)).toBeVisible();
+  await page.getByRole("button", { name: "Rebuild in Experimental Quality mode", exact: true }).click();
+  await expect(page.locator(".song-card").getByText(/Experimental Quality ·/)).toBeVisible();
+});
+
+test("Experimental Quality explains missing setup and blocks only that choice", async ({ page }) => {
+  await page.route("**/api/health", (route) => route.fulfill({ json: {
+    ready: true, missing: [], token: "test", shutting_down: false, max_bytes: 2 * 1024 ** 3,
+    recognition: { ready: false, missing: ["Qwen3-ASR-1.7B"] },
+  } }));
+  await page.reload();
+  await page.getByLabel("YOUTUBE VIDEO URL").fill("https://youtu.be/abcdefghijk");
+  const create = page.getByRole("button", { name: "Create song", exact: true });
+  await expect(create).toBeEnabled();
+  await page.getByRole("radio", { name: /^Experimental Quality/ }).check();
+  await expect(page.getByText(/Extra setup required: Qwen3-ASR-1.7B/)).toBeVisible();
+  await expect(page.getByText(/karapincho.setup_models --quality/)).toBeVisible();
+  await expect(create).toBeDisabled();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations.filter((v) => ["critical", "serious"].includes(v.impact || ""))).toEqual([]);
+  await page.getByRole("radio", { name: /Fast/ }).check();
+  await expect(create).toBeEnabled();
+});
+
+for (const source of ["upload", "csv"] as const) {
+  test(`Experimental Quality is submitted with ${source} files`, async ({ page }) => {
+    let submitted = false;
+    await page.route(`**/api/jobs/${source}`, (route) => {
+      expect(route.request().postDataBuffer()!.toString()).toContain('name="processing_mode"\r\n\r\nquality-v2');
+      submitted = true;
+      const job = { ...completed, processing_mode: "quality-v2", status: "queued" };
+      return route.fulfill({ status: 202, json: source === "csv" ? { jobs: [job] } : job });
+    });
+    await page.getByRole("radio", { name: /^Experimental Quality/ }).check();
+    if (source === "upload") {
+      await page.getByRole("tab", { name: "Upload video" }).click();
+      await page.locator('input[type="file"][accept*="mp4"]').setInputFiles({ name: "song.mp4", mimeType: "video/mp4", buffer: Buffer.from("video") });
+    } else {
+      await page.getByLabel("Add multiple songs").check();
+      await page.getByLabel("SONGS CSV FILE", { exact: true }).setInputFiles({ name: "songs.csv", mimeType: "text/csv", buffer: Buffer.from("url,artist,song_name\nhttps://youtu.be/abcdefghijk,Artist,Song\n") });
+    }
+    await page.getByRole("button", { name: source === "csv" ? "Queue songs from CSV" : "Create song", exact: true }).click();
+    await expect.poll(() => submitted).toBe(true);
+  });
+}
 
 test("multiple songs are uploaded from CSV with metadata and can be corrected", async ({ page }) => {
   let active: any[] = [];

@@ -466,7 +466,7 @@ def transcribe_quality(folder, low_memory=False):
     if not segments:
         raise ValueError("No intelligible vocals were detected. Supply lyrics or try another recording.")
     result = {"segments": segments, "warnings": warnings, "source": "transcription",
-              "model": "quality-v2/qwen3-asr+whisper", "recognition": recognition.provenance(),
+              "model": "quality-v2/qwen3-asr+whisper", "recognition": recognition.provenance(job),
               "passages": diagnostics}
     write_json(folder / "transcript.json", result)
     return {k: v for k, v in result.items() if k != "segments"}

@@ -39,7 +39,7 @@ def signature(stage, folder, job, reduced=False):
                "dependencies": {name: hashlib.sha256((folder / f"{name}.json").read_bytes()).hexdigest()
                                 for name in DEPENDENCIES[stage]}}
     if stage in acceleration.AI_STAGES | {"prepare"}:
-        payload["acceleration"] = acceleration.provenance(stage)
+        payload["acceleration"] = acceleration.provenance(stage, job)
     if stage == "transcribe" and job.get("processing_mode", "quality") == "fast":
         payload["processing"] = {"mode": "fast", "model": "small", "beam_size": 1}
     if stage == "transcribe" and reduced:

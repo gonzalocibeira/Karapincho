@@ -63,14 +63,14 @@ def cpu_runtime(runtime):
     return runtime
 
 
-def configure(stage, reduced=False, backend=None):
+def configure(stage, reduced=False, backend=None, job=None):
     global CURRENT
     mode = os.environ.get("KARAPINCHO_ACCELERATION", "auto")
     if mode not in ("auto", "cpu"):
         raise ValueError("KARAPINCHO_ACCELERATION must be auto or cpu")
     import psutil
     from .recognition import engine, quantized
-    quality_v2 = stage == "transcribe" and engine() == "quality-v2"
+    quality_v2 = stage == "transcribe" and engine(job) == "quality-v2"
     memory = psutil.virtual_memory()
     batch, limit = profile(memory.total, memory.available, reduced)
     runtime = Runtime(physical_bytes=memory.total, available_bytes=memory.available,
@@ -167,7 +167,7 @@ def failure_kind(message, backend="cpu", returncode=1):
     return "application"
 
 
-def provenance(stage):
+def provenance(stage, job=None):
     names = {"transcribe": ("faster-whisper", "mlx-whisper", "mlx", "mlx-qwen3-asr"),
              "separate": ("torch", "demucs"), "align": ("torch", "whisperx"),
              "pitch": ("torch", "torchcrepe")}.get(stage, ())
@@ -184,5 +184,5 @@ def provenance(stage):
             "whisper_model": os.environ.get("KARAPINCHO_WHISPER_MODEL", "medium") if stage == "transcribe" else None}
     if stage == "transcribe":
         from .recognition import provenance as recognition_provenance
-        result["recognition"] = recognition_provenance()
+        result["recognition"] = recognition_provenance(job)
     return result

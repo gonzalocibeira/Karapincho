@@ -78,7 +78,7 @@ def transcribe_audio(folder, low_memory=False):
     job = read_json(folder / "job.json") if (folder / "job.json").exists() else {}
     fast = job.get("processing_mode") == "fast"
     from .recognition import engine
-    if not fast and engine() == "quality-v2":
+    if not fast and engine(job) == "quality-v2":
         from .quality_transcription import transcribe_quality
         return transcribe_quality(folder, low_memory)
     if acceleration.CURRENT.backend == "mlx" and not fast:
