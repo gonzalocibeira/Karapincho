@@ -97,6 +97,12 @@ Karapincho was created by Gonzalo Cibeira with substantial assistance from AI to
 
 AI assistance does not replace review: release claims are backed by automated tests, reproducible fixtures, and the checks described in [VALIDATION.md](VALIDATION.md).
 
+## Release notes
+
+- **[v0.3.0 — Experimental Quality](docs/RELEASE_NOTES_v0.3.0.md):** Choose the new local lyric recognizer per song in the UI, with setup diagnostics, rebuild options, and published accuracy results. Quality remains the default while Japanese accuracy and 8 GB hardware validation remain pending.
+- **[v0.2.0 — Lyric confirmation and karaoke workflow](docs/RELEASE_NOTES_v0.2.0.md):** Confirm uncertain synced lyrics, queue songs from CSV, export directly to your karaoke folder, and manage completed jobs.
+- **[v0.1.0 — Initial beta](docs/RELEASE_NOTES_v0.1.0.md):** Local video-to-UltraStar generation for Apple Silicon, with English, Spanish, and Japanese support.
+
 ## Documentation
 
 - [Architecture, pipeline, and API](docs/ARCHITECTURE.md)
@@ -106,7 +112,6 @@ AI assistance does not replace review: release claims are backed by automated te
 - [References and acknowledgements](docs/REFERENCES.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
 - [Validation evidence and limitations](VALIDATION.md)
-- [v0.3.0 release notes](docs/RELEASE_NOTES_v0.3.0.md)
 - [Creation workflow validation and remaining release gates](docs/WORKFLOW_VALIDATION.md)
 
 ## Development
