@@ -306,6 +306,7 @@ def test_qwen_session_released_on_inference_failure(tmp_path, monkeypatch):
             calls.append("released")
     mx = SimpleNamespace(float16="fp16", synchronize=lambda: calls.append("synchronized"),
                          clear_cache=lambda: calls.append("cleared"))
+    monkeypatch.setitem(sys.modules, "mlx", SimpleNamespace(core=mx))
     monkeypatch.setitem(sys.modules, "mlx.core", mx)
     monkeypatch.setitem(sys.modules, "mlx_qwen3_asr", SimpleNamespace(Session=Session))
     monkeypatch.setattr(q, "qwen_path", lambda compact: tmp_path)
@@ -319,6 +320,7 @@ def test_qwen_session_released_on_inference_failure(tmp_path, monkeypatch):
 
 def test_qwen_import_failure_requests_cpu_recovery(tmp_path, monkeypatch):
     mx = SimpleNamespace(synchronize=lambda: None, clear_cache=lambda: None)
+    monkeypatch.setitem(sys.modules, "mlx", SimpleNamespace(core=mx))
     monkeypatch.setitem(sys.modules, "mlx.core", mx)
     monkeypatch.setitem(sys.modules, "mlx_qwen3_asr", SimpleNamespace())
     with pytest.raises(RuntimeError, match="quality retry: Qwen inference failed .*ImportError"):
