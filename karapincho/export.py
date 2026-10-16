@@ -14,13 +14,16 @@ def download_name(folder):
             key, value = line[1:].split(":", 1)
             headers[key] = value.strip()
 
-    def safe(value, fallback):
+    def safe(value, fallback, byte_limit=100):
         value = re.sub(r'[<>:"/\\|?*\x00-\x1f\x7f]', "_", value)
         # Bound UTF-8 bytes as well as characters for filesystem compatibility.
-        return value.encode("utf-8")[:100].decode("utf-8", errors="ignore").strip(" .") or fallback
+        return value.encode("utf-8")[:byte_limit].decode("utf-8", errors="ignore").strip(" .") or fallback
 
     artist = safe(headers.get("ARTIST", ""), "Unknown Artist")
-    title = safe(headers.get("TITLE", ""), "Unknown Song")
+    title = headers.get("TITLE", "")
+    # Reserve room for the generated-song label when shortening long titles.
+    suffix = " (AI)" if title.endswith(" (AI)") else ""
+    title = safe(title.removesuffix(suffix), "Unknown Song", 100 - len(suffix)) + suffix
     return f"{artist} - {title}"
 
 

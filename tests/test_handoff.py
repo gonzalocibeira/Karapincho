@@ -2,14 +2,19 @@
 import json
 import shutil
 import subprocess
+import io
+import zipfile
 from pathlib import Path
 from types import SimpleNamespace
+from urllib.parse import unquote
 
 import pytest
 from fastapi.testclient import TestClient
 
 from karapincho import config, handoff
 from karapincho.app import create_app
+from karapincho.chart import render_chart
+from karapincho.stage import package
 from karapincho.store import Store
 
 
@@ -38,6 +43,40 @@ def ready(session, tmp_path):
     destination.mkdir()
     store.set_setting('songs_folder', str(destination))
     return store, job['id'], folder, destination
+
+
+@pytest.mark.parametrize('title,chart_title,export_title', [
+    ('Song', 'Song (AI)', 'Song (AI)'),
+    ('Song (AI)', 'Song (AI)', 'Song (AI)'),
+    ('  歌\n名  ', '歌 名 (AI)', '歌 名 (AI)'),
+    ('é' * 60, 'é' * 60 + ' (AI)', 'é' * 47 + ' (AI)'),
+])
+def test_generated_song_label_reaches_chart_download_and_karaoke(session, ready, title, chart_title, export_title):
+    _, job_id, source, root = ready
+    working = config.DATA / 'jobs' / job_id
+    metadata = {'title': title, 'artist': 'Artist', 'duration': 3}
+    chart = render_chart(
+        [{'start': 1, 'end': 2, 'type': ':', 'pitch': 9, 'text': 'la ', 'phrase': 1}], metadata,
+    )
+    assert chart.splitlines()[0] == f'#TITLE:{chart_title}'
+    assert metadata['title'] == title
+    (working / 'song.txt').write_text(chart, encoding='utf-8')
+    for name in ('audio.mp3', 'video.mp4', 'cover.jpg'):
+        shutil.copyfile(source / name, working / name)
+    package(working)
+
+    name = f'Artist - {export_title}'
+    download = session.get(f'/api/jobs/{job_id}/download')
+    assert download.status_code == 200
+    assert f'{name}.zip' in unquote(download.headers['content-disposition'])
+    with zipfile.ZipFile(io.BytesIO(download.content)) as archive:
+        assert {entry.split('/')[0] for entry in archive.namelist()} == {name}
+        assert archive.read(f'{name}/song.txt').decode('utf-8') == chart
+
+    exported = session.post(f'/api/jobs/{job_id}/export', json={})
+    assert exported.status_code == 200, exported.text
+    assert Path(exported.json()['export_receipt']['path']) == root / name
+    assert (root / name / 'song.txt').read_text(encoding='utf-8') == chart
 
 
 def test_export_idempotence_and_cleanup_keeps_external_copy(session, ready):
