@@ -96,7 +96,7 @@ def test_real_media_encode_sync_and_package(tmp_path, monkeypatch):
     )
     package(folder)
     with zipfile.ZipFile(folder / "song.zip") as archive:
-        assert {n.split("/")[0] for n in archive.namelist()} == {"Test - Test"}
+        assert {n.split("/")[0] for n in archive.namelist()} == {"Test - Test (AI)"}
         assert sorted(n.split("/")[-1] for n in archive.namelist()) == [
             "audio.mp3",
             "cover.jpg",

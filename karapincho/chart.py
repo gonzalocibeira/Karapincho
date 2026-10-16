@@ -243,8 +243,11 @@ def render_chart(notes, metadata):
         last_end = end
     if not ordered:
         raise ValueError("No usable notes could be generated from this recording.")
+    title = clean_text(metadata["title"])
+    if not title.endswith(" (AI)"):
+        title += " (AI)"
     lines = [
-        f"#TITLE:{clean_text(metadata['title'])}",
+        f"#TITLE:{title}",
         f"#ARTIST:{clean_text(metadata['artist'])}",
         "#MP3:audio.mp3",
         "#VIDEO:video.mp4",

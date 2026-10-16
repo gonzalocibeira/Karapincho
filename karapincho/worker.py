@@ -35,7 +35,7 @@ DEPENDENCIES = {
 
 
 def signature(stage, folder, job, reduced=False):
-    payload = {"revision": 3 if stage == "lyrics" else 2 if stage in ("transcribe", "align", "chart", "package") else 1,
+    payload = {"revision": 3 if stage in ("lyrics", "chart") else 2 if stage in ("transcribe", "align", "package") else 1,
                "dependencies": {name: hashlib.sha256((folder / f"{name}.json").read_bytes()).hexdigest()
                                 for name in DEPENDENCIES[stage]}}
     if stage in acceleration.AI_STAGES | {"prepare"}:

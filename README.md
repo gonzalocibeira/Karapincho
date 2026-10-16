@@ -48,7 +48,7 @@ When LRCLIB cannot confidently supply synced lyrics, the song pauses and shows a
 
 Karapincho keeps your Mac awake while processing songs, including queued songs and lyric rebuilds. The screen can turn off and you can use other apps. Normal idle sleep resumes when processing finishes. Keep a MacBook's lid open and leave Karapincho's Terminal window running; closing the lid or choosing **Sleep** can still pause processing.
 
-Choose your karaoke **Songs** folder once. When processing finishes, review quality notices and select **Add to karaoke**. Karapincho copies the complete song directly into that folder. Existing names offer **Keep both** or explicit replacement; an export failure keeps your completed local song available for retry. ZIP download and lyric correction remain under **More options**.
+Choose your karaoke **Songs** folder once. When processing finishes, review quality notices and select **Add to karaoke**. Karapincho copies the complete song directly into that folder. Generated song titles end with **(AI)** so they are easy to identify in your karaoke player, exported folders, and ZIP downloads. Existing names offer **Keep both** or explicit replacement; an export failure keeps your completed local song available for retry. ZIP download and lyric correction remain under **More options**.
 
 Use **Move all to karaoke & remove local files** beside the configured Songs folder to transfer all completed songs, including older jobs. Each karaoke copy is verified before its local package, source, and rebuild files are removed. Existing versions are kept, and songs that cannot be exported retain their local files for retry. Processing history and export locations are kept.
 
