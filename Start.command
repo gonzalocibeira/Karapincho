@@ -6,4 +6,5 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 if [ ! -x .venv/bin/python ] || [ ! -f frontend/dist/index.html ]; then
   ./Setup.command
 fi
+node frontend/scripts/check-node.mjs
 exec .venv/bin/python -m karapincho.launch

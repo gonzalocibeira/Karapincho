@@ -113,6 +113,13 @@ def test_corrupt_media(tmp_path):
         inspect_media(source)
 
 
+def test_youtube_matroska_remains_supported_with_restricted_demuxers(tmp_path):
+    source = synthetic_video(tmp_path)
+    matroska = tmp_path / "source.mkv"
+    run([config.ffmpeg(), "-nostdin", "-loglevel", "error", "-i", source, "-c", "copy", matroska])
+    assert 2.9 < inspect_media(matroska)["duration"] < 3.2
+
+
 def test_audio_offset_and_longer_video_keep_common_timeline(tmp_path):
     source = tmp_path / "offset.mp4"
     run(

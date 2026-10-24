@@ -24,7 +24,7 @@ See the [v0.3.0 release notes](docs/RELEASE_NOTES_v0.3.0.md) for the latest feat
 
 - Apple Silicon Mac (M1 or newer); Intel Macs are unsupported.
 - macOS 14 or newer.
-- Python 3.12 and Node.js 22+. Setup can install them through Homebrew when available.
+- Python 3.12, patched Node.js (22.23.4+, 24.22.1+, or 26.12.1+ within those release lines), and FFmpeg 9.0.2+. Setup can install them through Homebrew when available.
 - At least 10 GB free for installation; 20 GB or more recommended for working files.
 - Internet access for first setup, model downloads, YouTube input, and optional LRCLIB lookup.
 
@@ -118,6 +118,7 @@ AI assistance does not replace review: release claims are backed by automated te
 
 ```bash
 python3.12 -m venv .venv
+.venv/bin/python -m pip install --upgrade 'pip @ https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl#sha256=fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70'
 .venv/bin/python -m pip install -r requirements-macos.lock
 .venv/bin/python -m pip install -e '.[dev,ai]'
 npm ci --prefix frontend
@@ -134,6 +135,8 @@ Run the backend with:
 ```
 
 For frontend development, use `npm run dev --prefix frontend`; it proxies `/api` to the local backend. Do not bind Karapincho to a public interface.
+
+Existing installations should rerun `Setup.command` to apply the October security updates. See the [24 October security review](docs/SECURITY_REVIEW_2026-10-24.md) for patched components, verification, and unresolved upstream AI and media-library findings.
 
 The project does not currently promise support or review unsolicited contributions. Forks and redistribution remain welcome under the GPL. See [SUPPORT.md](SUPPORT.md) and report security issues through GitHub’s private vulnerability-reporting channel.
 
