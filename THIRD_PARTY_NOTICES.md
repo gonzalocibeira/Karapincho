@@ -5,7 +5,7 @@ Karapincho is GPL-3.0-or-later software. It uses and downloads third-party softw
 ## Runtime software
 
 - **PyKakasi** — GPL-3.0-or-later. Japanese Kana/Kanji-to-romaji conversion.
-- **FFmpeg** — GPL-2.0-or-later in the build currently installed through `imageio-ffmpeg`; invoked as a separate executable for media processing. Run `ffmpeg -L` on the installed binary for its complete notice.
+- **FFmpeg** — installed separately through Homebrew and invoked as an executable for media processing; the standard Homebrew build uses GPL-3.0-or-later. Run `ffmpeg -L` on the installed binary for its complete notice. PyAV also bundles FFmpeg libraries under its upstream wheel's terms.
 - **FastAPI, Uvicorn, React, Vite, Lucide, yt-dlp, WhisperX, Faster Whisper, Demucs, torchcrepe, PyTorch, MLX, Fugashi, UniDic Lite, Pyphen, NumPy, SciPy, SoundFile, PyAV, and their transitive dependencies** retain their upstream licenses. The exact tested package versions are recorded in `requirements-macos.lock`, `requirements-gpu.lock`, and `frontend/package-lock.json`.
 - **Downloaded model weights** — the Faster Whisper and optional MLX Whisper snapshots are MIT; the Japanese and Spanish XLSR-53 alignment snapshots are Apache-2.0; the English wav2vec 2.0 alignment weight is MIT. The torchcrepe weight is bundled with its MIT-licensed package. Exact repositories, immutable Hugging Face revisions, package-pinned filenames, provenance, and the available torchcrepe checksum are in `karapincho/model_manifest.json`.
 - **Accuracy-first recognition** — `mlx-qwen3-asr` 0.4.4, Qwen3-ASR-1.7B, and its moona3k 8-bit conversion are Apache-2.0. The pinned Faster Whisper large-v3 recovery snapshot is MIT. The adapter uses local weights and does not call Qwen's hosted services.

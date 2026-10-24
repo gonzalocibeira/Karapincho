@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import os
+import re
 import shutil
+import subprocess
+from functools import lru_cache
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -21,10 +24,13 @@ def initialize():
     os.environ.setdefault("DO_NOT_TRACK", "1")
 
 
+@lru_cache(maxsize=1)
 def ffmpeg():
     found = shutil.which("ffmpeg")
-    if found:
-        return found
-    import imageio_ffmpeg
-
-    return imageio_ffmpeg.get_ffmpeg_exe()
+    if not found:
+        raise RuntimeError("Install maintained FFmpeg 9.0.2 or newer (brew install ffmpeg), then restart Karapincho.")
+    result = subprocess.run([found, "-version"], capture_output=True, text=True, check=True, timeout=10)
+    match = re.match(r"ffmpeg version (\d+)\.(\d+)(?:\.(\d+))?\b", result.stdout)
+    if not match or tuple(int(part or 0) for part in match.groups()) < (9, 0, 2):
+        raise RuntimeError("Upgrade FFmpeg to 9.0.2 or newer (brew upgrade ffmpeg), then restart Karapincho.")
+    return found

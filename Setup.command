@@ -21,25 +21,38 @@ if [ "$free_kb" -lt "$recommended_kb" ]; then
   echo "Warning: less than 20 GB is free. Setup can finish, but song processing needs working space."
 fi
 
-step "Checking Python 3.12 and Node.js 22+"
+step "Checking Python 3.12 and security-patched Node.js"
 if ! command -v python3.12 >/dev/null; then
   if command -v brew >/dev/null; then brew install python@3.12; else
     echo "Install Python 3.12 from python.org, then run Setup.command again."; exit 1
   fi
 fi
-if ! command -v node >/dev/null || [ "$(node -p 'Number(process.versions.node.split(".")[0])' 2>/dev/null || echo 0)" -lt 22 ]; then
-  if command -v brew >/dev/null; then brew install node; else
-    echo "Install Node.js 22 or newer from nodejs.org, then run Setup.command again."; exit 1
+if ! command -v node >/dev/null || ! node frontend/scripts/check-node.mjs; then
+  if command -v brew >/dev/null; then
+    if brew list --versions node >/dev/null 2>&1; then brew upgrade node; else brew install node; fi
+  else
+    echo "Install patched Node.js 22.23.4+, 24.22.1+, or 26.12.1+ from nodejs.org, then run Setup.command again."
+    exit 1
   fi
 fi
-node_major="$(node -p 'Number(process.versions.node.split(".")[0])')"
-[ "$node_major" -ge 22 ] || fail "Node.js 22 or newer is required. Upgrade Node and run Setup.command again."
+node frontend/scripts/check-node.mjs || fail "Upgrade Node.js and run Setup.command again."
 
 step "Creating the local Python environment"
 python3.12 -m venv .venv
-.venv/bin/python -m pip install --upgrade pip
+# Hash-pinned bootstrap also replaces pip's vulnerable vendored CA bundle.
+.venv/bin/python -m pip install --upgrade 'pip @ https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl#sha256=fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70'
 .venv/bin/python -m pip install -r requirements-macos.lock
 .venv/bin/python -m pip install -e '.[ai]'
+
+step "Checking maintained FFmpeg"
+if ! .venv/bin/python -c 'from karapincho.config import ffmpeg; print(ffmpeg())'; then
+  if command -v brew >/dev/null; then
+    if brew list --versions ffmpeg >/dev/null 2>&1; then brew upgrade ffmpeg; else brew install ffmpeg; fi
+  else
+    fail "Install FFmpeg 9.0.2 or newer on PATH, then run Setup.command again."
+  fi
+fi
+.venv/bin/python -c 'from karapincho.config import ffmpeg; print(ffmpeg())'
 
 step "Installing optional Apple acceleration"
 if ! .venv/bin/python -m pip install -r requirements-gpu.lock; then

@@ -48,7 +48,9 @@ def inspect_media(path):
     import av
 
     try:
-        with av.open(str(path)) as container:
+        # Uploads are MP4; YouTube may also return Matroska/WebM. Never autodetect playlists.
+        media_format = "matroska" if Path(path).suffix.lower() in (".mkv", ".webm") else "mov"
+        with av.open(str(path), format=media_format, options={"protocol_whitelist": "file,pipe"}) as container:
             if not container.streams.audio or not container.streams.video:
                 raise ValueError("The video must contain both audio and video tracks.")
             duration = container.duration / av.time_base if container.duration else 0
@@ -165,7 +167,8 @@ def prepare(metadata, folder):
 
     ff = config.ffmpeg()
     source = Path(metadata["input"])
-    base = [ff, "-nostdin", "-hide_banner", "-loglevel", "error", "-y", "-i", source]
+    base = [ff, "-nostdin", "-hide_banner", "-loglevel", "error", "-y",
+            "-protocol_whitelist", "file,pipe", "-i", source]
     # A single normalized, untrimmed timeline feeds both playback audio and video.
     run(
         [
